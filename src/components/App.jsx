@@ -328,12 +328,6 @@ export default function App() {
             onFinalizar={() => setResultado("factura-ok")}
           />
         )}
-
-        {resultado === "factura-ok" && (
-          <p className="text-sm text-[var(--amber-600)] font-medium mt-4 text-center">
-            ¡Listo! Tu carga y tu factura quedaron registradas.
-          </p>
-        )}
       </div>
 
       <p className="text-xs text-[var(--ink)]/45 text-center mt-8 leading-relaxed">

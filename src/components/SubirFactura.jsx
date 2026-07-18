@@ -70,6 +70,7 @@ export default function SubirFactura({ docente, items, ediciones, valores, total
   const [fechaFactura, setFechaFactura] = useState("");
   const [subiendo, setSubiendo] = useState(false);
   const [error, setError] = useState("");
+  const [enviada, setEnviada] = useState(false);
 
   async function handleSubir() {
     if (!archivo || !fechaFactura) return;
@@ -86,12 +87,25 @@ export default function SubirFactura({ docente, items, ediciones, valores, total
         setError(data.error || "No se pudo subir la factura.");
         return;
       }
+      setEnviada(true);
       onFinalizar();
     } catch (err) {
       setError("Hubo un problema subiendo el archivo. Probá de nuevo.");
     } finally {
       setSubiendo(false);
     }
+  }
+
+  if (enviada) {
+    return (
+      <div className="fade-in border border-[var(--line)] bg-[var(--panel)] rounded-2xl p-5 text-center">
+        <p className="font-display text-lg text-[var(--teal-900)] mb-1">Factura recibida</p>
+        <p className="text-sm text-[var(--ink)]/70">
+          Ya quedó registrada con la fecha que indicaste, y va a aparecer en el panel de
+          administración.
+        </p>
+      </div>
+    );
   }
 
   return (

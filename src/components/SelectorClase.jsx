@@ -34,14 +34,18 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail }) {
       return;
     }
     setCargandoAsignaciones(true);
-    fetch(`/api/sesiones-asignadas?email=${encodeURIComponent(docenteEmail)}`)
+    fetch(
+      `/api/sesiones-asignadas?email=${encodeURIComponent(docenteEmail)}&cursoId=${encodeURIComponent(
+        cursoId
+      )}`
+    )
       .then((r) => r.json())
       .then((data) => {
         if (data.ok) setAsignaciones(data.asignaciones || []);
       })
       .catch(() => {})
       .finally(() => setCargandoAsignaciones(false));
-  }, [esSesion, docenteEmail]);
+  }, [esSesion, docenteEmail, cursoId]);
 
   // Números ya cargados por otro docente, para deshabilitarlos en los chips
   // y armar la barra de progreso. En modo sesión manual, se filtra por alumno.

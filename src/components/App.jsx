@@ -117,16 +117,16 @@ export default function App() {
 
   function agregarItem(item) {
     setPendientes((prev) => [...prev, item]);
-    if (item.cursoId in valores) return;
+    if (item.cursoReal in valores) return;
     if (modoPrueba) {
-      setValores((prev) => ({ ...prev, [item.cursoId]: DEMO_VALORES[item.cursoId] || 0 }));
+      setValores((prev) => ({ ...prev, [item.cursoReal]: DEMO_VALORES[item.cursoReal] || 0 }));
       return;
     }
     if (docente) {
-      fetch(`/api/valor?email=${encodeURIComponent(docente.email)}&curso=${item.cursoId}`)
+      fetch(`/api/valor?email=${encodeURIComponent(docente.email)}&curso=${item.cursoReal}`)
         .then((r) => r.json())
         .then((data) => {
-          if (data.ok) setValores((prev) => ({ ...prev, [item.cursoId]: data.valor }));
+          if (data.ok) setValores((prev) => ({ ...prev, [item.cursoReal]: data.valor }));
         })
         .catch(() => {});
     }
@@ -136,8 +136,8 @@ export default function App() {
     setPendientes((prev) => prev.filter((_, i) => i !== idx));
   }
 
-  const total = pendientes.reduce((acc, item) => acc + (valores[item.cursoId] || 0), 0);
-  const totalConfirmado = confirmados.reduce((acc, item) => acc + (valores[item.cursoId] || 0), 0);
+  const total = pendientes.reduce((acc, item) => acc + (valores[item.cursoReal] || 0), 0);
+  const totalConfirmado = confirmados.reduce((acc, item) => acc + (valores[item.cursoReal] || 0), 0);
 
   async function confirmarCarga() {
     if (pendientes.length === 0) return;
@@ -151,7 +151,8 @@ export default function App() {
           email: docente.email,
           modoPrueba,
           items: pendientes.map((p) => ({
-            cursoId: p.cursoId,
+            cursoReal: p.cursoReal,
+            nombreCurso: p.nombreCurso,
             edicion: p.edicion,
             claseOSesion: p.claseOSesion,
             alumno: p.alumno,
@@ -322,18 +323,15 @@ export default function App() {
                     <h2 className="font-display text-[17px] text-[var(--teal-900)] mb-3">
                       Tu carga de este mes
                     </h2>
-                    {pendientes.map((item, idx) => {
-                      const edicion = ediciones.find((e) => e.cursoId === item.cursoId);
-                      return (
-                        <TicketClase
-                          key={idx}
-                          item={item}
-                          nombreCurso={edicion?.nombreCurso || item.cursoId}
-                          valor={valores[item.cursoId]}
-                          onQuitar={() => quitarItem(idx)}
-                        />
-                      );
-                    })}
+                    {pendientes.map((item, idx) => (
+                      <TicketClase
+                        key={idx}
+                        item={item}
+                        nombreCurso={item.nombreCurso || item.cursoReal}
+                        valor={valores[item.cursoReal]}
+                        onQuitar={() => quitarItem(idx)}
+                      />
+                    ))}
                     <div className="flex items-center justify-between px-1 py-2 mb-2">
                       <span className="text-sm text-[var(--ink)]/70">Total estimado</span>
                       <span className="font-mono text-lg font-semibold text-[var(--teal-700)]">
@@ -361,10 +359,11 @@ export default function App() {
           <SubirFactura
             docente={docente}
             items={confirmados}
-            ediciones={ediciones}
+            mes={mesLabel}
             valores={valores}
             total={totalConfirmado}
             onFinalizar={() => setResultado("factura-ok")}
+            modoPrueba={modoPrueba}
           />
         )}
       </div>

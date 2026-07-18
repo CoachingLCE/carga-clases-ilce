@@ -41,7 +41,7 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modo
     setCargandoAsignaciones(true);
     fetch(
       `/api/sesiones-asignadas?email=${encodeURIComponent(docenteEmail)}&cursoId=${encodeURIComponent(
-        cursoId
+        edicionSeleccionada?.cursoReal || ""
       )}`
     )
       .then((r) => r.json())
@@ -68,7 +68,7 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modo
     }
     setCargandoTomadas(true);
     const params = new URLSearchParams({
-      cursoId,
+      cursoId: edicionSeleccionada.cursoReal,
       edicion: edicionSeleccionada.edicion || "",
     });
     if (esSesion) params.set("alumno", alumno.trim());
@@ -91,6 +91,8 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modo
     selChips.forEach((n) => {
       onAgregar({
         cursoId,
+        cursoReal: edicionSeleccionada.cursoReal,
+        nombreCurso: edicionSeleccionada.nombreCurso,
         edicion: edicionSeleccionada?.edicion || "",
         claseOSesion: String(n),
         alumno: esSesion ? alumno.trim() : "",
@@ -105,6 +107,8 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modo
     if (!asignacionElegida) return;
     onAgregar({
       cursoId,
+      cursoReal: edicionSeleccionada.cursoReal,
+      nombreCurso: edicionSeleccionada.nombreCurso,
       edicion: edicionSeleccionada?.edicion || "",
       claseOSesion: selChips[0],
       alumno: alumno.trim(),

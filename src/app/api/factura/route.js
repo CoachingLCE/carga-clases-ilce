@@ -1,19 +1,19 @@
 import { NextResponse } from "next/server";
 import { Readable } from "stream";
 import { getDriveClient } from "@/lib/googleAuth";
-import { getDocentePorEmail, registrarFactura } from "@/lib/sheets";
+import { marcarFacturaSubida } from "@/lib/sheets";
 
 export async function POST(request) {
   try {
     const formData = await request.formData();
     const archivo = formData.get("factura");
     const email = formData.get("email");
-    const fechaFactura = formData.get("fechaFactura");
+    const mes = formData.get("mes");
     const alias = formData.get("alias") || "";
 
-    if (!archivo || !email) {
+    if (!archivo || !email || !mes) {
       return NextResponse.json(
-        { ok: false, error: "Falta el archivo o el email." },
+        { ok: false, error: "Falta el archivo, el email o el mes." },
         { status: 400 }
       );
     }
@@ -45,15 +45,29 @@ export async function POST(request) {
       fields: "id, webViewLink",
     });
 
-    const docente = await getDocentePorEmail(email);
+    const archivoUrl = subido.data.webViewLink || "";
 
-    await registrarFactura({
-      email,
-      nombreDocente: docente?.nombre || "",
-      fechaFactura: fechaFactura || fechaHoy,
-      archivoUrl: subido.data.webViewLink || "",
-      alias,
-    });
+    try {
+      await drive.permissions.create({
+        fileId: subido.data.id,
+        requestBody: { role: "reader", type: "anyone" },
+      });
+    } catch (permErr) {
+      console.error("No se pudo dar permiso de lectura al archivo:", permErr);
+    }
+
+    const actualizadas = await marcarFacturaSubida({ email, mes, archivoUrl, alias });
+
+    if (actualizadas === 0) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error:
+            "No encontramos cargas pendientes de facturar para este mes. ¿Ya confirmaste tu carga?",
+        },
+        { status: 404 }
+      );
+    }
 
     return NextResponse.json({ ok: true });
   } catch (err) {

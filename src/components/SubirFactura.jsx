@@ -3,13 +3,12 @@
 import { useState } from "react";
 import { CUIT_INSTITUTO, CONDICION_FISCAL } from "@/lib/config";
 
-function agruparParaFactura(items, ediciones, valores) {
+function agruparParaFactura(items, valores) {
   const grupos = {};
   items.forEach((item) => {
-    const edicion = ediciones.find((e) => e.cursoId === item.cursoId);
-    const nombreCurso = edicion?.nombreCurso || item.cursoId;
+    const nombreCurso = item.nombreCurso || item.cursoReal;
     const clave = `${nombreCurso}||${item.edicion}`;
-    const valorUnitario = valores[item.cursoId] || 0;
+    const valorUnitario = valores[item.cursoReal] || 0;
     if (!grupos[clave]) {
       grupos[clave] = { nombreCurso, edicion: item.edicion, cantidad: 0, valorUnitario };
     }
@@ -18,9 +17,9 @@ function agruparParaFactura(items, ediciones, valores) {
   return Object.values(grupos);
 }
 
-function GuiaFactura({ items, ediciones, valores }) {
+function GuiaFactura({ items, valores }) {
   if (!items || items.length === 0) return null;
-  const grupos = agruparParaFactura(items, ediciones, valores);
+  const grupos = agruparParaFactura(items, valores);
 
   return (
     <div className="border border-[var(--line)] bg-[var(--panel)] rounded-2xl p-5 mb-4">
@@ -65,7 +64,7 @@ function GuiaFactura({ items, ediciones, valores }) {
   );
 }
 
-export default function SubirFactura({ docente, items, ediciones, valores, total, onFinalizar }) {
+export default function SubirFactura({ docente, items, mes, valores, total, onFinalizar, modoPrueba }) {
   const [archivo, setArchivo] = useState(null);
   const [fechaFactura, setFechaFactura] = useState("");
   const [alias, setAlias] = useState("");
@@ -77,12 +76,22 @@ export default function SubirFactura({ docente, items, ediciones, valores, total
     if (!archivo || !fechaFactura) return;
     setSubiendo(true);
     setError("");
+
+    if (modoPrueba) {
+      // No tocamos nada real en modo prueba.
+      setEnviada(true);
+      onFinalizar();
+      setSubiendo(false);
+      return;
+    }
+
     try {
       const formData = new FormData();
       formData.append("factura", archivo);
       formData.append("email", docente.email);
       formData.append("fechaFactura", fechaFactura);
       formData.append("alias", alias.trim());
+      formData.append("mes", mes);
       const res = await fetch("/api/factura", { method: "POST", body: formData });
       const data = await res.json();
       if (!data.ok) {
@@ -112,7 +121,7 @@ export default function SubirFactura({ docente, items, ediciones, valores, total
 
   return (
     <div className="fade-in">
-      <GuiaFactura items={items} ediciones={ediciones} valores={valores} />
+      <GuiaFactura items={items} valores={valores} />
 
       <div className="border border-[var(--line)] bg-[var(--panel)] rounded-2xl p-5">
         <h3 className="font-display text-[17px] text-[var(--teal-900)] mb-1">Subir factura</h3>

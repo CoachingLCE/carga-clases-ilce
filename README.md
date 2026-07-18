@@ -6,52 +6,72 @@ App para que los docentes carguen sus clases y sesiones del mes, y suban su fact
 
 ## 1. Armar la planilla de Google Sheets
 
-Creá una planilla nueva en [sheets.google.com](https://sheets.google.com) con **4 hojas**, con estos nombres exactos y estas columnas (fila 1 = encabezados, los datos arrancan en la fila 2):
+Creá una planilla nueva en [sheets.google.com](https://sheets.google.com) con **6 hojas**, con estos nombres exactos y estas columnas (fila 1 = encabezados, los datos arrancan en la fila 2):
 
 ### Hoja "Docentes"
 | A: Email | B: Nombre | C: Activo | D: AliasSesiones |
 |---|---|---|---|
 | juan@mail.com | Juan Pérez | SI | Juan P. |
 
-- **Activo**: `SI` o `NO`. Si es `NO`, ese docente no puede ingresar a la app (le aparece un aviso para que consulte con administración).
-- **AliasSesiones** (opcional, columna "Nombre en planilla de sesiones"): el nombre/alias con el que ese docente aparece en la planilla externa de asignación de sesiones de Coaching Ontológico. Se usa para mostrarle solo sus sesiones pre-asignadas (ver sección "Sesiones pre-asignadas" más abajo). Si lo dejás vacío, el docente simplemente carga sus sesiones a mano, como hasta ahora.
+- **Activo**: `SI` o `NO`. Si es `NO`, ese docente no puede ingresar a la app.
+- **AliasSesiones** (opcional, columna "Nombre en planilla de sesiones"): el alias con el que ese docente aparece en la planilla externa de sesiones de Coaching Ontológico (ver más abajo).
+
+### Hoja "Administradores"
+| A: Email | B: Nombre | C: Activo |
+|---|---|---|
+| administracion@institutoilce.com | Administración | SI |
+
+Cualquier email de esta hoja (marcado `SI`) entra directo al panel de administración en vez del flujo normal de carga de clases.
+
+### Hoja "Referencia cursos"
+Hoja de referencia con los cursos que existen — **la app no escribe acá, es de lectura**.
+
+| A: CursoId | B: NombreCurso |
+|---|---|
+| ontologico | Coaching Ontológico |
+| deportivo | Coaching Deportivo |
+| educativo | Coaching Educativo |
+| vocacional | Coaching Vocacional |
+| oratoria | Oratoria |
+| equipos | Coaching de Equipos |
+
+- **CursoId**: el identificador que se usa en "Ediciones" y "Valores".
+- Solo "ontologico" tiene doble modalidad (clase de cohorte 1-48 y sesión individual 1-4); el resto son solo "clase", rango 1-16. Estas reglas están fijas en el código (`src/lib/sheets.js`, constante `TOPES_POR_CURSO`) — si cambian, hay que ajustarlas ahí.
 
 ### Hoja "Ediciones"
-Acá cargás cada curso/edición que puede elegirse al cargar una clase.
+Acá marcás qué edición de cada curso está abierta para cargar en este momento.
 
-| A: CursoId | B: NombreCurso | C: TipoCoaching | D: Edicion | E: Modalidad | F: TopeSesiones |
-|---|---|---|---|---|---|
-| CO27 | Coaching Ontológico | Coaching ontológico | Edición 27 | clase | |
-| Or-10 | Oratoria | Oratoria | Edición 10 | clase | |
-| IE-Individual | Inteligencia Emocional (sesiones) | Coaching educativo | | sesion | 20 |
+| A: Curso | B: Edicion | C: Estado |
+|---|---|---|
+| ontologico | 51 | Abierta |
+| oratoria | 10 | Abierta |
 
-- **CursoId**: un identificador único y corto (vos lo inventás, ej. "CO27"). Es la clave que conecta esta hoja con "Valores" y "Cargas".
-- **Modalidad**: `clase` (clases de una cohorte) o `sesion` (sesiones individuales con nombre de alumno).
-- **TopeSesiones**: solo para modalidad `sesion`. Si lo dejás vacío, se usan 20 por defecto.
+- **Estado**: solo las filas con `Abierta` (sin importar mayúsculas) aparecen para elegir en la app. Cualquier otro valor (o vacío) las oculta.
 
 ### Hoja "Valores"
 El valor acordado por docente y por curso.
 
-| A: Email | B: CursoId | C: Valor |
+| A: EmailDocente | B: Curso | C: Valor |
 |---|---|---|
-| juan@mail.com | CO27 | 45000 |
+| juan@mail.com | ontologico | 19632 |
 
 ### Hoja "Cargas"
 Esta hoja la llena automáticamente la app — no necesitás escribir nada acá, solo dejarla creada con los encabezados.
 
-| A: Timestamp | B: Email | C: CursoId | D: Edicion | E: ClaseOSesion | F: Alumno | G: EstadoFactura |
-|---|---|---|---|---|---|---|
+| A: Timestamp | B: EmailDocente | C: NombreDocente | D: Curso | E: Edicion | F: ClaseOSesion | G: Alumno | H: Mes | I: Valor | J: EstadoFacturado | K: FacturaURL | L: Alias |
+|---|---|---|---|---|---|---|---|---|---|---|---|
 
-### Hoja "Facturas"
-También la llena automáticamente la app cuando un docente sube su factura. Solo creála con los encabezados.
-
-| A: Email | B: NombreDocente | C: FechaFactura | D: FechaEnvio | E: ArchivoUrl | F: Alias |
-|---|---|---|---|---|---|
-
-- **Alias**: el alias bancario que el docente carga junto con su factura, para que administración sepa a qué cuenta transferirle.
+- **EstadoFacturado** arranca en `Pendiente` y pasa a `Facturado` cuando el docente sube su factura de ese mes (se actualiza automáticamente para todas las filas pendientes de ese docente + mes).
+- **Alias**: el alias bancario que carga el docente al subir la factura.
 
 Anotá el **ID de la planilla**: es la parte de la URL entre `/d/` y `/edit`.
 Ej: `https://docs.google.com/spreadsheets/d/ESTE-ES-EL-ID/edit` → `ESTE-ES-EL-ID`
+
+---
+
+## Panel de administración
+
+Cualquier email cargado en la hoja "Administradores" (marcado `SI` en Activo) entra directo al panel de administración en vez del flujo normal de carga. Ahí ve una tabla con **Docente / Mes / Cantidad / Total / Alias / link a la factura**, agrupada por docente + mes, que se arma automáticamente a partir de la hoja "Cargas". Desde ahí hay un botón **"Exportar a Excel"** que descarga esa tabla.
 
 ---
 
@@ -89,12 +109,6 @@ Para activarlo hacen falta dos variables de entorno en Vercel:
 - `GMAIL_APP_PASSWORD`: la contraseña de aplicación de esa cuenta (no es la contraseña normal — se genera en la sección de seguridad de la cuenta de Google, y requiere tener la verificación en dos pasos activada).
 
 Si estas variables no están configuradas, la app sigue funcionando normal (la carga se registra igual) pero no manda el mail, y queda un aviso en los logs de Vercel.
-
----
-
-## Panel de administración
-
-Si entrás a la app con el email `administracion@institutoilce.com` (configurable en `src/lib/config.js`, constante `MAIL_ADMINISTRACION`), en vez del flujo normal de carga vas a ver una tabla con **Docente / Fecha de factura / Fecha de envío**, que se completa sola a medida que los docentes suben sus facturas. Desde ahí hay un botón **"Exportar a Excel"** que descarga esa tabla como archivo `.xlsx`.
 
 ---
 

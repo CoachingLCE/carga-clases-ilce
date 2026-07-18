@@ -12,11 +12,6 @@ export default function EmailGate({ onIngreso }) {
     e.preventDefault();
     if (!email.trim()) return;
 
-    if (email.trim().toLowerCase() === MAIL_ADMINISTRACION.toLowerCase()) {
-      onIngreso({ email: email.trim(), nombre: "Administración", esAdmin: true });
-      return;
-    }
-
     setCargando(true);
     setError("");
     try {

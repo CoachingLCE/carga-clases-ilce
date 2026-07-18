@@ -3,20 +3,31 @@ import { getSheetsClient } from "./googleAuth";
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
 
 const HOJA_DOCENTES = "Docentes";
+const HOJA_ADMINISTRADORES = "Administradores";
+const HOJA_REFERENCIA_CURSOS = "Referencia cursos";
 const HOJA_EDICIONES = "Ediciones";
 const HOJA_VALORES = "Valores";
 const HOJA_CARGAS = "Cargas";
-const HOJA_FACTURAS = "Facturas";
 
 /*
- * Estructura esperada de cada hoja (ver README para el detalle completo):
+ * Estructura real de la planilla (ver README para el detalle completo):
  *
- * Docentes   -> A: Email | B: Nombre | C: Activo (SI/NO) | D: AliasSesiones (Nombre en planilla de sesiones)
- * Ediciones  -> A: CursoId | B: NombreCurso | C: TipoCoaching | D: Edicion | E: Modalidad (clase|sesion) | F: TopeSesiones
- * Valores    -> A: Email | B: CursoId | C: Valor
- * Cargas     -> A: Timestamp | B: Email | C: CursoId | D: Edicion | E: ClaseOSesion | F: Alumno | G: EstadoFactura
- * Facturas   -> A: Email | B: NombreDocente | C: FechaFactura | D: FechaEnvio | E: ArchivoUrl | F: Alias
+ * Docentes            -> A: Email | B: Nombre | C: Activo (SI/NO) | D: AliasSesiones (Nombre en planilla de sesiones)
+ * Administradores     -> A: Email | B: Nombre | C: Activo (SI/NO)
+ * Referencia cursos   -> A: CursoId | B: NombreCurso | C: Modos | D: Rango  (hoja de referencia, no se escribe)
+ * Ediciones           -> A: Curso | B: Edicion | C: Estado ("Abierta" = disponible para cargar)
+ * Valores             -> A: EmailDocente | B: Curso | C: Valor
+ * Cargas              -> A: Timestamp | B: EmailDocente | C: NombreDocente | D: Curso | E: Edicion |
+ *                        F: ClaseOSesion | G: Alumno | H: Mes | I: Valor | J: EstadoFacturado |
+ *                        K: FacturaURL | L: Alias
+ *
+ * Solo "ontologico" tiene doble modalidad (clase de cohorte 1-48 y sesión individual 1-4).
+ * El resto de los cursos son solo "clase", rango 1-16.
  */
+const TOPES_POR_CURSO = {
+  ontologico: { clase: 48, sesion: 4 },
+};
+const TOPE_CLASE_DEFAULT = 16;
 
 async function leerRango(rango) {
   const sheets = getSheetsClient();
@@ -52,100 +63,210 @@ export async function getDocentePorEmail(email) {
   };
 }
 
-// Devuelve la lista de ediciones/cursos disponibles para elegir.
-export async function getEdiciones() {
-  const filas = await leerRango(`${HOJA_EDICIONES}!A2:F`);
+// Busca un administrador por email. Devuelve { email, nombre, activo } o null si no existe.
+export async function getAdministradorPorEmail(email) {
+  const filas = await leerRango(`${HOJA_ADMINISTRADORES}!A2:C`);
+  const encontrada = filas.find(
+    (f) => (f[0] || "").trim().toLowerCase() === email.trim().toLowerCase()
+  );
+  if (!encontrada) return null;
+  return {
+    email: encontrada[0],
+    nombre: encontrada[1] || "",
+    activo: (encontrada[2] || "").trim().toUpperCase() !== "NO",
+  };
+}
+
+// Lee la hoja de referencia (nombres de curso) — no se escribe nunca acá.
+async function getReferenciaCursos() {
+  const filas = await leerRango(`${HOJA_REFERENCIA_CURSOS}!A2:D`);
   return filas
     .filter((f) => f[0])
     .map((f) => ({
-      cursoId: f[0],
+      cursoId: (f[0] || "").trim(),
       nombreCurso: f[1] || "",
-      tipoCoaching: f[2] || "",
-      edicion: f[3] || "",
-      modalidad: (f[4] || "clase").toLowerCase(), // "clase" | "sesion"
-      topeSesiones: f[5] ? Number(f[5]) : null,
     }));
 }
 
-// Busca el valor acordado para un docente + curso puntual.
-// Devuelve el número, o null si todavía no está cargado.
-export async function getValor(email, cursoId) {
+// Devuelve la lista de ediciones/cursos disponibles para elegir, combinando
+// "Referencia cursos" (nombres) + "Ediciones" (cuáles están Abiertas) + las
+// reglas fijas de modalidad y rango.
+// Cada item tiene:
+//   cursoId    -> clave única para la UI: "curso::modalidad::edicion"
+//   cursoReal  -> el id real del curso (el que se guarda en Valores/Cargas)
+//   nombreCurso, edicion, modalidad ("clase"|"sesion"), topeSesiones
+export async function getEdiciones() {
+  const [referencia, filasEdiciones] = await Promise.all([
+    getReferenciaCursos(),
+    leerRango(`${HOJA_EDICIONES}!A2:C`),
+  ]);
+
+  const nombrePorCurso = {};
+  referencia.forEach((r) => {
+    nombrePorCurso[r.cursoId] = r.nombreCurso;
+  });
+
+  const abiertas = filasEdiciones
+    .filter((f) => (f[2] || "").trim().toLowerCase() === "abierta")
+    .map((f) => ({ curso: (f[0] || "").trim(), edicion: (f[1] || "").trim() }))
+    .filter((e) => e.curso && e.edicion);
+
+  const resultado = [];
+  for (const { curso, edicion } of abiertas) {
+    const nombreCurso = nombrePorCurso[curso] || curso;
+    const tieneDobleModalidad = curso in TOPES_POR_CURSO;
+
+    if (tieneDobleModalidad) {
+      resultado.push({
+        cursoId: `${curso}::clase::${edicion}`,
+        cursoReal: curso,
+        nombreCurso,
+        edicion,
+        modalidad: "clase",
+        topeSesiones: TOPES_POR_CURSO[curso].clase,
+      });
+      resultado.push({
+        cursoId: `${curso}::sesion::${edicion}`,
+        cursoReal: curso,
+        nombreCurso: `${nombreCurso} (sesiones individuales)`,
+        edicion,
+        modalidad: "sesion",
+        topeSesiones: TOPES_POR_CURSO[curso].sesion,
+      });
+    } else {
+      resultado.push({
+        cursoId: `${curso}::clase::${edicion}`,
+        cursoReal: curso,
+        nombreCurso,
+        edicion,
+        modalidad: "clase",
+        topeSesiones: TOPE_CLASE_DEFAULT,
+      });
+    }
+  }
+
+  return resultado;
+}
+
+// Busca el valor acordado para un docente + curso puntual (cursoReal, no el
+// cursoId compuesto de la UI). Devuelve el número, o null si no está cargado.
+export async function getValor(email, cursoReal) {
   const filas = await leerRango(`${HOJA_VALORES}!A2:C`);
   const encontrada = filas.find(
     (f) =>
       (f[0] || "").trim().toLowerCase() === email.trim().toLowerCase() &&
-      (f[1] || "").trim() === cursoId.trim()
+      (f[1] || "").trim() === (cursoReal || "").trim()
   );
   if (!encontrada || !encontrada[2]) return null;
   const valor = Number(String(encontrada[2]).replace(/[^0-9.-]/g, ""));
   return Number.isFinite(valor) ? valor : null;
 }
 
-// Registra una o más clases/sesiones cargadas por un docente.
-// items: [{ cursoId, edicion, claseOSesion, alumno }]
-export async function registrarCargas(email, items) {
+// Registra una o más clases/sesiones cargadas por un docente en la hoja "Cargas".
+// items: [{ cursoReal, edicion, claseOSesion, alumno, valor }]
+export async function registrarCargas(email, nombreDocente, mes, items) {
   const timestamp = new Date().toISOString();
   for (const item of items) {
     await agregarFila(HOJA_CARGAS, [
       timestamp,
       email,
-      item.cursoId,
+      nombreDocente || "",
+      item.cursoReal,
       item.edicion || "",
       item.claseOSesion || "",
       item.alumno || "",
-      "Pendiente", // EstadoFactura
+      mes || "",
+      item.valor || 0,
+      "Pendiente", // EstadoFacturado
+      "", // FacturaURL
+      "", // Alias
     ]);
   }
 }
 
 // Devuelve los números de clase/sesión ya cargados para un curso + edición
-// (y, si se pasa alumno, solo los de ese alumno — para el caso de sesiones
-// individuales, donde cada alumno tiene su propio conteo).
-// Se usa para no mostrarle a un docente una clase que ya cargó otro, y para
-// la barra de progreso de la edición.
-export async function getClasesTomadas(cursoId, edicion, alumno) {
-  const filas = await leerRango(`${HOJA_CARGAS}!A2:G`);
+// (y, si se pasa alumno, solo los de ese alumno). Se usa para no mostrarle a
+// un docente una clase que ya cargó otro, y para la barra de progreso.
+export async function getClasesTomadas(cursoReal, edicion, alumno) {
+  const filas = await leerRango(`${HOJA_CARGAS}!A2:L`);
   const alumnoNorm = (alumno || "").trim().toLowerCase();
   return filas
     .filter((f) => {
-      const coincideCurso = (f[2] || "").trim() === (cursoId || "").trim();
-      const coincideEdicion = (f[3] || "").trim() === (edicion || "").trim();
+      const coincideCurso = (f[3] || "").trim() === (cursoReal || "").trim();
+      const coincideEdicion = (f[4] || "").trim() === (edicion || "").trim();
       if (!coincideCurso || !coincideEdicion) return false;
       if (alumnoNorm) {
-        return (f[5] || "").trim().toLowerCase() === alumnoNorm;
+        return (f[6] || "").trim().toLowerCase() === alumnoNorm;
       }
       return true;
     })
-    .map((f) => String(f[4] || "").trim())
+    .map((f) => String(f[5] || "").trim())
     .filter(Boolean);
 }
 
-// Registra el envío de una factura. fechaFactura es la fecha que puso el docente
-// en su factura; fechaEnvio la pone el sistema automáticamente.
-export async function registrarFactura({ email, nombreDocente, fechaFactura, archivoUrl, alias }) {
-  const fechaEnvio = new Date().toISOString();
-  await agregarFila(HOJA_FACTURAS, [
-    email,
-    nombreDocente || "",
-    fechaFactura || "",
-    fechaEnvio,
-    archivoUrl || "",
-    alias || "",
-  ]);
-  return { fechaEnvio };
+// Marca como facturadas todas las filas de "Cargas" de un docente para un mes
+// puntual (las que estén en "Pendiente"), y les carga la URL del archivo y el
+// alias bancario. Devuelve la cantidad de filas actualizadas.
+export async function marcarFacturaSubida({ email, mes, archivoUrl, alias }) {
+  const sheets = getSheetsClient();
+  const filas = await leerRango(`${HOJA_CARGAS}!A2:L`);
+  const emailNorm = email.trim().toLowerCase();
+
+  const actualizaciones = [];
+  filas.forEach((f, idx) => {
+    const filaNumero = idx + 2; // offset por encabezado
+    const coincideEmail = (f[1] || "").trim().toLowerCase() === emailNorm;
+    const coincideMes = (f[7] || "").trim() === (mes || "").trim();
+    const pendiente = (f[9] || "").trim().toLowerCase() !== "facturado";
+    if (coincideEmail && coincideMes && pendiente) {
+      actualizaciones.push({
+        range: `${HOJA_CARGAS}!J${filaNumero}:L${filaNumero}`,
+        values: [["Facturado", archivoUrl || "", alias || ""]],
+      });
+    }
+  });
+
+  if (actualizaciones.length === 0) return 0;
+
+  await sheets.spreadsheets.values.batchUpdate({
+    spreadsheetId: SPREADSHEET_ID,
+    requestBody: {
+      valueInputOption: "USER_ENTERED",
+      data: actualizaciones,
+    },
+  });
+
+  return actualizaciones.length;
 }
 
-// Devuelve todas las facturas registradas, para el panel de administración.
-export async function getFacturas() {
-  const filas = await leerRango(`${HOJA_FACTURAS}!A2:F`);
-  return filas
-    .filter((f) => f[0])
-    .map((f) => ({
-      email: f[0],
-      nombreDocente: f[1] || "",
-      fechaFactura: f[2] || "",
-      fechaEnvio: f[3] || "",
-      archivoUrl: f[4] || "",
-      alias: f[5] || "",
-    }));
+// Devuelve las facturas recibidas, agrupadas por docente + mes, para el
+// panel de administración.
+export async function getFacturasRecibidas() {
+  const filas = await leerRango(`${HOJA_CARGAS}!A2:L`);
+  const grupos = {};
+
+  filas.forEach((f) => {
+    const estado = (f[9] || "").trim().toLowerCase();
+    if (estado !== "facturado") return;
+    const email = f[1] || "";
+    const mes = f[7] || "";
+    const clave = `${email}||${mes}`;
+    if (!grupos[clave]) {
+      grupos[clave] = {
+        email,
+        nombreDocente: f[2] || "",
+        mes,
+        cantidad: 0,
+        total: 0,
+        archivoUrl: f[10] || "",
+        alias: f[11] || "",
+      };
+    }
+    grupos[clave].cantidad += 1;
+    grupos[clave].total += Number(f[8]) || 0;
+    if (!grupos[clave].archivoUrl && f[10]) grupos[clave].archivoUrl = f[10];
+    if (!grupos[clave].alias && f[11]) grupos[clave].alias = f[11];
+  });
+
+  return Object.values(grupos);
 }

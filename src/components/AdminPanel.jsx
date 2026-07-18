@@ -2,13 +2,6 @@
 
 import { useEffect, useState } from "react";
 
-function formatearFecha(iso) {
-  if (!iso) return "—";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString("es-AR");
-}
-
 export default function AdminPanel({ email }) {
   const [facturas, setFacturas] = useState([]);
   const [cargando, setCargando] = useState(true);
@@ -32,8 +25,9 @@ export default function AdminPanel({ email }) {
     const XLSX = await import("xlsx");
     const filas = facturas.map((f) => ({
       Docente: f.nombreDocente || f.email,
-      "Fecha de factura": formatearFecha(f.fechaFactura),
-      "Fecha de envío": formatearFecha(f.fechaEnvio),
+      Mes: f.mes,
+      Cantidad: f.cantidad,
+      Total: f.total,
       Alias: f.alias || "",
     }));
     const hoja = XLSX.utils.json_to_sheet(filas);
@@ -83,18 +77,35 @@ export default function AdminPanel({ email }) {
             <thead>
               <tr className="bg-[#eef0f1] text-left">
                 <th className="px-3.5 py-2.5 font-semibold text-[var(--ink)]/70">Docente</th>
-                <th className="px-3.5 py-2.5 font-semibold text-[var(--ink)]/70">Fecha de factura</th>
-                <th className="px-3.5 py-2.5 font-semibold text-[var(--ink)]/70">Fecha de envío</th>
+                <th className="px-3.5 py-2.5 font-semibold text-[var(--ink)]/70">Mes</th>
+                <th className="px-3.5 py-2.5 font-semibold text-[var(--ink)]/70">Cantidad</th>
+                <th className="px-3.5 py-2.5 font-semibold text-[var(--ink)]/70">Total</th>
                 <th className="px-3.5 py-2.5 font-semibold text-[var(--ink)]/70">Alias</th>
+                <th className="px-3.5 py-2.5 font-semibold text-[var(--ink)]/70">Factura</th>
               </tr>
             </thead>
             <tbody>
               {facturas.map((f, idx) => (
                 <tr key={idx} className="border-t border-[var(--line)]">
                   <td className="px-3.5 py-2.5">{f.nombreDocente || f.email}</td>
-                  <td className="px-3.5 py-2.5 font-mono">{formatearFecha(f.fechaFactura)}</td>
-                  <td className="px-3.5 py-2.5 font-mono">{formatearFecha(f.fechaEnvio)}</td>
+                  <td className="px-3.5 py-2.5 font-mono capitalize">{f.mes}</td>
+                  <td className="px-3.5 py-2.5 font-mono">{f.cantidad}</td>
+                  <td className="px-3.5 py-2.5 font-mono">${f.total.toLocaleString("es-AR")}</td>
                   <td className="px-3.5 py-2.5 font-mono">{f.alias || "—"}</td>
+                  <td className="px-3.5 py-2.5">
+                    {f.archivoUrl ? (
+                      <a
+                        href={f.archivoUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-[var(--teal-700)] underline"
+                      >
+                        Ver
+                      </a>
+                    ) : (
+                      "—"
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

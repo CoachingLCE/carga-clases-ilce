@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { registrarCargas, getClasesTomadas, getDocentePorEmail, getEdiciones, getValor } from "@/lib/sheets";
+import { registrarCargas, getClasesTomadas, getDocentePorEmail, getValor } from "@/lib/sheets";
 import { getEstadoCierre } from "@/lib/mes";
 import { enviarMailConfirmacionCarga } from "@/lib/mail";
 
@@ -15,14 +15,13 @@ export async function POST(request) {
       );
     }
 
-    if (!modoPrueba) {
-      const { habilitado } = getEstadoCierre();
-      if (!habilitado) {
-        return NextResponse.json(
-          { ok: false, error: "La carga de este mes ya está cerrada." },
-          { status: 403 }
-        );
-      }
+    const { habilitado, mesLabel } = getEstadoCierre();
+
+    if (!modoPrueba && !habilitado) {
+      return NextResponse.json(
+        { ok: false, error: "La carga de este mes ya está cerrada." },
+        { status: 403 }
+      );
     }
 
     let aceptados = items;
@@ -34,9 +33,9 @@ export async function POST(request) {
       const cacheTomadas = {};
       aceptados = [];
       for (const item of items) {
-        const clave = `${item.cursoId}::${item.edicion}::${(item.alumno || "").toLowerCase()}`;
+        const clave = `${item.cursoReal}::${item.edicion}::${(item.alumno || "").toLowerCase()}`;
         if (!(clave in cacheTomadas)) {
-          cacheTomadas[clave] = await getClasesTomadas(item.cursoId, item.edicion, item.alumno);
+          cacheTomadas[clave] = await getClasesTomadas(item.cursoReal, item.edicion, item.alumno);
         }
         const tomadas = cacheTomadas[clave];
         if (tomadas.includes(String(item.claseOSesion))) {
@@ -48,36 +47,38 @@ export async function POST(request) {
       }
 
       if (aceptados.length > 0) {
-        await registrarCargas(email, aceptados);
-      }
+        const docente = await getDocentePorEmail(email);
 
-      // Mandamos el mail de confirmación al docente (con copia a administración).
-      // Si falla el envío, no rompemos la respuesta — la carga ya quedó registrada.
-      if (aceptados.length > 0) {
-        try {
-          const [docente, ediciones] = await Promise.all([getDocentePorEmail(email), getEdiciones()]);
-          const valoresPorCurso = {};
-          for (const item of aceptados) {
-            if (!(item.cursoId in valoresPorCurso)) {
-              valoresPorCurso[item.cursoId] = await getValor(email, item.cursoId);
-            }
+        // Buscamos el valor de cada curso involucrado (una sola vez por cursoReal).
+        const valoresPorCurso = {};
+        for (const item of aceptados) {
+          if (!(item.cursoReal in valoresPorCurso)) {
+            valoresPorCurso[item.cursoReal] = await getValor(email, item.cursoReal);
           }
-          const detalle = aceptados.map((item) => {
-            const edicion = ediciones.find((e) => e.cursoId === item.cursoId);
-            return {
-              cursoNombre: edicion?.nombreCurso || item.cursoId,
-              edicion: item.edicion,
-              claseOSesion: item.claseOSesion,
-              alumno: item.alumno,
-              valor: valoresPorCurso[item.cursoId] || 0,
-            };
-          });
-          const rechazadasDetalle = rechazados.map((item) => {
-            const edicion = ediciones.find((e) => e.cursoId === item.cursoId);
-            return { cursoNombre: edicion?.nombreCurso || item.cursoId, ...item };
-          });
+        }
+
+        const itemsConValor = aceptados.map((item) => ({
+          ...item,
+          valor: valoresPorCurso[item.cursoReal] || 0,
+        }));
+
+        await registrarCargas(email, docente?.nombre || "", mesLabel, itemsConValor);
+
+        // Mandamos el mail de confirmación al docente (con copia a administración).
+        // Si falla el envío, no rompemos la respuesta — la carga ya quedó registrada.
+        try {
+          const detalle = itemsConValor.map((item) => ({
+            cursoNombre: item.nombreCurso || item.cursoReal,
+            edicion: item.edicion,
+            claseOSesion: item.claseOSesion,
+            alumno: item.alumno,
+            valor: item.valor,
+          }));
+          const rechazadasDetalle = rechazados.map((item) => ({
+            cursoNombre: item.nombreCurso || item.cursoReal,
+            ...item,
+          }));
           const total = detalle.reduce((acc, d) => acc + d.valor, 0);
-          const { mesLabel } = getEstadoCierre();
 
           await enviarMailConfirmacionCarga({
             emailDocente: email,

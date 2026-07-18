@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getDocentePorEmail } from "@/lib/sheets";
+import { getDocentePorEmail, getAdministradorPorEmail } from "@/lib/sheets";
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
@@ -10,6 +10,20 @@ export async function GET(request) {
   }
 
   try {
+    const administrador = await getAdministradorPorEmail(email);
+    if (administrador) {
+      if (!administrador.activo) {
+        return NextResponse.json(
+          { ok: false, error: "Este usuario figura como inactivo." },
+          { status: 403 }
+        );
+      }
+      return NextResponse.json({
+        ok: true,
+        docente: { email: administrador.email, nombre: administrador.nombre, esAdmin: true },
+      });
+    }
+
     const docente = await getDocentePorEmail(email);
     if (!docente) {
       return NextResponse.json(

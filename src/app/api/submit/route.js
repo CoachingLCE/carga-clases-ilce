@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { registrarCargas, getClasesTomadas } from "@/lib/sheets";
+import { registrarCargas, getClasesTomadas, getDocentePorEmail, getEdiciones, getValor } from "@/lib/sheets";
 import { getEstadoCierre } from "@/lib/mes";
+import { enviarMailConfirmacionCarga } from "@/lib/mail";
 
 export async function POST(request) {
   try {
@@ -48,6 +49,47 @@ export async function POST(request) {
 
       if (aceptados.length > 0) {
         await registrarCargas(email, aceptados);
+      }
+
+      // Mandamos el mail de confirmación al docente (con copia a administración).
+      // Si falla el envío, no rompemos la respuesta — la carga ya quedó registrada.
+      if (aceptados.length > 0) {
+        try {
+          const [docente, ediciones] = await Promise.all([getDocentePorEmail(email), getEdiciones()]);
+          const valoresPorCurso = {};
+          for (const item of aceptados) {
+            if (!(item.cursoId in valoresPorCurso)) {
+              valoresPorCurso[item.cursoId] = await getValor(email, item.cursoId);
+            }
+          }
+          const detalle = aceptados.map((item) => {
+            const edicion = ediciones.find((e) => e.cursoId === item.cursoId);
+            return {
+              cursoNombre: edicion?.nombreCurso || item.cursoId,
+              edicion: item.edicion,
+              claseOSesion: item.claseOSesion,
+              alumno: item.alumno,
+              valor: valoresPorCurso[item.cursoId] || 0,
+            };
+          });
+          const rechazadasDetalle = rechazados.map((item) => {
+            const edicion = ediciones.find((e) => e.cursoId === item.cursoId);
+            return { cursoNombre: edicion?.nombreCurso || item.cursoId, ...item };
+          });
+          const total = detalle.reduce((acc, d) => acc + d.valor, 0);
+          const { mesLabel } = getEstadoCierre();
+
+          await enviarMailConfirmacionCarga({
+            emailDocente: email,
+            nombreDocente: docente?.nombre || "",
+            mes: mesLabel,
+            detalle,
+            total,
+            rechazadas: rechazadasDetalle,
+          });
+        } catch (mailErr) {
+          console.error("No se pudo enviar el mail de confirmación:", mailErr);
+        }
       }
     }
 

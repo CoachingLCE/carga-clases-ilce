@@ -78,6 +78,18 @@ Además del tutorial inicial (que se ve solo la primera vez), hay un botón **"V
 
 ---
 
+## Mail de confirmación de carga
+
+Cada vez que un docente confirma su carga de clases (fuera del modo prueba), la app le manda un mail con el detalle de lo que cargó (curso, alumno si corresponde, número de clase/sesión y valor) y el total a facturar, con **copia a administración**. Si alguna clase/sesión se rechazó por estar duplicada, también se lo avisa en el mismo mail.
+
+Para activarlo hacen falta dos variables de entorno en Vercel:
+- `GMAIL_USER`: el email de la cuenta de Gmail que envía los mails.
+- `GMAIL_APP_PASSWORD`: la contraseña de aplicación de esa cuenta (no es la contraseña normal — se genera en la sección de seguridad de la cuenta de Google, y requiere tener la verificación en dos pasos activada).
+
+Si estas variables no están configuradas, la app sigue funcionando normal (la carga se registra igual) pero no manda el mail, y queda un aviso en los logs de Vercel.
+
+---
+
 ## Panel de administración
 
 Si entrás a la app con el email `administracion@institutoilce.com` (configurable en `src/lib/config.js`, constante `MAIL_ADMINISTRACION`), en vez del flujo normal de carga vas a ver una tabla con **Docente / Fecha de factura / Fecha de envío**, que se completa sola a medida que los docentes suben sus facturas. Desde ahí hay un botón **"Exportar a Excel"** que descarga esa tabla como archivo `.xlsx`.
@@ -141,6 +153,8 @@ Sin este paso, la app no va a poder leer ni escribir nada.
    | `GOOGLE_SHEET_ID` | el ID de tu planilla |
    | `GOOGLE_DRIVE_FOLDER_ID` | el ID de tu carpeta de facturas |
    | `GOOGLE_SESIONES_SHEET_ID` | el ID de la planilla externa de sesiones asignadas (opcional, solo si usás esa función) |
+   | `GMAIL_USER` | el email de Gmail desde el que se mandan los mails de confirmación (ej. `coachingeducacionallider@gmail.com`) |
+   | `GMAIL_APP_PASSWORD` | la contraseña de aplicación de 16 letras de esa cuenta (se genera en [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords), requiere verificación en dos pasos activada) |
 
 3. Dale **Deploy**. Al terminar te da una URL tipo `https://carga-clases-ilce.vercel.app`.
 

@@ -37,30 +37,69 @@ export default function EmailGate({ onIngreso }) {
     }
   }
 
+  function entrarModoPrueba() {
+    const nombre = email.trim() ? email.trim().split("@")[0] : "Modo prueba";
+    onIngreso({
+      email: email.trim() || "prueba@ejemplo.com",
+      nombre,
+      modoPrueba: true,
+    });
+  }
+
   return (
-    <div className="max-w-sm mx-auto mt-16 px-6">
-      <h1 className="text-xl font-semibold text-[var(--ink)] mb-1">Carga de clases</h1>
-      <p className="text-sm text-[var(--ink)]/60 mb-6">
-        Ingresá tu email para cargar tus clases y sesiones del mes.
-      </p>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <input
-          type="email"
-          required
-          placeholder="tu-email@ejemplo.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="border border-[var(--clay-300)] rounded-lg px-4 py-2.5 text-sm outline-none focus:border-[var(--amber-600)]"
-        />
-        {error && <p className="text-sm text-[var(--clay-600)]">{error}</p>}
-        <button
-          type="submit"
-          disabled={cargando}
-          className="bg-[var(--amber-600)] text-white rounded-lg px-4 py-2.5 text-sm font-semibold disabled:opacity-60"
-        >
-          {cargando ? "Verificando..." : "Ingresar"}
-        </button>
-      </form>
+    <div className="fade-in min-h-[70vh] flex items-center justify-center">
+      <div className="w-full max-w-[360px]">
+        <p className="text-center text-[13px] font-medium text-[var(--teal-500)] mb-1.5">
+          ¡Bienvenido/a!
+        </p>
+        <h1 className="font-display text-[28px] text-center text-[var(--teal-900)] mb-0.5">
+          Carga de clases
+        </h1>
+        <p className="text-center text-[var(--ink)]/50 text-xs mb-2.5">
+          (y sesiones de Coaching Ontológico)
+        </p>
+        <p className="text-center text-[var(--ink)]/65 text-sm mb-7">
+          Ingresá con tu email de docente para empezar.
+        </p>
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-2.5">
+          <input
+            type="email"
+            required
+            placeholder="tu-email@ejemplo.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full border border-[var(--line)] rounded-full px-5 py-3 text-sm outline-none focus:border-[var(--teal-500)]"
+          />
+          {error && <p className="text-[13px] text-[var(--clay-600)] px-2">{error}</p>}
+          <button
+            type="submit"
+            disabled={cargando}
+            className="w-full bg-[var(--teal-700)] text-white rounded-full px-4 py-3 text-sm font-medium disabled:opacity-60"
+          >
+            {cargando ? "Verificando..." : "Ingresar"}
+          </button>
+        </form>
+
+        <p className="text-xs text-[var(--ink)]/50 text-center mt-4 leading-relaxed">
+          ¿Tenés algún inconveniente con la app?
+          <br />
+          Escribí a{" "}
+          <a href={`mailto:${MAIL_ADMINISTRACION}`} className="text-[var(--teal-700)]">
+            {MAIL_ADMINISTRACION}
+          </a>
+        </p>
+
+        <div className="text-center mt-6 pt-5 border-t border-[var(--line)]">
+          <button
+            type="button"
+            onClick={entrarModoPrueba}
+            className="bg-transparent border-none text-[var(--amber-600)] text-[13px] font-semibold underline"
+          >
+            ¿Solo querés ver cómo funciona? Entrá en modo prueba
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

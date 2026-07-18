@@ -97,6 +97,28 @@ export async function registrarCargas(email, items) {
   }
 }
 
+// Devuelve los números de clase/sesión ya cargados para un curso + edición
+// (y, si se pasa alumno, solo los de ese alumno — para el caso de sesiones
+// individuales, donde cada alumno tiene su propio conteo).
+// Se usa para no mostrarle a un docente una clase que ya cargó otro, y para
+// la barra de progreso de la edición.
+export async function getClasesTomadas(cursoId, edicion, alumno) {
+  const filas = await leerRango(`${HOJA_CARGAS}!A2:G`);
+  const alumnoNorm = (alumno || "").trim().toLowerCase();
+  return filas
+    .filter((f) => {
+      const coincideCurso = (f[2] || "").trim() === (cursoId || "").trim();
+      const coincideEdicion = (f[3] || "").trim() === (edicion || "").trim();
+      if (!coincideCurso || !coincideEdicion) return false;
+      if (alumnoNorm) {
+        return (f[5] || "").trim().toLowerCase() === alumnoNorm;
+      }
+      return true;
+    })
+    .map((f) => String(f[4] || "").trim())
+    .filter(Boolean);
+}
+
 // Registra el envío de una factura. fechaFactura es la fecha que puso el docente
 // en su factura; fechaEnvio la pone el sistema automáticamente.
 export async function registrarFactura({ email, nombreDocente, fechaFactura, archivoUrl }) {

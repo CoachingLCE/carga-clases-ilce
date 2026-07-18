@@ -2,23 +2,30 @@
 
 export default function TicketClase({ item, nombreCurso, valor, onQuitar }) {
   return (
-    <div className="flex items-center justify-between border border-[var(--clay-300)] rounded-lg px-4 py-2.5 mb-2">
+    <div className="border border-[var(--line)] bg-[var(--panel)] rounded-lg px-5 py-3 flex items-center justify-between mb-2">
       <div>
-        <p className="text-sm font-medium text-[var(--ink)]">
+        <p className="text-sm font-medium text-[var(--teal-900)]">
           {nombreCurso} {item.edicion ? `— ${item.edicion}` : ""}
         </p>
-        <p className="text-xs text-[var(--ink)]/55">
-          {item.alumno ? `Sesión ${item.claseOSesion} · ${item.alumno}` : `Clase ${item.claseOSesion}`}
-          {valor != null && ` · $${valor.toLocaleString("es-AR")}`}
+        <p className="text-xs text-[var(--ink)]/60 mt-0.5">
+          {item.alumno ? `Alumno: ${item.alumno} · ` : ""}N°{" "}
+          <span className="font-mono">{item.claseOSesion}</span>
         </p>
       </div>
-      <button
-        onClick={onQuitar}
-        aria-label="Quitar"
-        className="text-[var(--ink)]/40 hover:text-[var(--clay-600)] text-sm"
-      >
-        Quitar
-      </button>
+      <div className="flex items-center gap-2.5">
+        {valor != null && (
+          <span className="font-mono text-sm text-[var(--teal-700)]">
+            ${valor.toLocaleString("es-AR")}
+          </span>
+        )}
+        <button
+          onClick={onQuitar}
+          aria-label="Quitar"
+          className="text-[var(--clay-600)] text-lg leading-none"
+        >
+          ×
+        </button>
+      </div>
     </div>
   );
 }

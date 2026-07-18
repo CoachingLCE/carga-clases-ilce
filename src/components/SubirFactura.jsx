@@ -1,8 +1,71 @@
 "use client";
 
 import { useState } from "react";
+import { CUIT_INSTITUTO, CONDICION_FISCAL } from "@/lib/config";
 
-export default function SubirFactura({ docente, total, onFinalizar }) {
+function agruparParaFactura(items, ediciones, valores) {
+  const grupos = {};
+  items.forEach((item) => {
+    const edicion = ediciones.find((e) => e.cursoId === item.cursoId);
+    const nombreCurso = edicion?.nombreCurso || item.cursoId;
+    const clave = `${nombreCurso}||${item.edicion}`;
+    const valorUnitario = valores[item.cursoId] || 0;
+    if (!grupos[clave]) {
+      grupos[clave] = { nombreCurso, edicion: item.edicion, cantidad: 0, valorUnitario };
+    }
+    grupos[clave].cantidad += 1;
+  });
+  return Object.values(grupos);
+}
+
+function GuiaFactura({ items, ediciones, valores }) {
+  if (!items || items.length === 0) return null;
+  const grupos = agruparParaFactura(items, ediciones, valores);
+
+  return (
+    <div className="border border-[var(--line)] bg-[var(--panel)] rounded-2xl p-5 mb-4">
+      <div className="flex items-center gap-2 mb-2.5">
+        <span className="rec-dot w-2 h-2 rounded-full bg-[var(--amber-600)] inline-block" />
+        <h3 className="font-display text-[16px] text-[var(--teal-900)]">Cómo armar tu factura</h3>
+      </div>
+      <div className="flex gap-6 flex-wrap mb-3.5">
+        <div>
+          <p className="text-[11px] uppercase tracking-wide text-[var(--ink)]/55 mb-0.5">
+            CUIT Instituto ILCE
+          </p>
+          <p className="text-sm text-[var(--ink)]">{CUIT_INSTITUTO}</p>
+        </div>
+        <div>
+          <p className="text-[11px] uppercase tracking-wide text-[var(--ink)]/55 mb-0.5">
+            Condición
+          </p>
+          <p className="text-sm text-[var(--ink)]">{CONDICION_FISCAL}</p>
+        </div>
+      </div>
+      {grupos.map((g, i) => (
+        <div key={i} className="border border-[var(--line)] rounded-lg px-3 py-2.5 mb-2">
+          <p className="text-[11px] uppercase tracking-wide text-[var(--teal-500)] font-semibold mb-1.5">
+            Línea {i + 1}
+          </p>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-[13px]">
+            <span className="text-[var(--ink)]/55">Producto/Servicio</span>
+            <span className="text-[var(--ink)] font-medium">
+              {g.nombreCurso} {g.edicion ? `— Edición ${g.edicion}` : ""}
+            </span>
+            <span className="text-[var(--ink)]/55">Cantidad</span>
+            <span className="text-[var(--ink)] font-medium">{g.cantidad}</span>
+            <span className="text-[var(--ink)]/55">Precio Unitario</span>
+            <span className="text-[var(--ink)] font-medium">
+              ${g.valorUnitario.toLocaleString("es-AR")}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default function SubirFactura({ docente, items, ediciones, valores, total, onFinalizar }) {
   const [archivo, setArchivo] = useState(null);
   const [fechaFactura, setFechaFactura] = useState("");
   const [subiendo, setSubiendo] = useState(false);
@@ -32,46 +95,54 @@ export default function SubirFactura({ docente, total, onFinalizar }) {
   }
 
   return (
-    <div className="mt-6 border-t border-[var(--clay-300)] pt-5">
-      <div className="flex items-center gap-2 mb-3">
-        <span className="w-2 h-2 rounded-full bg-[var(--amber-600)] animate-pulse" />
-        <h3 className="text-sm font-semibold text-[var(--ink)]">Cómo armar tu factura</h3>
+    <div className="fade-in">
+      <GuiaFactura items={items} ediciones={ediciones} valores={valores} />
+
+      <div className="border border-[var(--line)] bg-[var(--panel)] rounded-2xl p-5">
+        <h3 className="font-display text-[17px] text-[var(--teal-900)] mb-1">Subir factura</h3>
+        <p className="text-sm text-[var(--ink)]/60 mb-3.5">
+          Adjuntá tu factura en PDF, JPG o PNG
+          {total ? (
+            <>
+              {" "}
+              por un total de{" "}
+              <span className="font-semibold text-[var(--ink)]">
+                ${total.toLocaleString("es-AR")}
+              </span>
+              .
+            </>
+          ) : (
+            "."
+          )}
+        </p>
+
+        <label className="block text-[11px] uppercase tracking-wide text-[var(--ink)]/55 mb-1.5">
+          Fecha de la factura
+        </label>
+        <input
+          type="date"
+          value={fechaFactura}
+          onChange={(e) => setFechaFactura(e.target.value)}
+          className="w-full border border-[var(--line)] rounded-lg px-3 py-2.5 text-sm mb-3.5 outline-none focus:border-[var(--teal-500)]"
+        />
+
+        <input
+          type="file"
+          accept=".pdf,.jpg,.jpeg,.png"
+          onChange={(e) => setArchivo(e.target.files?.[0] || null)}
+          className="w-full text-sm mb-3.5"
+        />
+
+        {error && <p className="text-[13px] text-[var(--clay-600)] mb-2.5">{error}</p>}
+
+        <button
+          onClick={handleSubir}
+          disabled={!archivo || !fechaFactura || subiendo}
+          className="w-full bg-[var(--teal-700)] text-white rounded-full px-4 py-3 text-sm font-medium disabled:opacity-60"
+        >
+          {subiendo ? "Subiendo..." : "Subir factura"}
+        </button>
       </div>
-      <ul className="text-sm text-[var(--ink)]/70 space-y-1.5 mb-4 list-disc list-inside">
-        <li>
-          Monto total del período:{" "}
-          <span className="font-semibold text-[var(--ink)]">
-            ${total.toLocaleString("es-AR")}
-          </span>
-        </li>
-        <li>Detallá cada clase/sesión cargada como un ítem, o un ítem único con el total.</li>
-        <li>Emitila a nombre de Instituto ILCE.</li>
-      </ul>
-
-      <label className="block text-xs font-medium text-[var(--ink)]/60 mb-1.5">
-        Fecha de la factura
-      </label>
-      <input
-        type="date"
-        value={fechaFactura}
-        onChange={(e) => setFechaFactura(e.target.value)}
-        className="border border-[var(--clay-300)] rounded-lg px-3 py-2 text-sm mb-3 outline-none focus:border-[var(--amber-600)]"
-      />
-
-      <input
-        type="file"
-        accept=".pdf,.jpg,.jpeg,.png"
-        onChange={(e) => setArchivo(e.target.files?.[0] || null)}
-        className="text-sm mb-3"
-      />
-      {error && <p className="text-sm text-[var(--clay-600)] mb-2">{error}</p>}
-      <button
-        onClick={handleSubir}
-        disabled={!archivo || !fechaFactura || subiendo}
-        className="w-full bg-[var(--amber-600)] text-white rounded-lg px-4 py-2.5 text-sm font-semibold disabled:opacity-60"
-      >
-        {subiendo ? "Subiendo..." : "Subir factura"}
-      </button>
     </div>
   );
 }

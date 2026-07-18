@@ -3,12 +3,18 @@
 @tailwind utilities;
 
 :root {
-  --ink: #1f1b16;
-  --clay-100: #f4efe9;
-  --clay-300: #ddd2c4;
-  --clay-600: #8a5a3f;
-  --amber-100: #fbead0;
-  --amber-600: #b5762a;
+  --ink: #01233f;
+  --paper: #f6f7f8;
+  --panel: #ffffff;
+  --teal-900: #01233f;
+  --teal-700: #065f74;
+  --teal-500: #03738b;
+  --amber-600: #70168d;
+  --amber-100: #f1e2f0;
+  --clay-600: #a4342e;
+  --clay-300: #dde2e6;
+  --clay-100: rgba(220, 216, 204, 0.4);
+  --line: #dde2e6;
 }
 
 * {
@@ -17,9 +23,19 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: #fffdfa;
+  font-family: "Dosis", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--paper);
   color: var(--ink);
+}
+
+.font-display {
+  font-family: "Jost", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 600;
+}
+
+.font-mono {
+  font-family: "Dosis", monospace;
+  font-weight: 600;
 }
 
 button {
@@ -30,4 +46,50 @@ button {
 input,
 select {
   font-family: inherit;
+}
+
+@keyframes brightenStep {
+  from {
+    opacity: 0.18;
+    filter: brightness(0.55);
+  }
+  to {
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+.tutorial-step {
+  opacity: 0.18;
+  filter: brightness(0.55);
+  animation: brightenStep 0.7s ease forwards;
+}
+
+@keyframes recBlink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.rec-dot {
+  animation: recBlink 1.1s ease-in-out infinite;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.25s ease-out;
 }

@@ -95,7 +95,7 @@ export default function RecorridoGuiado({ onCerrar }) {
         <p className="text-xs font-medium text-[var(--amber-600)] mb-1">
           Paso {paso + 1} de {PASOS.length}
         </p>
-        <h3 className="text-base font-semibold text-[var(--ink)] mb-1.5">{actual.titulo}</h3>
+        <h3 className="font-display text-base text-[var(--teal-900)] mb-1.5">{actual.titulo}</h3>
         <p className="text-sm text-[var(--ink)]/70 mb-1">{actual.texto}</p>
         {!rect && (
           <p className="text-xs text-[var(--ink)]/50 mb-3">
@@ -117,7 +117,7 @@ export default function RecorridoGuiado({ onCerrar }) {
             )}
             <button
               onClick={siguiente}
-              className="bg-[var(--ink)] text-white rounded-lg px-3 py-1.5 text-sm font-medium"
+              className="bg-[var(--teal-700)] text-white rounded-lg px-3 py-1.5 text-sm font-medium"
             >
               {esUltimo ? "Listo" : "Siguiente"}
             </button>

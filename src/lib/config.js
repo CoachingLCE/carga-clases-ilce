@@ -16,3 +16,6 @@ export const REGLAS_CUOTAS = {
   "Formación para formadores": 3,
   DEFAULT: 4,
 };
+
+export const CUIT_INSTITUTO = "23-34230780-9";
+export const CONDICION_FISCAL = "Consumidor final";

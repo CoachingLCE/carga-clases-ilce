@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { registrarCargas } from "@/lib/sheets";
+import { registrarCargas, getClasesTomadas } from "@/lib/sheets";
 import { getEstadoCierre } from "@/lib/mes";
 
 export async function POST(request) {
@@ -24,11 +24,34 @@ export async function POST(request) {
       }
     }
 
+    let aceptados = items;
+    let rechazados = [];
+
     if (!modoPrueba) {
-      await registrarCargas(email, items);
+      // Chequeamos, por cada combinación curso+edición(+alumno), qué números ya
+      // están tomados, para no pisar la carga de otro docente.
+      const cacheTomadas = {};
+      aceptados = [];
+      for (const item of items) {
+        const clave = `${item.cursoId}::${item.edicion}::${(item.alumno || "").toLowerCase()}`;
+        if (!(clave in cacheTomadas)) {
+          cacheTomadas[clave] = await getClasesTomadas(item.cursoId, item.edicion, item.alumno);
+        }
+        const tomadas = cacheTomadas[clave];
+        if (tomadas.includes(String(item.claseOSesion))) {
+          rechazados.push(item);
+        } else {
+          aceptados.push(item);
+          tomadas.push(String(item.claseOSesion));
+        }
+      }
+
+      if (aceptados.length > 0) {
+        await registrarCargas(email, aceptados);
+      }
     }
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, aceptados, rechazados });
   } catch (err) {
     console.error(err);
     return NextResponse.json(

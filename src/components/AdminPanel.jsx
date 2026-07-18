@@ -44,14 +44,21 @@ export default function AdminPanel({ email }) {
   return (
     <div className="max-w-2xl mx-auto px-6 py-8">
       <header className="flex items-start justify-between gap-4 mb-5">
-        <div>
-          <p className="text-[11px] uppercase tracking-wide text-[var(--teal-500)] mb-1">
-            Instituto ILCE · Panel de administración
-          </p>
-          <h1 className="font-display text-2xl text-[var(--teal-900)]">Facturas recibidas</h1>
-          <p className="text-[13px] text-[var(--ink)]/55 mt-1.5">
-            Se actualiza automáticamente cada vez que un docente sube su factura.
-          </p>
+        <div className="flex items-center gap-2.5">
+          <img
+            src="/logo.jpg"
+            alt="Instituto ILCE"
+            className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+          />
+          <div>
+            <p className="text-[11px] uppercase tracking-wide text-[var(--teal-500)] mb-1">
+              Instituto ILCE · Panel de administración
+            </p>
+            <h1 className="font-display text-2xl text-[var(--teal-900)]">Facturas recibidas</h1>
+            <p className="text-[13px] text-[var(--ink)]/55 mt-1.5">
+              Se actualiza automáticamente cada vez que un docente sube su factura.
+            </p>
+          </div>
         </div>
         <button
           onClick={exportarExcel}

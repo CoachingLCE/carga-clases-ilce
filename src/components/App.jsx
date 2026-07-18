@@ -209,13 +209,20 @@ export default function App() {
       )}
 
       <div className="flex items-start justify-between mb-4">
-        <div>
-          <p className="text-[11px] uppercase tracking-wide text-[var(--teal-500)] mb-1">
-            Instituto ILCE · {mesLabel}
-          </p>
-          <h1 className="font-display text-2xl text-[var(--teal-900)]">
-            Hola, {docente.nombre || docente.email}
-          </h1>
+        <div className="flex items-center gap-2.5">
+          <img
+            src="/logo.jpg"
+            alt="Instituto ILCE"
+            className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+          />
+          <div>
+            <p className="text-[11px] uppercase tracking-wide text-[var(--teal-500)] mb-1">
+              Instituto ILCE · {mesLabel}
+            </p>
+            <h1 className="font-display text-2xl text-[var(--teal-900)]">
+              Hola, {docente.nombre || docente.email}
+            </h1>
+          </div>
         </div>
         <button
           onClick={() => setMostrarRecorrido(true)}

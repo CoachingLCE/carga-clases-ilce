@@ -49,6 +49,11 @@ export default function EmailGate({ onIngreso }) {
   return (
     <div className="fade-in min-h-[70vh] flex items-center justify-center">
       <div className="w-full max-w-[360px]">
+        <img
+          src="/logo.jpg"
+          alt="Instituto ILCE"
+          className="w-14 h-14 rounded-full mx-auto mb-4 object-cover"
+        />
         <p className="text-center text-[13px] font-medium text-[var(--teal-500)] mb-1.5">
           ¡Bienvenido/a!
         </p>

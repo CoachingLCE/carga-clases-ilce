@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ink: #1f1b16;
+  --clay-100: #f4efe9;
+  --clay-300: #ddd2c4;
+  --clay-600: #8a5a3f;
+  --amber-100: #fbead0;
+  --amber-600: #b5762a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #fffdfa;
+  color: var(--ink);
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+input,
+select {
+  font-family: inherit;
+}

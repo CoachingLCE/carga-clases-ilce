@@ -183,10 +183,28 @@ export default function App() {
       {mostrarRecorrido && <RecorridoGuiado onCerrar={() => setMostrarRecorrido(false)} />}
 
       {modoPrueba && (
-        <div className="rounded-full bg-[var(--amber-100)] border border-[var(--amber-600)] px-3.5 py-1.5 mb-4 text-center">
+        <div className="rounded-full bg-[var(--amber-100)] border border-[var(--amber-600)] px-3.5 py-1.5 mb-2 text-center">
           <span className="text-xs font-semibold text-[var(--amber-600)]">
             Modo prueba — nada de lo que hagas acá se guarda de verdad
           </span>
+        </div>
+      )}
+
+      {modoPrueba && (
+        <div className="text-center mb-4">
+          <button
+            onClick={() => {
+              if (typeof window !== "undefined") {
+                const url = new URL(window.location.href);
+                url.searchParams.delete("prueba");
+                window.history.replaceState({}, "", url.toString());
+              }
+              setDocente(null);
+            }}
+            className="text-[11px] text-[var(--ink)]/50 underline"
+          >
+            Salir del modo prueba
+          </button>
         </div>
       )}
 

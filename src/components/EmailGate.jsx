@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MAIL_ADMINISTRACION } from "@/lib/config";
 
 const BENEFICIOS = [
@@ -14,6 +14,11 @@ export default function EmailGate({ onIngreso }) {
   const [email, setEmail] = useState("");
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const ultimoEmail = localStorage.getItem("ilce_ultimo_email");
+    if (ultimoEmail) setEmail(ultimoEmail);
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -31,6 +36,7 @@ export default function EmailGate({ onIngreso }) {
         );
         return;
       }
+      localStorage.setItem("ilce_ultimo_email", email.trim());
       onIngreso(data.docente);
     } catch (err) {
       setError("No pudimos verificar tu email. Probá de nuevo en un momento.");
@@ -40,10 +46,14 @@ export default function EmailGate({ onIngreso }) {
   }
 
   function entrarModoPrueba() {
-    const nombre = email.trim() ? email.trim().split("@")[0] : "Modo prueba";
+    if (!email.trim()) {
+      setError("Escribí tu email antes de entrar en modo prueba, así los mails de prueba te llegan a vos.");
+      return;
+    }
+    localStorage.setItem("ilce_ultimo_email", email.trim());
     onIngreso({
-      email: email.trim() || "prueba@ejemplo.com",
-      nombre,
+      email: email.trim(),
+      nombre: email.trim().split("@")[0],
       modoPrueba: true,
     });
   }

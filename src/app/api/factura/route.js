@@ -9,6 +9,7 @@ export async function POST(request) {
     const archivo = formData.get("factura");
     const email = formData.get("email");
     const fechaFactura = formData.get("fechaFactura");
+    const alias = formData.get("alias") || "";
 
     if (!archivo || !email) {
       return NextResponse.json(
@@ -51,6 +52,7 @@ export async function POST(request) {
       nombreDocente: docente?.nombre || "",
       fechaFactura: fechaFactura || fechaHoy,
       archivoUrl: subido.data.webViewLink || "",
+      alias,
     });
 
     return NextResponse.json({ ok: true });

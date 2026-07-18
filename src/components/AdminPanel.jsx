@@ -34,6 +34,7 @@ export default function AdminPanel({ email }) {
       Docente: f.nombreDocente || f.email,
       "Fecha de factura": formatearFecha(f.fechaFactura),
       "Fecha de envío": formatearFecha(f.fechaEnvio),
+      Alias: f.alias || "",
     }));
     const hoja = XLSX.utils.json_to_sheet(filas);
     const libro = XLSX.utils.book_new();
@@ -84,6 +85,7 @@ export default function AdminPanel({ email }) {
                 <th className="px-3.5 py-2.5 font-semibold text-[var(--ink)]/70">Docente</th>
                 <th className="px-3.5 py-2.5 font-semibold text-[var(--ink)]/70">Fecha de factura</th>
                 <th className="px-3.5 py-2.5 font-semibold text-[var(--ink)]/70">Fecha de envío</th>
+                <th className="px-3.5 py-2.5 font-semibold text-[var(--ink)]/70">Alias</th>
               </tr>
             </thead>
             <tbody>
@@ -92,6 +94,7 @@ export default function AdminPanel({ email }) {
                   <td className="px-3.5 py-2.5">{f.nombreDocente || f.email}</td>
                   <td className="px-3.5 py-2.5 font-mono">{formatearFecha(f.fechaFactura)}</td>
                   <td className="px-3.5 py-2.5 font-mono">{formatearFecha(f.fechaEnvio)}</td>
+                  <td className="px-3.5 py-2.5 font-mono">{f.alias || "—"}</td>
                 </tr>
               ))}
             </tbody>

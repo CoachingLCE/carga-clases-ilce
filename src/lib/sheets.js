@@ -15,7 +15,7 @@ const HOJA_FACTURAS = "Facturas";
  * Ediciones  -> A: CursoId | B: NombreCurso | C: TipoCoaching | D: Edicion | E: Modalidad (clase|sesion) | F: TopeSesiones
  * Valores    -> A: Email | B: CursoId | C: Valor
  * Cargas     -> A: Timestamp | B: Email | C: CursoId | D: Edicion | E: ClaseOSesion | F: Alumno | G: EstadoFactura
- * Facturas   -> A: Email | B: NombreDocente | C: FechaFactura | D: FechaEnvio | E: ArchivoUrl
+ * Facturas   -> A: Email | B: NombreDocente | C: FechaFactura | D: FechaEnvio | E: ArchivoUrl | F: Alias
  */
 
 async function leerRango(rango) {
@@ -122,15 +122,22 @@ export async function getClasesTomadas(cursoId, edicion, alumno) {
 
 // Registra el envío de una factura. fechaFactura es la fecha que puso el docente
 // en su factura; fechaEnvio la pone el sistema automáticamente.
-export async function registrarFactura({ email, nombreDocente, fechaFactura, archivoUrl }) {
+export async function registrarFactura({ email, nombreDocente, fechaFactura, archivoUrl, alias }) {
   const fechaEnvio = new Date().toISOString();
-  await agregarFila(HOJA_FACTURAS, [email, nombreDocente || "", fechaFactura || "", fechaEnvio, archivoUrl || ""]);
+  await agregarFila(HOJA_FACTURAS, [
+    email,
+    nombreDocente || "",
+    fechaFactura || "",
+    fechaEnvio,
+    archivoUrl || "",
+    alias || "",
+  ]);
   return { fechaEnvio };
 }
 
 // Devuelve todas las facturas registradas, para el panel de administración.
 export async function getFacturas() {
-  const filas = await leerRango(`${HOJA_FACTURAS}!A2:E`);
+  const filas = await leerRango(`${HOJA_FACTURAS}!A2:F`);
   return filas
     .filter((f) => f[0])
     .map((f) => ({
@@ -139,5 +146,6 @@ export async function getFacturas() {
       fechaFactura: f[2] || "",
       fechaEnvio: f[3] || "",
       archivoUrl: f[4] || "",
+      alias: f[5] || "",
     }));
 }

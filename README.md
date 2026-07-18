@@ -45,8 +45,10 @@ Esta hoja la llena automáticamente la app — no necesitás escribir nada acá,
 ### Hoja "Facturas"
 También la llena automáticamente la app cuando un docente sube su factura. Solo creála con los encabezados.
 
-| A: Email | B: NombreDocente | C: FechaFactura | D: FechaEnvio | E: ArchivoUrl |
-|---|---|---|---|---|
+| A: Email | B: NombreDocente | C: FechaFactura | D: FechaEnvio | E: ArchivoUrl | F: Alias |
+|---|---|---|---|---|---|
+
+- **Alias**: el alias bancario que el docente carga junto con su factura, para que administración sepa a qué cuenta transferirle.
 
 Anotá el **ID de la planilla**: es la parte de la URL entre `/d/` y `/edit`.
 Ej: `https://docs.google.com/spreadsheets/d/ESTE-ES-EL-ID/edit` → `ESTE-ES-EL-ID`

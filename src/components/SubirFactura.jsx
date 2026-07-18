@@ -68,6 +68,7 @@ function GuiaFactura({ items, ediciones, valores }) {
 export default function SubirFactura({ docente, items, ediciones, valores, total, onFinalizar }) {
   const [archivo, setArchivo] = useState(null);
   const [fechaFactura, setFechaFactura] = useState("");
+  const [alias, setAlias] = useState("");
   const [subiendo, setSubiendo] = useState(false);
   const [error, setError] = useState("");
   const [enviada, setEnviada] = useState(false);
@@ -81,6 +82,7 @@ export default function SubirFactura({ docente, items, ediciones, valores, total
       formData.append("factura", archivo);
       formData.append("email", docente.email);
       formData.append("fechaFactura", fechaFactura);
+      formData.append("alias", alias.trim());
       const res = await fetch("/api/factura", { method: "POST", body: formData });
       const data = await res.json();
       if (!data.ok) {
@@ -137,6 +139,17 @@ export default function SubirFactura({ docente, items, ediciones, valores, total
           type="date"
           value={fechaFactura}
           onChange={(e) => setFechaFactura(e.target.value)}
+          className="w-full border border-[var(--line)] rounded-lg px-3 py-2.5 text-sm mb-3.5 outline-none focus:border-[var(--teal-500)]"
+        />
+
+        <label className="block text-[11px] uppercase tracking-wide text-[var(--ink)]/55 mb-1.5">
+          Alias
+        </label>
+        <input
+          type="text"
+          value={alias}
+          onChange={(e) => setAlias(e.target.value)}
+          placeholder="tu.alias.bancario"
           className="w-full border border-[var(--line)] rounded-lg px-3 py-2.5 text-sm mb-3.5 outline-none focus:border-[var(--teal-500)]"
         />
 

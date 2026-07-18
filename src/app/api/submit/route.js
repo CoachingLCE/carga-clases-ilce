@@ -27,6 +27,41 @@ export async function POST(request) {
     let aceptados = items;
     let rechazados = [];
 
+    if (modoPrueba) {
+      // No escribimos nada en la planilla, pero sí mandamos el mail de
+      // confirmación con los datos de ejemplo, para poder probar que el
+      // envío de mails funciona sin tocar datos reales.
+      try {
+        const detalle = items.map((item) => ({
+          cursoNombre: item.nombreCurso || item.cursoReal,
+          edicion: item.edicion,
+          claseOSesion: item.claseOSesion,
+          alumno: item.alumno,
+          valor: item.valor || 0,
+        }));
+        const total = detalle.reduce((acc, d) => acc + d.valor, 0);
+
+        await enviarMailConfirmacionCarga({
+          emailDocente: email,
+          nombreDocente: "Modo prueba",
+          mes: `${mesLabel} (PRUEBA — no se guardó nada)`,
+          detalle,
+          total,
+          rechazadas: [],
+        });
+      } catch (mailErr) {
+        console.error("No se pudo enviar el mail de prueba:", mailErr);
+        return NextResponse.json(
+          {
+            ok: false,
+            error:
+              "No se pudo enviar el mail de prueba. Revisá GMAIL_USER y GMAIL_APP_PASSWORD en Vercel.",
+          },
+          { status: 500 }
+        );
+      }
+    }
+
     if (!modoPrueba) {
       // Chequeamos, por cada combinación curso+edición(+alumno), qué números ya
       // están tomados, para no pisar la carga de otro docente.

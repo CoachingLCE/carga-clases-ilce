@@ -156,6 +156,7 @@ export default function App() {
             edicion: p.edicion,
             claseOSesion: p.claseOSesion,
             alumno: p.alumno,
+            valor: valores[p.cursoReal] || 0,
           })),
         }),
       });

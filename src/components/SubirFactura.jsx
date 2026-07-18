@@ -112,8 +112,8 @@ export default function SubirFactura({ docente, items, mes, valores, total, onFi
       <div className="fade-in border border-[var(--line)] bg-[var(--panel)] rounded-2xl p-5 text-center">
         <p className="font-display text-lg text-[var(--teal-900)] mb-1">Factura recibida</p>
         <p className="text-sm text-[var(--ink)]/70">
-          Ya quedó registrada con la fecha que indicaste, y va a aparecer en el panel de
-          administración.
+          Tu factura ya fue enviada a administracion@institutoilce.com. Además, vas a recibir en
+          tu correo una copia de lo registrado.
         </p>
       </div>
     );

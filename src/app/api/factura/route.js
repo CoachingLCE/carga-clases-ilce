@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { Readable } from "stream";
 import { getDriveClient } from "@/lib/googleAuth";
-import { marcarFacturaSubida } from "@/lib/sheets";
+import { marcarFacturaSubida, getDocentePorEmail } from "@/lib/sheets";
+import { enviarMailFacturaSubida } from "@/lib/mail";
 
 export async function POST(request) {
   try {
@@ -67,6 +68,21 @@ export async function POST(request) {
         },
         { status: 404 }
       );
+    }
+
+    // Mandamos el mail de confirmación. Si falla, no rompemos la respuesta —
+    // la factura ya quedó registrada en la planilla.
+    try {
+      const docente = await getDocentePorEmail(email);
+      await enviarMailFacturaSubida({
+        emailDocente: email,
+        nombreDocente: docente?.nombre || "",
+        mes,
+        archivoUrl,
+        alias,
+      });
+    } catch (mailErr) {
+      console.error("No se pudo enviar el mail de factura recibida:", mailErr);
     }
 
     return NextResponse.json({ ok: true });

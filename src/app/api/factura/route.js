@@ -11,12 +11,37 @@ export async function POST(request) {
     const email = formData.get("email");
     const mes = formData.get("mes");
     const alias = formData.get("alias") || "";
+    const modoPrueba = formData.get("modoPrueba") === "1";
 
     if (!archivo || !email || !mes) {
       return NextResponse.json(
         { ok: false, error: "Falta el archivo, el email o el mes." },
         { status: 400 }
       );
+    }
+
+    if (modoPrueba) {
+      // No tocamos Drive ni la planilla: solo probamos que el mail se mande bien.
+      try {
+        await enviarMailFacturaSubida({
+          emailDocente: email,
+          nombreDocente: "Modo prueba",
+          mes: `${mes} (PRUEBA — no se guardó nada)`,
+          archivoUrl: "",
+          alias,
+        });
+        return NextResponse.json({ ok: true });
+      } catch (mailErr) {
+        console.error("No se pudo enviar el mail de prueba de factura:", mailErr);
+        return NextResponse.json(
+          {
+            ok: false,
+            error:
+              "No se pudo enviar el mail de prueba. Revisá GMAIL_USER y GMAIL_APP_PASSWORD en Vercel.",
+          },
+          { status: 500 }
+        );
+      }
     }
 
     const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID;

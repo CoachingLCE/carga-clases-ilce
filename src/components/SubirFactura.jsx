@@ -77,14 +77,6 @@ export default function SubirFactura({ docente, items, mes, valores, total, onFi
     setSubiendo(true);
     setError("");
 
-    if (modoPrueba) {
-      // No tocamos nada real en modo prueba.
-      setEnviada(true);
-      onFinalizar();
-      setSubiendo(false);
-      return;
-    }
-
     try {
       const formData = new FormData();
       formData.append("factura", archivo);
@@ -92,6 +84,7 @@ export default function SubirFactura({ docente, items, mes, valores, total, onFi
       formData.append("fechaFactura", fechaFactura);
       formData.append("alias", alias.trim());
       formData.append("mes", mes);
+      if (modoPrueba) formData.append("modoPrueba", "1");
       const res = await fetch("/api/factura", { method: "POST", body: formData });
       const data = await res.json();
       if (!data.ok) {

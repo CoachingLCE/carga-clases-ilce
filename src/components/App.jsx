@@ -9,6 +9,7 @@ import TicketClase from "./TicketClase";
 import SubirFactura from "./SubirFactura";
 import AdminPanel from "./AdminPanel";
 import { getEstadoCierre } from "@/lib/mes";
+import { DEMO_EDICIONES, DEMO_VALORES } from "@/lib/config";
 
 const APP_VERSION = "v21";
 
@@ -94,13 +95,20 @@ export default function App() {
     if (!docente || docente.esAdmin) return;
     const yaVioTutorial = localStorage.getItem(`ilce_tutorial_${docente.email}`);
     if (!yaVioTutorial) setMostrarTutorial(true);
+
+    if (modoPrueba) {
+      // El modo prueba no lee ni escribe nada en la planilla real.
+      setEdiciones(DEMO_EDICIONES);
+      return;
+    }
+
     fetch("/api/valor?soloEdiciones=1")
       .then((r) => r.json())
       .then((data) => {
         if (data.ok) setEdiciones(data.ediciones);
       })
       .catch(() => {});
-  }, [docente]);
+  }, [docente, modoPrueba]);
 
   function cerrarTutorial() {
     if (docente) localStorage.setItem(`ilce_tutorial_${docente.email}`, "1");
@@ -109,7 +117,12 @@ export default function App() {
 
   function agregarItem(item) {
     setPendientes((prev) => [...prev, item]);
-    if (docente && !(item.cursoId in valores)) {
+    if (item.cursoId in valores) return;
+    if (modoPrueba) {
+      setValores((prev) => ({ ...prev, [item.cursoId]: DEMO_VALORES[item.cursoId] || 0 }));
+      return;
+    }
+    if (docente) {
       fetch(`/api/valor?email=${encodeURIComponent(docente.email)}&curso=${item.cursoId}`)
         .then((r) => r.json())
         .then((data) => {
@@ -301,6 +314,7 @@ export default function App() {
                   ediciones={ediciones}
                   onAgregar={agregarItem}
                   docenteEmail={docente.email}
+                  modoPrueba={modoPrueba}
                 />
 
                 {pendientes.length > 0 && (

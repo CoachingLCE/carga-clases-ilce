@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { SESIONES_DEFAULT } from "@/lib/config";
+import { SESIONES_DEFAULT, DEMO_ASIGNACIONES } from "@/lib/config";
 
-export default function SelectorClase({ ediciones, onAgregar, docenteEmail }) {
+export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modoPrueba }) {
   const [cursoId, setCursoId] = useState("");
   const [alumno, setAlumno] = useState("");
   const [selChips, setSelChips] = useState([]);
@@ -33,6 +33,11 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail }) {
       setAsignaciones([]);
       return;
     }
+    if (modoPrueba) {
+      // En modo prueba no consultamos nada real: mostramos un ejemplo fijo.
+      setAsignaciones(DEMO_ASIGNACIONES);
+      return;
+    }
     setCargandoAsignaciones(true);
     fetch(
       `/api/sesiones-asignadas?email=${encodeURIComponent(docenteEmail)}&cursoId=${encodeURIComponent(
@@ -45,7 +50,7 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail }) {
       })
       .catch(() => {})
       .finally(() => setCargandoAsignaciones(false));
-  }, [esSesion, docenteEmail, cursoId]);
+  }, [esSesion, docenteEmail, cursoId, modoPrueba]);
 
   // Números ya cargados por otro docente, para deshabilitarlos en los chips
   // y armar la barra de progreso. En modo sesión manual, se filtra por alumno.
@@ -53,6 +58,11 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail }) {
     if (!cursoId || !edicionSeleccionada) return;
     if (esSesion && !modoManual) return; // en ese caso se usa la lista de pre-asignadas
     if (esSesion && modoManual && !alumno.trim()) {
+      setTomadas([]);
+      return;
+    }
+    if (modoPrueba) {
+      // En modo prueba no hay nada "ya tomado" — arranca siempre vacío.
       setTomadas([]);
       return;
     }
@@ -69,7 +79,7 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail }) {
       })
       .catch(() => {})
       .finally(() => setCargandoTomadas(false));
-  }, [cursoId, edicionSeleccionada, esSesion, modoManual, alumno]);
+  }, [cursoId, edicionSeleccionada, esSesion, modoManual, alumno, modoPrueba]);
 
   function toggleChip(n) {
     setSelChips((prev) => (prev.includes(n) ? prev.filter((x) => x !== n) : [...prev, n]));

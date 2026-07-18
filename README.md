@@ -9,11 +9,12 @@ App para que los docentes carguen sus clases y sesiones del mes, y suban su fact
 Creá una planilla nueva en [sheets.google.com](https://sheets.google.com) con **4 hojas**, con estos nombres exactos y estas columnas (fila 1 = encabezados, los datos arrancan en la fila 2):
 
 ### Hoja "Docentes"
-| A: Email | B: Nombre | C: AliasSesiones |
-|---|---|---|
-| juan@mail.com | Juan Pérez | Juan P. |
+| A: Email | B: Nombre | C: Activo | D: AliasSesiones |
+|---|---|---|---|
+| juan@mail.com | Juan Pérez | SI | Juan P. |
 
-- **AliasSesiones** (opcional): el nombre/alias con el que ese docente aparece en la planilla externa de asignación de sesiones de Coaching Ontológico. Se usa para mostrarle solo sus sesiones pre-asignadas (ver sección "Sesiones pre-asignadas" más abajo). Si lo dejás vacío, el docente simplemente carga sus sesiones a mano, como hasta ahora.
+- **Activo**: `SI` o `NO`. Si es `NO`, ese docente no puede ingresar a la app (le aparece un aviso para que consulte con administración).
+- **AliasSesiones** (opcional, columna "Nombre en planilla de sesiones"): el nombre/alias con el que ese docente aparece en la planilla externa de asignación de sesiones de Coaching Ontológico. Se usa para mostrarle solo sus sesiones pre-asignadas (ver sección "Sesiones pre-asignadas" más abajo). Si lo dejás vacío, el docente simplemente carga sus sesiones a mano, como hasta ahora.
 
 ### Hoja "Ediciones"
 Acá cargás cada curso/edición que puede elegirse al cargar una clase.

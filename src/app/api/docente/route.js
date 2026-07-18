@@ -17,6 +17,12 @@ export async function GET(request) {
         { status: 404 }
       );
     }
+    if (!docente.activo) {
+      return NextResponse.json(
+        { ok: false, error: "Este docente figura como inactivo. Consultá con administración." },
+        { status: 403 }
+      );
+    }
     return NextResponse.json({ ok: true, docente });
   } catch (err) {
     console.error(err);

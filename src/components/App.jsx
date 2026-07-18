@@ -3,13 +3,14 @@
 import { useEffect, useState } from "react";
 import EmailGate from "./EmailGate";
 import Tutorial from "./Tutorial";
+import RecorridoGuiado from "./RecorridoGuiado";
 import SelectorClase from "./SelectorClase";
 import TicketClase from "./TicketClase";
 import SubirFactura from "./SubirFactura";
 import AdminPanel from "./AdminPanel";
 import { getEstadoCierre } from "@/lib/mes";
 
-const APP_VERSION = "v1.0";
+const APP_VERSION = "v21";
 
 function BannerCierre({ modoPrueba }) {
   if (modoPrueba) {
@@ -71,6 +72,7 @@ function BannerCierre({ modoPrueba }) {
 export default function App() {
   const [docente, setDocente] = useState(null);
   const [mostrarTutorial, setMostrarTutorial] = useState(false);
+  const [mostrarRecorrido, setMostrarRecorrido] = useState(false);
   const [tab, setTab] = useState("cargar"); // cargar | factura
   const [ediciones, setEdiciones] = useState([]);
   const [pendientes, setPendientes] = useState([]);
@@ -161,17 +163,47 @@ export default function App() {
   return (
     <div className="max-w-md mx-auto px-6 py-8">
       {mostrarTutorial && <Tutorial onCerrar={cerrarTutorial} />}
+      {mostrarRecorrido && <RecorridoGuiado onCerrar={() => setMostrarRecorrido(false)} />}
 
-      <div className="flex items-center justify-between mb-1">
+      <div className="flex items-start justify-between mb-1">
         <h1 className="text-lg font-semibold text-[var(--ink)]">Hola, {docente.nombre || docente.email}</h1>
         <span className="text-[10px] text-[var(--ink)]/30 font-mono">{APP_VERSION}</span>
       </div>
 
+      <button
+        onClick={() => setMostrarRecorrido(true)}
+        className="text-xs text-[var(--amber-600)] underline mb-3"
+      >
+        Ver recorrido guiado
+      </button>
+
       <BannerCierre modoPrueba={modoPrueba} />
+
+      <div
+        data-tour="tabs"
+        className="flex gap-1.5 mb-4 rounded-full p-1 bg-[var(--clay-100)]"
+      >
+        <button
+          onClick={() => setTab("cargar")}
+          className={`flex-1 rounded-full py-2 text-sm font-medium ${
+            tab === "cargar" ? "bg-white text-[var(--ink)] shadow-sm" : "text-[var(--ink)]/60"
+          }`}
+        >
+          Cargar clases
+        </button>
+        <button
+          onClick={() => setTab("factura")}
+          className={`flex-1 rounded-full py-2 text-sm font-medium ${
+            tab === "factura" ? "bg-white text-[var(--ink)] shadow-sm" : "text-[var(--ink)]/60"
+          }`}
+        >
+          Subir factura
+        </button>
+      </div>
 
       {tab === "cargar" && (
         <>
-          <SelectorClase ediciones={ediciones} onAgregar={agregarItem} />
+          <SelectorClase ediciones={ediciones} onAgregar={agregarItem} docenteEmail={docente.email} />
 
           {pendientes.length > 0 && (
             <div className="mb-4">

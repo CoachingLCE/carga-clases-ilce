@@ -11,7 +11,7 @@ const HOJA_FACTURAS = "Facturas";
 /*
  * Estructura esperada de cada hoja (ver README para el detalle completo):
  *
- * Docentes   -> A: Email | B: Nombre
+ * Docentes   -> A: Email | B: Nombre | C: AliasSesiones (para cruzar con la planilla externa de sesiones)
  * Ediciones  -> A: CursoId | B: NombreCurso | C: TipoCoaching | D: Edicion | E: Modalidad (clase|sesion) | F: TopeSesiones
  * Valores    -> A: Email | B: CursoId | C: Valor
  * Cargas     -> A: Timestamp | B: Email | C: CursoId | D: Edicion | E: ClaseOSesion | F: Alumno | G: EstadoFactura
@@ -37,14 +37,18 @@ async function agregarFila(hoja, fila) {
   });
 }
 
-// Busca un docente por email. Devuelve { email, nombre } o null si no existe.
+// Busca un docente por email. Devuelve { email, nombre, aliasSesiones } o null si no existe.
 export async function getDocentePorEmail(email) {
-  const filas = await leerRango(`${HOJA_DOCENTES}!A2:B`);
+  const filas = await leerRango(`${HOJA_DOCENTES}!A2:C`);
   const encontrada = filas.find(
     (f) => (f[0] || "").trim().toLowerCase() === email.trim().toLowerCase()
   );
   if (!encontrada) return null;
-  return { email: encontrada[0], nombre: encontrada[1] || "" };
+  return {
+    email: encontrada[0],
+    nombre: encontrada[1] || "",
+    aliasSesiones: (encontrada[2] || "").trim(),
+  };
 }
 
 // Devuelve la lista de ediciones/cursos disponibles para elegir.

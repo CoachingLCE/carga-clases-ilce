@@ -50,7 +50,7 @@ export default function EmailGate({ onIngreso }) {
     <div className="fade-in min-h-[70vh] flex items-center justify-center">
       <div className="w-full max-w-[360px]">
         <img
-          src="/logo.jpg"
+          src="/logo.png"
           alt="Instituto ILCE"
           className="w-14 h-14 rounded-full mx-auto mb-4 object-cover"
         />

@@ -224,7 +224,7 @@ export default function App() {
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-2.5">
           <img
-            src="/logo.jpg"
+            src="/logo.png"
             alt="Instituto ILCE"
             className="w-8 h-8 rounded-full object-cover flex-shrink-0"
           />

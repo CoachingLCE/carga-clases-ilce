@@ -57,22 +57,22 @@ export default function EmailGate({ onIngreso }) {
           className="w-14 h-14 rounded-full mx-auto mb-4 object-cover"
         />
 
-        <p className="text-center text-[11px] font-semibold uppercase tracking-wide text-[var(--teal-500)] mb-2">
+        <p className="text-center text-[13px] font-semibold uppercase tracking-wide text-[var(--teal-500)] mb-2">
           Acceso exclusivo para docentes de ILCE
         </p>
 
-        <h1 className="font-display text-[32px] leading-tight text-center text-[var(--teal-900)] mb-2">
+        <h1 className="font-display text-[38px] leading-tight text-center text-[var(--teal-900)] mb-2">
           Carga de clases
         </h1>
 
-        <p className="text-center text-[var(--ink)]/70 text-[15px] mb-1">
+        <p className="text-center text-[var(--ink)]/70 text-[17px] mb-1.5">
           Registrá tus clases de forma simple y rápida.
         </p>
-        <p className="text-center text-[var(--ink)]/50 text-xs mb-7">
+        <p className="text-center text-[var(--ink)]/55 text-sm mb-7">
           Registrá tus clases y tus sesiones en menos de un minuto.
         </p>
 
-        <p className="text-center text-[var(--ink)]/65 text-sm mb-4">
+        <p className="text-center text-[var(--ink)]/65 text-base mb-4">
           Ingresá el correo electrónico con el que dictás clases en ILCE.
         </p>
 
@@ -83,13 +83,13 @@ export default function EmailGate({ onIngreso }) {
             placeholder="nombre@correo.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full border border-[var(--line)] rounded-full px-5 py-3 text-sm outline-none focus:border-[var(--teal-500)]"
+            className="w-full border border-[var(--line)] rounded-full px-5 py-3.5 text-base outline-none focus:border-[var(--teal-500)]"
           />
-          {error && <p className="text-[13px] text-[var(--clay-600)] px-2">{error}</p>}
+          {error && <p className="text-sm text-[var(--clay-600)] px-2">{error}</p>}
           <button
             type="submit"
             disabled={cargando}
-            className="w-full bg-[var(--teal-700)] text-white rounded-full px-4 py-3 text-sm font-medium disabled:opacity-60"
+            className="w-full bg-[var(--teal-700)] text-white rounded-full px-4 py-3.5 text-base font-medium disabled:opacity-60"
           >
             {cargando ? "Verificando..." : "Continuar"}
           </button>
@@ -98,7 +98,7 @@ export default function EmailGate({ onIngreso }) {
         <button
           type="button"
           onClick={entrarModoPrueba}
-          className="w-full mt-3 border border-[var(--amber-600)] text-[var(--amber-600)] rounded-full px-4 py-2.5 text-[13px] font-semibold"
+          className="w-full mt-3 border border-[var(--amber-600)] text-[var(--amber-600)] rounded-full px-4 py-3 text-sm font-semibold"
         >
           Ver cómo funciona (modo prueba)
         </button>
@@ -110,12 +110,12 @@ export default function EmailGate({ onIngreso }) {
                 className="w-1.5 h-1.5 rounded-full flex-shrink-0"
                 style={{ background: b.color }}
               />
-              <span className="text-xs text-[var(--ink)]/60">{b.texto}</span>
+              <span className="text-sm text-[var(--ink)]/65">{b.texto}</span>
             </div>
           ))}
         </div>
 
-        <p className="text-xs text-[var(--ink)]/45 text-center leading-relaxed">
+        <p className="text-sm text-[var(--ink)]/50 text-center leading-relaxed">
           ¿Necesitás ayuda para ingresar?
           <br />
           Escribí a{" "}

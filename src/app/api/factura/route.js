@@ -1,6 +1,4 @@
 import { NextResponse } from "next/server";
-import { Readable } from "stream";
-import { getDriveClient } from "@/lib/googleAuth";
 import { marcarFacturaSubida, getDocentePorEmail } from "@/lib/sheets";
 import { enviarMailFacturaSubida } from "@/lib/mail";
 
@@ -44,43 +42,15 @@ export async function POST(request) {
       }
     }
 
-    const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
-    if (!folderId) {
-      return NextResponse.json(
-        { ok: false, error: "No está configurada la carpeta de Drive (GOOGLE_DRIVE_FOLDER_ID)." },
-        { status: 500 }
-      );
-    }
-
     const buffer = Buffer.from(await archivo.arrayBuffer());
-    const stream = Readable.from(buffer);
-
     const fechaHoy = new Date().toISOString().slice(0, 10);
     const nombreArchivo = `Factura - ${email} - ${fechaHoy} - ${archivo.name}`;
 
-    const drive = getDriveClient();
-    const subido = await drive.files.create({
-      requestBody: {
-        name: nombreArchivo,
-        parents: [folderId],
-      },
-      media: {
-        mimeType: archivo.type || "application/octet-stream",
-        body: stream,
-      },
-      fields: "id, webViewLink",
-    });
-
-    const archivoUrl = subido.data.webViewLink || "";
-
-    try {
-      await drive.permissions.create({
-        fileId: subido.data.id,
-        requestBody: { role: "reader", type: "anyone" },
-      });
-    } catch (permErr) {
-      console.error("No se pudo dar permiso de lectura al archivo:", permErr);
-    }
+    // Nota: ya no subimos el archivo a Google Drive. Las cuentas de servicio
+    // no tienen cuota de almacenamiento propia en Drive normal (solo en
+    // Unidades compartidas, que requieren Google Workspace). En su lugar,
+    // adjuntamos la factura directo al mail de confirmación.
+    const archivoUrl = "";
 
     const actualizadas = await marcarFacturaSubida({ email, mes, archivoUrl, alias });
 
@@ -105,6 +75,11 @@ export async function POST(request) {
         mes,
         archivoUrl,
         alias,
+        adjunto: {
+          filename: nombreArchivo,
+          content: buffer,
+          contentType: archivo.type || "application/octet-stream",
+        },
       });
     } catch (mailErr) {
       console.error("No se pudo enviar el mail de factura recibida:", mailErr);

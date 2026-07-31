@@ -89,14 +89,23 @@ export async function enviarMailConfirmacionCarga({
 /**
  * Mail de confirmación al subir la factura: va al docente, con copia a administración.
  */
-export async function enviarMailFacturaSubida({ emailDocente, nombreDocente, mes, archivoUrl, alias }) {
+export async function enviarMailFacturaSubida({
+  emailDocente,
+  nombreDocente,
+  mes,
+  archivoUrl,
+  alias,
+  adjunto,
+}) {
   const transporter = getTransporter();
 
   const html = `
     <div style="font-family: Arial, sans-serif; color:#01233f; max-width:600px;">
       <h2 style="color:#065f74;">Factura recibida — ${mes}</h2>
       <p>Hola ${nombreDocente || emailDocente},</p>
-      <p>Tu factura de ${mes} ya quedó registrada y enviada a administración.</p>
+      <p>Tu factura de ${mes} ya quedó registrada y enviada a administración${
+    adjunto ? " (la encontrás adjunta a este mail)" : ""
+  }.</p>
       ${alias ? `<p><strong>Alias informado:</strong> ${alias}</p>` : ""}
       ${archivoUrl ? `<p><a href="${archivoUrl}">Ver archivo de la factura</a></p>` : ""}
       <p style="margin-top:24px; color:#6b7280; font-size:13px;">Instituto ILCE</p>
@@ -109,5 +118,6 @@ export async function enviarMailFacturaSubida({ emailDocente, nombreDocente, mes
     cc: MAIL_ADMINISTRACION,
     subject: `Factura recibida — ${mes}`,
     html,
+    attachments: adjunto ? [adjunto] : [],
   });
 }

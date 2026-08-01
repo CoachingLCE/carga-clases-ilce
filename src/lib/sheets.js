@@ -209,10 +209,19 @@ export async function getClasesTomadas(cursoReal, edicion, alumno) {
 // alias bancario. Devuelve la cantidad de filas actualizadas.
 export async function marcarFacturaSubida({ email, mes, archivoUrl, alias }) {
   const sheets = getSheetsClient();
-  const filas = await leerRango(`${HOJA_CARGAS}!A2:L`);
+  const [filas, referencia] = await Promise.all([
+    leerRango(`${HOJA_CARGAS}!A2:L`),
+    getReferenciaCursos(),
+  ]);
   const emailNorm = email.trim().toLowerCase();
 
+  const nombrePorCurso = {};
+  referencia.forEach((r) => {
+    nombrePorCurso[r.cursoId] = r.nombreCurso;
+  });
+
   const actualizaciones = [];
+  const detalle = [];
   filas.forEach((f, idx) => {
     const filaNumero = idx + 2; // offset por encabezado
     const coincideEmail = (f[1] || "").trim().toLowerCase() === emailNorm;
@@ -223,10 +232,18 @@ export async function marcarFacturaSubida({ email, mes, archivoUrl, alias }) {
         range: `${HOJA_CARGAS}!J${filaNumero}:L${filaNumero}`,
         values: [["Facturado", archivoUrl || "", alias || ""]],
       });
+      const curso = (f[3] || "").trim();
+      detalle.push({
+        cursoNombre: nombrePorCurso[curso] || curso,
+        edicion: (f[4] || "").trim(),
+        claseOSesion: (f[5] || "").trim(),
+        alumno: (f[6] || "").trim(),
+        valor: Number(f[8]) || 0,
+      });
     }
   });
 
-  if (actualizaciones.length === 0) return 0;
+  if (actualizaciones.length === 0) return { count: 0, detalle: [], total: 0 };
 
   await sheets.spreadsheets.values.batchUpdate({
     spreadsheetId: SPREADSHEET_ID,
@@ -236,7 +253,8 @@ export async function marcarFacturaSubida({ email, mes, archivoUrl, alias }) {
     },
   });
 
-  return actualizaciones.length;
+  const total = detalle.reduce((acc, d) => acc + d.valor, 0);
+  return { count: actualizaciones.length, detalle, total };
 }
 
 // Devuelve las facturas recibidas, agrupadas por docente + mes, para el

@@ -86,8 +86,29 @@ export async function enviarMailConfirmacionCarga({
   });
 }
 
+function tablaDetalle(detalle) {
+  return detalle
+    .map(
+      (d) => `
+        <tr>
+          <td style="padding:6px 10px;border-bottom:1px solid #eee;">${d.cursoNombre}${
+        d.edicion ? ` — ${d.edicion}` : ""
+      }</td>
+          <td style="padding:6px 10px;border-bottom:1px solid #eee;">${d.alumno || "—"}</td>
+          <td style="padding:6px 10px;border-bottom:1px solid #eee;">${d.claseOSesion}</td>
+          <td style="padding:6px 10px;border-bottom:1px solid #eee;">$${(d.valor || 0).toLocaleString(
+            "es-AR"
+          )}</td>
+        </tr>`
+    )
+    .join("");
+}
+
 /**
  * Mail de confirmación al subir la factura: va al docente, con copia a administración.
+ *
+ * detalle/total: opcional — si se pasan, se muestra la misma tabla de clases/sesiones
+ * que se facturaron, igual que en el mail de carga confirmada.
  */
 export async function enviarMailFacturaSubida({
   emailDocente,
@@ -96,8 +117,29 @@ export async function enviarMailFacturaSubida({
   archivoUrl,
   alias,
   adjunto,
+  detalle,
+  total,
 }) {
   const transporter = getTransporter();
+
+  const bloqueDetalle =
+    detalle && detalle.length > 0
+      ? `
+      <table style="border-collapse:collapse; width:100%; margin:16px 0;">
+        <thead>
+          <tr style="background:#f3f4f6; text-align:left;">
+            <th style="padding:6px 10px;">Curso</th>
+            <th style="padding:6px 10px;">Alumno</th>
+            <th style="padding:6px 10px;">Clase/Sesión</th>
+            <th style="padding:6px 10px;">Valor</th>
+          </tr>
+        </thead>
+        <tbody>${tablaDetalle(detalle)}</tbody>
+      </table>
+      <p style="font-size:16px;"><strong>Total facturado: $${(total || 0).toLocaleString(
+        "es-AR"
+      )}</strong></p>`
+      : "";
 
   const html = `
     <div style="font-family: Arial, sans-serif; color:#01233f; max-width:600px;">
@@ -107,6 +149,7 @@ export async function enviarMailFacturaSubida({
     adjunto ? " (la encontrás adjunta a este mail)" : ""
   }.</p>
       ${alias ? `<p><strong>Alias informado:</strong> ${alias}</p>` : ""}
+      ${bloqueDetalle}
       ${archivoUrl ? `<p><a href="${archivoUrl}">Ver archivo de la factura</a></p>` : ""}
       <p style="margin-top:24px; color:#6b7280; font-size:13px;">Instituto ILCE</p>
     </div>

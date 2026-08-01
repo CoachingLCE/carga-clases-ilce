@@ -52,7 +52,12 @@ export async function POST(request) {
     // adjuntamos la factura directo al mail de confirmación.
     const archivoUrl = "";
 
-    const actualizadas = await marcarFacturaSubida({ email, mes, archivoUrl, alias });
+    const { count: actualizadas, detalle, total } = await marcarFacturaSubida({
+      email,
+      mes,
+      archivoUrl,
+      alias,
+    });
 
     if (actualizadas === 0) {
       return NextResponse.json(
@@ -80,6 +85,8 @@ export async function POST(request) {
           content: buffer,
           contentType: archivo.type || "application/octet-stream",
         },
+        detalle,
+        total,
       });
     } catch (mailErr) {
       console.error("No se pudo enviar el mail de factura recibida:", mailErr);

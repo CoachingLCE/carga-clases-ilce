@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { SESIONES_DEFAULT, DEMO_ASIGNACIONES } from "@/lib/config";
 
-export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modoPrueba }) {
+export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modoPrueba, mes }) {
   const [cursoId, setCursoId] = useState("");
   const [alumno, setAlumno] = useState("");
   const [selChips, setSelChips] = useState([]);
@@ -42,7 +42,7 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modo
     fetch(
       `/api/sesiones-asignadas?email=${encodeURIComponent(docenteEmail)}&cursoId=${encodeURIComponent(
         edicionSeleccionada?.cursoReal || ""
-      )}`
+      )}&mes=${encodeURIComponent(mes || "")}`
     )
       .then((r) => r.json())
       .then((data) => {
@@ -50,7 +50,7 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modo
       })
       .catch(() => {})
       .finally(() => setCargandoAsignaciones(false));
-  }, [esSesion, docenteEmail, cursoId, modoPrueba]);
+  }, [esSesion, docenteEmail, cursoId, modoPrueba, mes]);
 
   // Números ya cargados por otro docente, para deshabilitarlos en los chips
   // y armar la barra de progreso. En modo sesión manual, se filtra por alumno.

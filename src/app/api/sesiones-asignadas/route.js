@@ -6,6 +6,7 @@ export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const email = searchParams.get("email");
   const cursoId = searchParams.get("cursoId") || "";
+  const mes = searchParams.get("mes") || "";
 
   if (!email) {
     return NextResponse.json({ ok: false, error: "Falta el email." }, { status: 400 });
@@ -18,7 +19,7 @@ export async function GET(request) {
       return NextResponse.json({ ok: true, asignaciones: [] });
     }
 
-    const asignaciones = await getSesionesAsignadas(docente.aliasSesiones);
+    const asignaciones = await getSesionesAsignadas(docente.aliasSesiones, mes);
 
     // Sacamos las sesiones que el docente ya cargó (quedaron registradas en la
     // hoja "Cargas"), para no mostrarlas de nuevo como pendientes después de

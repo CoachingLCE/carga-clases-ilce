@@ -22,18 +22,48 @@ const SESIONES_SHEET_ID = process.env.GOOGLE_SESIONES_SHEET_ID;
  */
 const RANGO = "Asignaciones!A2:J";
 
+const MESES = [
+  "enero", "febrero", "marzo", "abril", "mayo", "junio",
+  "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
+];
+
+// "julio 2026" -> 6 (índice 0 = enero). null si no se puede interpretar.
+function mesIndexDesdeLabel(mesLabel) {
+  if (!mesLabel) return null;
+  const nombre = mesLabel.trim().toLowerCase().split(" ")[0];
+  const idx = MESES.indexOf(nombre);
+  return idx === -1 ? null : idx;
+}
+
+// Las fechas de la planilla vienen como "DD/MM" (sin año). Si no se puede
+// interpretar la fecha, o no se pidió filtrar por mes, no se descarta la fila
+// (mejor mostrar de más que ocultar una sesión real por un formato raro).
+function fechaDentroDelMes(fechaStr, mesIndex) {
+  if (mesIndex === null) return true;
+  if (!fechaStr) return true;
+  const partes = fechaStr.trim().split("/");
+  if (partes.length < 2) return true;
+  const mesFecha = parseInt(partes[1], 10) - 1;
+  if (Number.isNaN(mesFecha)) return true;
+  return mesFecha === mesIndex;
+}
+
 function mapearFila(fila) {
   return {
     alumno: (fila[0] || "").trim(),
     edicion: (fila[1] || "").trim().replace("°", "").trim(),
     numeroSesion: (fila[2] || "").trim(),
+    fechaAsignacion: (fila[4] || "").trim(),
     aliasDocente: (fila[5] || "").trim(),
   };
 }
 
 // Devuelve las sesiones pre-asignadas a un docente (por su alias), agrupadas
 // por alumno + edición: [{ alumno, edicion, sesiones: ["1","2",...] }]
-export async function getSesionesAsignadas(aliasDocente) {
+//
+// mesLabel (ej. "julio 2026"): si se pasa, solo se muestran las sesiones cuya
+// "Fecha de asignación" (columna E) cae en ese mes.
+export async function getSesionesAsignadas(aliasDocente, mesLabel) {
   if (!SESIONES_SHEET_ID) {
     throw new Error("Falta la variable de entorno GOOGLE_SESIONES_SHEET_ID.");
   }
@@ -45,12 +75,14 @@ export async function getSesionesAsignadas(aliasDocente) {
     range: RANGO,
   });
 
+  const mesIndex = mesIndexDesdeLabel(mesLabel);
   const filas = (res.data.values || []).map(mapearFila);
   const aliasNorm = aliasDocente.trim().toLowerCase();
   const propias = filas.filter(
     (f) =>
       f.aliasDocente.toLowerCase() === aliasNorm &&
-      f.numeroSesion.toLowerCase() !== "acuerdo"
+      f.numeroSesion.toLowerCase() !== "acuerdo" &&
+      fechaDentroDelMes(f.fechaAsignacion, mesIndex)
   );
 
   const grupos = {};

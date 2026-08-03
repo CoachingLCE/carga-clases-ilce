@@ -317,6 +317,7 @@ export default function App() {
                   onAgregar={agregarItem}
                   docenteEmail={docente.email}
                   modoPrueba={modoPrueba}
+                  mes={mesLabel}
                 />
 
                 {pendientes.length > 0 && (

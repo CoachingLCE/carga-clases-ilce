@@ -27,12 +27,15 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modo
   // Reemplaza el viejo useEffect de reset por cursoId: al centralizar acá
   // el cambio de curso, podemos "precargar" alumno/sesión (desde el resumen
   // de pendientes) sin que un efecto los borre justo después.
-  function seleccionarCurso(nuevoCursoId, presetAlumno = "", presetSesion = null) {
+  function seleccionarCurso(nuevoCursoId, presetAlumno = "", presetSesion = null, irDirectoAConfirmar = false) {
     setCursoId(nuevoCursoId);
     setSelChips(presetSesion ? [String(presetSesion)] : []);
     setAlumno(presetAlumno);
     setAsignacionElegida(null);
-    setModoManual(false);
+    // Si viene con datos precargados (desde el resumen de pendientes),
+    // saltamos el panel de "Tus sesiones asignadas" (que ignora estos
+    // valores) e vamos directo al panel de confirmar, ya completado.
+    setModoManual(irDirectoAConfirmar);
     setTomadas([]);
   }
 
@@ -70,7 +73,7 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modo
     );
     if (!match) return; // la edición ya no está abierta para cargar
     const unicaSesion = item.sesiones.length === 1 ? item.sesiones[0] : null;
-    seleccionarCurso(match.cursoId, item.alumno, unicaSesion);
+    seleccionarCurso(match.cursoId, item.alumno, unicaSesion, true);
   }
 
   // Sesiones pre-asignadas (para Ontológico modo sesión), leídas de la planilla externa.

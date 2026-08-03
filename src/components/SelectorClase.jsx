@@ -42,7 +42,9 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modo
     fetch(
       `/api/sesiones-asignadas?email=${encodeURIComponent(docenteEmail)}&cursoId=${encodeURIComponent(
         edicionSeleccionada?.cursoReal || ""
-      )}&mes=${encodeURIComponent(mes || "")}`
+      )}&mes=${encodeURIComponent(mes || "")}&edicion=${encodeURIComponent(
+        edicionSeleccionada?.edicion || ""
+      )}`
     )
       .then((r) => r.json())
       .then((data) => {

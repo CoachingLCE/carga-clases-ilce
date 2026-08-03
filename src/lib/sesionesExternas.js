@@ -55,6 +55,7 @@ function mapearFila(fila) {
     numeroSesion: (fila[2] || "").trim(),
     fechaAsignacion: (fila[4] || "").trim(),
     aliasDocente: (fila[5] || "").trim(),
+    fechaDevolucion: (fila[6] || "").trim(),
   };
 }
 
@@ -63,7 +64,9 @@ function mapearFila(fila) {
 //
 // mesLabel (ej. "julio 2026"): si se pasa, solo se muestran las sesiones cuya
 // "Fecha de asignación" (columna E) cae en ese mes.
-export async function getSesionesAsignadas(aliasDocente, mesLabel) {
+// edicionFiltro (ej. "33"): si se pasa, solo se muestran las sesiones de esa
+// edición puntual (la que el docente eligió en el desplegable de curso).
+export async function getSesionesAsignadas(aliasDocente, mesLabel, edicionFiltro) {
   if (!SESIONES_SHEET_ID) {
     throw new Error("Falta la variable de entorno GOOGLE_SESIONES_SHEET_ID.");
   }
@@ -76,13 +79,16 @@ export async function getSesionesAsignadas(aliasDocente, mesLabel) {
   });
 
   const mesIndex = mesIndexDesdeLabel(mesLabel);
+  const edicionNorm = (edicionFiltro || "").trim().toLowerCase();
   const filas = (res.data.values || []).map(mapearFila);
   const aliasNorm = aliasDocente.trim().toLowerCase();
   const propias = filas.filter(
     (f) =>
       f.aliasDocente.toLowerCase() === aliasNorm &&
       f.numeroSesion.toLowerCase() !== "acuerdo" &&
-      fechaDentroDelMes(f.fechaAsignacion, mesIndex)
+      !f.fechaDevolucion && // ya resuelta/devuelta -> no es pendiente
+      fechaDentroDelMes(f.fechaAsignacion, mesIndex) &&
+      (!edicionNorm || f.edicion.toLowerCase() === edicionNorm)
   );
 
   const grupos = {};

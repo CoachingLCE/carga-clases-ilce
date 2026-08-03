@@ -15,17 +15,63 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modo
   const [modoManual, setModoManual] = useState(false);
   const [asignacionElegida, setAsignacionElegida] = useState(null);
 
+  // Resumen de pendientes de TODAS las ediciones (solo Coaching Ontológico,
+  // que es el único curso con planilla de asignaciones por ahora).
+  const [resumenPendientes, setResumenPendientes] = useState([]);
+  const [cargandoResumen, setCargandoResumen] = useState(false);
+
   const edicionSeleccionada = ediciones.find((e) => e.cursoId === cursoId);
   const esSesion = edicionSeleccionada?.modalidad === "sesion";
   const tope = edicionSeleccionada?.topeSesiones || SESIONES_DEFAULT;
 
-  useEffect(() => {
-    setSelChips([]);
-    setAlumno("");
+  // Reemplaza el viejo useEffect de reset por cursoId: al centralizar acá
+  // el cambio de curso, podemos "precargar" alumno/sesión (desde el resumen
+  // de pendientes) sin que un efecto los borre justo después.
+  function seleccionarCurso(nuevoCursoId, presetAlumno = "", presetSesion = null) {
+    setCursoId(nuevoCursoId);
+    setSelChips(presetSesion ? [String(presetSesion)] : []);
+    setAlumno(presetAlumno);
     setAsignacionElegida(null);
     setModoManual(false);
     setTomadas([]);
-  }, [cursoId]);
+  }
+
+  // Resumen de todas las sesiones pendientes del docente en el mes, sin
+  // importar la edición — para el bloque "Tus sesiones pendientes este mes".
+  useEffect(() => {
+    if (!docenteEmail) {
+      setResumenPendientes([]);
+      return;
+    }
+    if (modoPrueba) {
+      setResumenPendientes(DEMO_ASIGNACIONES);
+      return;
+    }
+    setCargandoResumen(true);
+    fetch(
+      `/api/sesiones-asignadas?email=${encodeURIComponent(
+        docenteEmail
+      )}&cursoId=ontologico&mes=${encodeURIComponent(mes || "")}`
+    )
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.ok) setResumenPendientes(data.asignaciones || []);
+      })
+      .catch(() => {})
+      .finally(() => setCargandoResumen(false));
+  }, [docenteEmail, modoPrueba, mes]);
+
+  function handleCargarDesdeResumen(item) {
+    const match = ediciones.find(
+      (e) =>
+        e.cursoReal === "ontologico" &&
+        e.modalidad === "sesion" &&
+        String(e.edicion) === String(item.edicion)
+    );
+    if (!match) return; // la edición ya no está abierta para cargar
+    const unicaSesion = item.sesiones.length === 1 ? item.sesiones[0] : null;
+    seleccionarCurso(match.cursoId, item.alumno, unicaSesion);
+  }
 
   // Sesiones pre-asignadas (para Ontológico modo sesión), leídas de la planilla externa.
   useEffect(() => {
@@ -101,6 +147,19 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modo
       });
     });
     setTomadas((prev) => [...prev, ...selChips.map(String)]);
+    if (esSesion) {
+      const alumnoNorm = alumno.trim().toLowerCase();
+      setResumenPendientes((prev) =>
+        prev
+          .map((a) =>
+            a.alumno.toLowerCase() === alumnoNorm &&
+            String(a.edicion) === String(edicionSeleccionada?.edicion)
+              ? { ...a, sesiones: a.sesiones.filter((s) => !selChips.includes(s)) }
+              : a
+          )
+          .filter((a) => a.sesiones.length > 0)
+      );
+    }
     setSelChips([]);
     if (esSesion) setAlumno("");
   }
@@ -119,6 +178,17 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modo
       prev
         .map((a) =>
           a === asignacionElegida
+            ? { ...a, sesiones: a.sesiones.filter((s) => s !== selChips[0]) }
+            : a
+        )
+        .filter((a) => a.sesiones.length > 0)
+    );
+    const alumnoNorm = alumno.trim().toLowerCase();
+    setResumenPendientes((prev) =>
+      prev
+        .map((a) =>
+          a.alumno.toLowerCase() === alumnoNorm &&
+          String(a.edicion) === String(edicionSeleccionada?.edicion)
             ? { ...a, sesiones: a.sesiones.filter((s) => s !== selChips[0]) }
             : a
         )
@@ -144,13 +214,49 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modo
       <h3 className="font-display text-[17px] text-[var(--teal-900)] mb-3.5">
         Agregar clase o sesión
       </h3>
+      {resumenPendientes.length > 0 && (
+        <div className="border border-[var(--teal-500)]/40 bg-white rounded-xl p-3.5 mb-4">
+          <p className="text-[11px] uppercase tracking-wide text-[var(--teal-700)] font-semibold mb-2">
+            Tus sesiones pendientes este mes
+          </p>
+          <div className="space-y-1.5">
+            {resumenPendientes.map((item, i) => (
+              <div
+                key={i}
+                className="flex items-center justify-between gap-2 py-2 border-b border-[var(--line)] last:border-b-0 last:pb-0"
+              >
+                <div>
+                  <p className="text-sm font-medium text-[var(--teal-900)]">{item.alumno}</p>
+                  <p className="text-xs text-[var(--ink)]/55">
+                    Ontológico · Edición {item.edicion} ·{" "}
+                    {item.sesiones.length > 1
+                      ? `${item.sesiones.length} sesiones`
+                      : `Sesión ${item.sesiones[0]}`}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleCargarDesdeResumen(item)}
+                  className="text-xs border border-[var(--line)] rounded-full px-3 py-1.5 font-medium hover:border-[var(--teal-500)] whitespace-nowrap"
+                >
+                  Cargar
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      {cargandoResumen && resumenPendientes.length === 0 && (
+        <p className="text-xs text-[var(--ink)]/50 mb-3">Buscando tus sesiones pendientes...</p>
+      )}
+
       <label className="block text-[11px] uppercase tracking-wide text-[var(--ink)]/55 mb-1.5">
         Curso
       </label>
       <select
         data-tour="selector-curso"
         value={cursoId}
-        onChange={(e) => setCursoId(e.target.value)}
+        onChange={(e) => seleccionarCurso(e.target.value)}
         className="w-full border border-[var(--line)] rounded-lg px-3 py-2.5 text-sm mb-3.5 outline-none bg-white focus:border-[var(--teal-500)]"
       >
         <option value="">Elegí un curso...</option>

@@ -5,23 +5,25 @@ const SESIONES_SHEET_ID = process.env.GOOGLE_SESIONES_SHEET_ID;
 /*
  * Planilla externa de asignación de sesiones de Coaching Ontológico (solo lectura).
  *
- * Estructura asumida — AJUSTAR estos índices si el orden real de columnas
- * en la planilla es distinto:
+ * Estructura real confirmada (columnas A a J):
+ *   A: Estudiante | B: Edición | C: N° sesión | D: Fecha de ingreso |
+ *   E: Fecha de asignación | F: Docente asignado | G: Fecha de devolución |
+ *   H: Demora docente | I: Demora feedback | J: Observaciones
  *
- *   A: AliasDocente | B: Alumno | C: Edición | D: Número de sesión
+ * Solo nos interesan A (alumno), B (edición), C (n° sesión) y F (alias del
+ * docente), pero leemos hasta J por si se necesita algo más adelante.
  *
- * Si en la planilla real las columnas están en otro orden, alcanza con
- * cambiar los números de `mapearFila` de acá abajo (0 = A, 1 = B, etc.).
- * No hace falta tocar nada más de la app.
+ * Si en "N° sesión" dice "Acuerdo" (en vez de un número), esa fila no
+ * corresponde a una sesión numerada real y se descarta.
  */
-const RANGO = "A2:D";
+const RANGO = "A2:J";
 
 function mapearFila(fila) {
   return {
-    aliasDocente: (fila[0] || "").trim(),
-    alumno: (fila[1] || "").trim(),
-    edicion: (fila[2] || "").trim(),
-    numeroSesion: (fila[3] || "").trim(),
+    alumno: (fila[0] || "").trim(),
+    edicion: (fila[1] || "").trim().replace("°", "").trim(),
+    numeroSesion: (fila[2] || "").trim(),
+    aliasDocente: (fila[5] || "").trim(),
   };
 }
 
@@ -41,7 +43,11 @@ export async function getSesionesAsignadas(aliasDocente) {
 
   const filas = (res.data.values || []).map(mapearFila);
   const aliasNorm = aliasDocente.trim().toLowerCase();
-  const propias = filas.filter((f) => f.aliasDocente.toLowerCase() === aliasNorm);
+  const propias = filas.filter(
+    (f) =>
+      f.aliasDocente.toLowerCase() === aliasNorm &&
+      f.numeroSesion.toLowerCase() !== "acuerdo"
+  );
 
   const grupos = {};
   for (const f of propias) {

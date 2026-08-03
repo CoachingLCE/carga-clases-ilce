@@ -15,8 +15,12 @@ const SESIONES_SHEET_ID = process.env.GOOGLE_SESIONES_SHEET_ID;
  *
  * Si en "N° sesión" dice "Acuerdo" (en vez de un número), esa fila no
  * corresponde a una sesión numerada real y se descarta.
+ *
+ * Los datos viven en la pestaña "Asignaciones" de ese archivo (confirmado):
+ * si no se especifica el nombre de la pestaña, Google Sheets toma la
+ * primera por posición, que puede no ser esta.
  */
-const RANGO = "A2:J";
+const RANGO = "Asignaciones!A2:J";
 
 function mapearFila(fila) {
   return {

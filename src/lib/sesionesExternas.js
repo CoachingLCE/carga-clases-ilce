@@ -35,16 +35,18 @@ function mesIndexDesdeLabel(mesLabel) {
   return idx === -1 ? null : idx;
 }
 
-// Las fechas de la planilla vienen como "DD/MM" (sin año). Si no se puede
-// interpretar la fecha, o no se pidió filtrar por mes, no se descarta la fila
-// (mejor mostrar de más que ocultar una sesión real por un formato raro).
+// Las fechas de la planilla vienen como "DD/MM" (sin año).
+// Si no se pidió filtrar por mes (mesIndex null), no se descarta ninguna fila.
+// Si SÍ se pidió filtrar por mes pero la fila no tiene fecha cargada, se
+// descarta: mostrarla "por las dudas" terminaba trayendo sesiones viejas de
+// meses anteriores sin fecha, mezcladas con las del mes actual.
 function fechaDentroDelMes(fechaStr, mesIndex) {
   if (mesIndex === null) return true;
-  if (!fechaStr) return true;
+  if (!fechaStr) return false;
   const partes = fechaStr.trim().split("/");
-  if (partes.length < 2) return true;
+  if (partes.length < 2) return false;
   const mesFecha = parseInt(partes[1], 10) - 1;
-  if (Number.isNaN(mesFecha)) return true;
+  if (Number.isNaN(mesFecha)) return false;
   return mesFecha === mesIndex;
 }
 

@@ -86,7 +86,6 @@ export async function getSesionesAsignadas(aliasDocente, mesLabel, edicionFiltro
     (f) =>
       f.aliasDocente.toLowerCase() === aliasNorm &&
       f.numeroSesion.toLowerCase() !== "acuerdo" &&
-      !f.fechaDevolucion && // ya resuelta/devuelta -> no es pendiente
       fechaDentroDelMes(f.fechaAsignacion, mesIndex) &&
       (!edicionNorm || f.edicion.toLowerCase() === edicionNorm)
   );

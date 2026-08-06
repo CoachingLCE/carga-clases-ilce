@@ -19,6 +19,7 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modo
   // que es el único curso con planilla de asignaciones por ahora).
   const [resumenPendientes, setResumenPendientes] = useState([]);
   const [cargandoResumen, setCargandoResumen] = useState(false);
+  const [errorResumen, setErrorResumen] = useState("");
 
   const edicionSeleccionada = ediciones.find((e) => e.cursoId === cursoId);
   const esSesion = edicionSeleccionada?.modalidad === "sesion";
@@ -71,7 +72,13 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modo
         e.modalidad === "sesion" &&
         String(e.edicion) === String(item.edicion)
     );
-    if (!match) return; // la edición ya no está abierta para cargar
+    if (!match) {
+      setErrorResumen(
+        `La Edición ${item.edicion} no está abierta para cargar este mes. Escribí a administración para que la habiliten.`
+      );
+      return;
+    }
+    setErrorResumen("");
     const unicaSesion = item.sesiones.length === 1 ? item.sesiones[0] : null;
     seleccionarCurso(match.cursoId, item.alumno, unicaSesion, true);
   }
@@ -247,6 +254,11 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modo
               </div>
             ))}
           </div>
+          {errorResumen && (
+            <p className="text-xs text-[var(--red-700,#b91c1c)] bg-[var(--red-50,#fef2f2)] rounded-lg px-2.5 py-2 mt-2">
+              {errorResumen}
+            </p>
+          )}
         </div>
       )}
       {cargandoResumen && resumenPendientes.length === 0 && (

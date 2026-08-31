@@ -3,7 +3,15 @@
 import { useEffect, useState } from "react";
 import { SESIONES_DEFAULT, DEMO_ASIGNACIONES } from "@/lib/config";
 
-export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modoPrueba, mes }) {
+export default function SelectorClase({
+  ediciones,
+  onAgregar,
+  docenteEmail,
+  modoPrueba,
+  mes,
+  presetExterno,
+  onPresetConsumido,
+}) {
   const [cursoId, setCursoId] = useState("");
   const [alumno, setAlumno] = useState("");
   const [selChips, setSelChips] = useState([]);
@@ -14,6 +22,10 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modo
   const [cargandoAsignaciones, setCargandoAsignaciones] = useState(false);
   const [modoManual, setModoManual] = useState(false);
   const [asignacionElegida, setAsignacionElegida] = useState(null);
+
+  // Nombres de alumnos cargados recientemente por este docente, para
+  // sugerírselos (autocompletar) y acelerar la carga.
+  const [alumnosRecientes, setAlumnosRecientes] = useState([]);
 
   // Resumen de pendientes de TODAS las ediciones (solo Coaching Ontológico,
   // que es el único curso con planilla de asignaciones por ahora).
@@ -39,6 +51,89 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modo
     setModoManual(irDirectoAConfirmar);
     setTomadas([]);
   }
+
+  // "Recordar el último curso" — al entrar, si todavía no eligió nada,
+  // preseleccionamos el último curso/edición que usó (si sigue abierto).
+  useEffect(() => {
+    if (cursoId || ediciones.length === 0 || !docenteEmail || modoPrueba) return;
+    try {
+      const guardado = JSON.parse(
+        localStorage.getItem(`ilce_ultimo_curso_${docenteEmail}`) || "null"
+      );
+      if (!guardado) return;
+      const match = ediciones.find(
+        (e) =>
+          e.cursoReal === guardado.cursoReal &&
+          e.modalidad === guardado.modalidad &&
+          String(e.edicion) === String(guardado.edicion)
+      );
+      if (match) setCursoId(match.cursoId);
+    } catch {
+      // localStorage no disponible o dato corrupto: no pasa nada, se ignora.
+    }
+    // Solo nos importa la primera vez que llegan las ediciones.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ediciones]);
+
+  // Alumnos recientes de este docente (para sugerir en el input de alumno).
+  useEffect(() => {
+    if (!docenteEmail) return;
+    try {
+      const guardados = JSON.parse(
+        localStorage.getItem(`ilce_alumnos_recientes_${docenteEmail}`) || "[]"
+      );
+      setAlumnosRecientes(Array.isArray(guardados) ? guardados : []);
+    } catch {
+      setAlumnosRecientes([]);
+    }
+  }, [docenteEmail]);
+
+  function recordarCursoYAlumno(alumnoCargado) {
+    if (!docenteEmail || modoPrueba || !edicionSeleccionada) return;
+    try {
+      localStorage.setItem(
+        `ilce_ultimo_curso_${docenteEmail}`,
+        JSON.stringify({
+          cursoReal: edicionSeleccionada.cursoReal,
+          edicion: edicionSeleccionada.edicion,
+          modalidad: edicionSeleccionada.modalidad,
+        })
+      );
+      if (alumnoCargado) {
+        const actuales = alumnosRecientes.filter(
+          (a) => a.toLowerCase() !== alumnoCargado.toLowerCase()
+        );
+        const nuevos = [alumnoCargado, ...actuales].slice(0, 8);
+        setAlumnosRecientes(nuevos);
+        localStorage.setItem(`ilce_alumnos_recientes_${docenteEmail}`, JSON.stringify(nuevos));
+      }
+    } catch {
+      // si falla el localStorage (modo incógnito, etc.) simplemente no recordamos nada.
+    }
+  }
+
+  // Preset que llega desde afuera: "Duplicar" una carga ya hecha, o "Cargar
+  // otra clase similar a la última" después de confirmar. Va directo al
+  // panel de confirmar, con el curso y el alumno ya completados.
+  useEffect(() => {
+    if (!presetExterno) return;
+    const match = ediciones.find(
+      (e) =>
+        e.cursoReal === presetExterno.cursoReal &&
+        e.modalidad === presetExterno.modalidad &&
+        String(e.edicion) === String(presetExterno.edicion)
+    );
+    if (!match) {
+      setErrorResumen(
+        `La Edición ${presetExterno.edicion} ya no está abierta para cargar este mes.`
+      );
+    } else {
+      setErrorResumen("");
+      seleccionarCurso(match.cursoId, presetExterno.alumno || "", null, true);
+    }
+    if (onPresetConsumido) onPresetConsumido();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [presetExterno]);
 
   // Resumen de todas las sesiones pendientes del docente en el mes, sin
   // importar la edición — para el bloque "Tus sesiones pendientes este mes".
@@ -172,7 +267,12 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modo
       );
     }
     setSelChips([]);
-    if (esSesion) setAlumno("");
+    if (esSesion) {
+      recordarCursoYAlumno(alumno.trim());
+      setAlumno("");
+    } else {
+      recordarCursoYAlumno();
+    }
   }
 
   function handleAgregarAsignacion() {
@@ -208,6 +308,7 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modo
     );
     setAsignacionElegida(null);
     setSelChips([]);
+    recordarCursoYAlumno(alumno.trim());
     setAlumno("");
   }
 
@@ -271,6 +372,7 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modo
         Curso
       </label>
       <select
+        id="selector-curso-select"
         data-tour="selector-curso"
         value={cursoId}
         onChange={(e) => seleccionarCurso(e.target.value)}
@@ -366,8 +468,16 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modo
                     value={alumno}
                     onChange={(e) => setAlumno(e.target.value)}
                     placeholder="Nombre y apellido del alumno"
+                    list="alumnos-recientes-datalist"
                     className="w-full border border-[var(--line)] rounded-lg px-3 py-2.5 text-sm mb-3.5 outline-none focus:border-[var(--teal-500)]"
                   />
+                  {alumnosRecientes.length > 0 && (
+                    <datalist id="alumnos-recientes-datalist">
+                      {alumnosRecientes.map((nombre) => (
+                        <option key={nombre} value={nombre} />
+                      ))}
+                    </datalist>
+                  )}
                 </>
               )}
 

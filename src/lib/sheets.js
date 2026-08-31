@@ -19,7 +19,7 @@ const HOJA_CARGAS = "Cargas";
  * Valores             -> A: EmailDocente | B: Curso | C: Valor
  * Cargas              -> A: Timestamp | B: EmailDocente | C: NombreDocente | D: Curso | E: Edicion |
  *                        F: ClaseOSesion | G: Alumno | H: Mes | I: Valor | J: EstadoFacturado |
- *                        K: FacturaURL | L: Alias
+ *                        K: FacturaURL | L: Alias | M: Modalidad (clase|sesion, opcional)
  *
  * Solo "ontologico" tiene doble modalidad (clase de cohorte 1-48 y sesión individual 1-4).
  * El resto de los cursos son solo "clase", rango 1-16.
@@ -78,7 +78,7 @@ export async function getAdministradorPorEmail(email) {
 }
 
 // Lee la hoja de referencia (nombres de curso) — no se escribe nunca acá.
-async function getReferenciaCursos() {
+export async function getReferenciaCursos() {
   const filas = await leerRango(`${HOJA_REFERENCIA_CURSOS}!A2:D`);
   return filas
     .filter((f) => f[0])
@@ -194,7 +194,7 @@ export async function getValor(email, cursoReal, modalidad) {
 }
 
 // Registra una o más clases/sesiones cargadas por un docente en la hoja "Cargas".
-// items: [{ cursoReal, edicion, claseOSesion, alumno, valor }]
+// items: [{ cursoReal, edicion, claseOSesion, alumno, valor, modalidad }]
 export async function registrarCargas(email, nombreDocente, mes, items) {
   const timestamp = new Date().toISOString();
   for (const item of items) {
@@ -211,6 +211,7 @@ export async function registrarCargas(email, nombreDocente, mes, items) {
       "Pendiente", // EstadoFacturado
       "", // FacturaURL
       "", // Alias
+      item.modalidad || "", // Modalidad (columna M, opcional)
     ]);
   }
 }
@@ -223,6 +224,8 @@ export async function getClasesTomadas(cursoReal, edicion, alumno) {
   const alumnoNorm = (alumno || "").trim().toLowerCase();
   return filas
     .filter((f) => {
+      const estado = (f[9] || "").trim().toLowerCase();
+      if (estado === "eliminada") return false; // liberar el número si se borró
       const coincideCurso = (f[3] || "").trim() === (cursoReal || "").trim();
       const coincideEdicion = (f[4] || "").trim() === (edicion || "").trim();
       if (!coincideCurso || !coincideEdicion) return false;
@@ -233,6 +236,123 @@ export async function getClasesTomadas(cursoReal, edicion, alumno) {
     })
     .map((f) => String(f[5] || "").trim())
     .filter(Boolean);
+}
+
+// Devuelve todas las cargas de un docente en un mes puntual, para el resumen
+// y la tabla "Tu carga de este mes". Incluye el número de fila real de la
+// hoja (para poder editar/eliminar esa fila puntual después).
+export async function getCargasDeDocente(email, mes) {
+  const [filas, referencia] = await Promise.all([
+    leerRango(`${HOJA_CARGAS}!A2:M`),
+    getReferenciaCursos(),
+  ]);
+
+  const nombrePorCurso = {};
+  referencia.forEach((r) => {
+    nombrePorCurso[r.cursoId] = r.nombreCurso;
+  });
+
+  const emailNorm = email.trim().toLowerCase();
+  const mesNorm = (mes || "").trim();
+
+  return filas
+    .map((f, idx) => ({ f, fila: idx + 2 }))
+    .filter(({ f }) => {
+      const estado = (f[9] || "").trim().toLowerCase();
+      if (estado === "eliminada") return false;
+      const coincideEmail = (f[1] || "").trim().toLowerCase() === emailNorm;
+      const coincideMes = (f[7] || "").trim() === mesNorm;
+      return coincideEmail && coincideMes;
+    })
+    .map(({ f, fila }) => {
+      const cursoReal = (f[3] || "").trim();
+      const alumno = (f[6] || "").trim();
+      // Filas viejas (previas a este cambio) no tienen modalidad guardada:
+      // la inferimos por si tienen alumno cargado (típico de sesiones).
+      const modalidad = (f[12] || "").trim() || (alumno ? "sesion" : "clase");
+      const nombreBase = nombrePorCurso[cursoReal] || cursoReal;
+      return {
+        fila,
+        timestamp: f[0] || "",
+        email: f[1] || "",
+        nombreDocente: f[2] || "",
+        cursoReal,
+        cursoNombre: modalidad === "sesion" ? `${nombreBase} (sesiones individuales)` : nombreBase,
+        edicion: (f[4] || "").trim(),
+        claseOSesion: (f[5] || "").trim(),
+        alumno,
+        mes: f[7] || "",
+        valor: Number(f[8]) || 0,
+        estadoFacturado: f[9] || "Pendiente",
+        modalidad,
+      };
+    })
+    .sort((a, b) => (a.timestamp < b.timestamp ? 1 : -1)); // más reciente primero
+}
+
+// Edita el alumno y/o el número de clase/sesión de UNA fila puntual, verificando
+// que sea del docente que la pide y que todavía no esté facturada.
+export async function editarCarga(email, fila, cambios) {
+  const filas = await leerRango(`${HOJA_CARGAS}!A${fila}:M${fila}`);
+  const f = filas[0];
+  if (!f) throw new Error("No se encontró esa carga.");
+  if ((f[1] || "").trim().toLowerCase() !== email.trim().toLowerCase()) {
+    throw new Error("Esa carga no te pertenece.");
+  }
+  if ((f[9] || "").trim().toLowerCase() === "facturado") {
+    throw new Error("No se puede editar una clase que ya fue facturada.");
+  }
+
+  const nuevoClaseOSesion =
+    cambios.claseOSesion !== undefined ? String(cambios.claseOSesion) : f[5] || "";
+  const nuevoAlumno = cambios.alumno !== undefined ? cambios.alumno : f[6] || "";
+
+  // Si se cambia el número, chequeamos que no choque con otra fila ya cargada
+  // (de este u otro docente) para el mismo curso+edición(+alumno).
+  if (cambios.claseOSesion !== undefined) {
+    const tomadas = await getClasesTomadas(
+      (f[3] || "").trim(),
+      (f[4] || "").trim(),
+      nuevoAlumno
+    );
+    if (
+      String(nuevoClaseOSesion) !== String(f[5] || "").trim() &&
+      tomadas.includes(String(nuevoClaseOSesion))
+    ) {
+      throw new Error("Ese número ya está cargado. Elegí otro.");
+    }
+  }
+
+  const sheets = getSheetsClient();
+  await sheets.spreadsheets.values.update({
+    spreadsheetId: SPREADSHEET_ID,
+    range: `${HOJA_CARGAS}!F${fila}:G${fila}`,
+    valueInputOption: "USER_ENTERED",
+    requestBody: { values: [[nuevoClaseOSesion, nuevoAlumno]] },
+  });
+}
+
+// "Elimina" una fila puntual (en realidad la marca como Eliminada y le borra
+// el número/alumno, para no tocar el orden de filas de la hoja). Verifica que
+// sea del docente que la pide y que no esté ya facturada.
+export async function eliminarCarga(email, fila) {
+  const filas = await leerRango(`${HOJA_CARGAS}!A${fila}:M${fila}`);
+  const f = filas[0];
+  if (!f) throw new Error("No se encontró esa carga.");
+  if ((f[1] || "").trim().toLowerCase() !== email.trim().toLowerCase()) {
+    throw new Error("Esa carga no te pertenece.");
+  }
+  if ((f[9] || "").trim().toLowerCase() === "facturado") {
+    throw new Error("No se puede eliminar una clase que ya fue facturada.");
+  }
+
+  const sheets = getSheetsClient();
+  await sheets.spreadsheets.values.update({
+    spreadsheetId: SPREADSHEET_ID,
+    range: `${HOJA_CARGAS}!J${fila}:L${fila}`,
+    valueInputOption: "USER_ENTERED",
+    requestBody: { values: [["Eliminada", "", ""]] },
+  });
 }
 
 // Marca como facturadas todas las filas de "Cargas" de un docente para un mes

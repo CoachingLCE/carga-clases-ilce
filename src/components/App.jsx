@@ -5,13 +5,14 @@ import EmailGate from "./EmailGate";
 import Tutorial from "./Tutorial";
 import RecorridoGuiado from "./RecorridoGuiado";
 import SelectorClase from "./SelectorClase";
+import ResumenCargasMes from "./ResumenCargasMes";
 import TicketClase from "./TicketClase";
 import SubirFactura from "./SubirFactura";
 import AdminPanel from "./AdminPanel";
 import { getEstadoCierre } from "@/lib/mes";
 import { DEMO_EDICIONES, DEMO_VALORES } from "@/lib/config";
 
-const APP_VERSION = "v21";
+const APP_VERSION = "v22";
 
 function BannerCierre({ modoPrueba }) {
   if (modoPrueba) {
@@ -86,6 +87,9 @@ export default function App() {
   const [resultado, setResultado] = useState(null);
   const [errorEnvio, setErrorEnvio] = useState("");
   const [rechazadosInfo, setRechazadosInfo] = useState(0);
+  const [refreshSignal, setRefreshSignal] = useState(0);
+  const [presetExterno, setPresetExterno] = useState(null);
+  const [ultimoConfirmado, setUltimoConfirmado] = useState(null);
 
   const modoPruebaUrl =
     typeof window !== "undefined" && new URLSearchParams(window.location.search).has("prueba");
@@ -116,6 +120,19 @@ export default function App() {
   }
 
   function agregarItem(item) {
+    const yaExiste = pendientes.some(
+      (p) =>
+        p.cursoReal === item.cursoReal &&
+        String(p.edicion) === String(item.edicion) &&
+        String(p.claseOSesion) === String(item.claseOSesion) &&
+        (p.alumno || "").toLowerCase() === (item.alumno || "").toLowerCase()
+    );
+    if (yaExiste) {
+      const seguir = window.confirm(
+        "Ya agregaste esta misma clase/sesión a tu carga de este mes. ¿Agregarla de nuevo?"
+      );
+      if (!seguir) return;
+    }
     setPendientes((prev) => [...prev, item]);
     const claveValor = `${item.cursoReal}::${item.modalidad || ""}`;
     if (claveValor in valores) return;
@@ -178,9 +195,11 @@ export default function App() {
       const aceptados = data.aceptados || pendientes;
       setConfirmados((prev) => [...prev, ...aceptados]);
       setRechazadosInfo((data.rechazados || []).length);
+      if (aceptados.length > 0) setUltimoConfirmado(aceptados[aceptados.length - 1]);
       setPendientes([]);
       setResultado("ok");
       setTab("factura");
+      setRefreshSignal((n) => n + 1);
     } catch (err) {
       setErrorEnvio("Hubo un problema de conexión. Probá de nuevo.");
     } finally {
@@ -292,6 +311,24 @@ export default function App() {
       <div className="fade-in">
         {tab === "cargar" && (
           <>
+            <ResumenCargasMes
+              docenteEmail={docente.email}
+              mes={mesLabel}
+              modoPrueba={modoPrueba}
+              refreshSignal={refreshSignal}
+              onDuplicar={(item) =>
+                setPresetExterno({
+                  cursoReal: item.cursoReal,
+                  edicion: item.edicion,
+                  modalidad: item.modalidad,
+                  alumno: item.alumno || "",
+                })
+              }
+              onRegistrarPrimera={() =>
+                document.getElementById("selector-curso-select")?.focus()
+              }
+            />
+
             {resultado === "ok" && confirmados.length > 0 && pendientes.length === 0 ? (
               <div className="border border-[var(--line)] bg-[var(--panel)] rounded-2xl p-5 text-center">
                 <p className="font-display text-xl text-[var(--teal-900)] mb-1">Carga confirmada</p>
@@ -328,6 +365,8 @@ export default function App() {
                   docenteEmail={docente.email}
                   modoPrueba={modoPrueba}
                   mes={mesLabel}
+                  presetExterno={presetExterno}
+                  onPresetConsumido={() => setPresetExterno(null)}
                 />
 
                 {pendientes.length > 0 && (
@@ -368,15 +407,35 @@ export default function App() {
         )}
 
         {tab === "factura" && (
-          <SubirFactura
-            docente={docente}
-            items={confirmados}
-            mes={mesLabel}
-            valores={valores}
-            total={totalConfirmado}
-            onFinalizar={() => setResultado("factura-ok")}
-            modoPrueba={modoPrueba}
-          />
+          <>
+            {ultimoConfirmado && (
+              <button
+                type="button"
+                onClick={() => {
+                  setPresetExterno({
+                    cursoReal: ultimoConfirmado.cursoReal,
+                    edicion: ultimoConfirmado.edicion,
+                    modalidad: ultimoConfirmado.modalidad,
+                    alumno: ultimoConfirmado.alumno || "",
+                  });
+                  setResultado(null);
+                  setTab("cargar");
+                }}
+                className="w-full border border-[var(--teal-500)] text-[var(--teal-700)] rounded-full px-4 py-2.5 text-sm font-medium mb-4"
+              >
+                Cargar otra clase similar a la última
+              </button>
+            )}
+            <SubirFactura
+              docente={docente}
+              items={confirmados}
+              mes={mesLabel}
+              valores={valores}
+              total={totalConfirmado}
+              onFinalizar={() => setResultado("factura-ok")}
+              modoPrueba={modoPrueba}
+            />
+          </>
         )}
       </div>
 

@@ -150,16 +150,47 @@ export async function getEdiciones() {
 
 // Busca el valor acordado para un docente + curso puntual (cursoReal, no el
 // cursoId compuesto de la UI). Devuelve el número, o null si no está cargado.
-export async function getValor(email, cursoReal) {
-  const filas = await leerRango(`${HOJA_VALORES}!A2:C`);
-  const encontrada = filas.find(
+//
+// modalidad ("clase" | "sesion"): la hoja "Valores" puede tener, opcionalmente,
+// una columna D con la modalidad, para los casos en que un mismo docente cobra
+// distinto por clases grupales que por sesiones individuales de un mismo curso
+// (ej. "ontologico"). Si hay una fila que coincide en email+curso+modalidad,
+// esa gana. Si no, se usa la fila general (sin modalidad especificada), que es
+// como estaban cargadas todas las filas hasta ahora — así no hace falta tocar
+// las filas existentes, solo agregar una fila nueva para el caso puntual que
+// necesite un valor distinto.
+export async function getValor(email, cursoReal, modalidad) {
+  const filas = await leerRango(`${HOJA_VALORES}!A2:D`);
+  const emailNorm = email.trim().toLowerCase();
+  const cursoNorm = (cursoReal || "").trim();
+  const modalidadNorm = (modalidad || "").trim().toLowerCase();
+
+  const aNumero = (valorCelda) => {
+    const n = Number(String(valorCelda).replace(/[^0-9.-]/g, ""));
+    return Number.isFinite(n) ? n : null;
+  };
+
+  if (modalidadNorm) {
+    const especifica = filas.find(
+      (f) =>
+        (f[0] || "").trim().toLowerCase() === emailNorm &&
+        (f[1] || "").trim() === cursoNorm &&
+        (f[3] || "").trim().toLowerCase() === modalidadNorm
+    );
+    if (especifica && especifica[2]) {
+      const valor = aNumero(especifica[2]);
+      if (valor !== null) return valor;
+    }
+  }
+
+  const general = filas.find(
     (f) =>
-      (f[0] || "").trim().toLowerCase() === email.trim().toLowerCase() &&
-      (f[1] || "").trim() === (cursoReal || "").trim()
+      (f[0] || "").trim().toLowerCase() === emailNorm &&
+      (f[1] || "").trim() === cursoNorm &&
+      !(f[3] || "").trim()
   );
-  if (!encontrada || !encontrada[2]) return null;
-  const valor = Number(String(encontrada[2]).replace(/[^0-9.-]/g, ""));
-  return Number.isFinite(valor) ? valor : null;
+  if (!general || !general[2]) return null;
+  return aNumero(general[2]);
 }
 
 // Registra una o más clases/sesiones cargadas por un docente en la hoja "Cargas".

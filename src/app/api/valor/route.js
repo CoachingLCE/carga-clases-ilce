@@ -12,6 +12,7 @@ export async function GET(request) {
 
     const email = searchParams.get("email");
     const curso = searchParams.get("curso");
+    const modalidad = searchParams.get("modalidad") || "";
     if (!email || !curso) {
       return NextResponse.json(
         { ok: false, error: "Faltan parámetros email o curso." },
@@ -19,7 +20,7 @@ export async function GET(request) {
       );
     }
 
-    const valor = await getValor(email, curso);
+    const valor = await getValor(email, curso, modalidad);
     return NextResponse.json({ ok: true, valor });
   } catch (err) {
     console.error(err);

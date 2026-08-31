@@ -15,6 +15,17 @@ function getTransporter() {
   });
 }
 
+// Si el detalle tiene alumno cargado en TODOS los ítems, es un curso de
+// sesiones individuales -> "Sesión". Si NINGUNO tiene alumno, es de clases
+// grupales -> "Clase". Si está mezclado (carga con cursos de los dos tipos
+// en un mismo mail), dejamos el genérico "Clase/Sesión".
+function etiquetaColumna(detalle) {
+  const conAlumno = detalle.filter((d) => (d.alumno || "").trim()).length;
+  if (conAlumno === detalle.length) return "Sesión";
+  if (conAlumno === 0) return "Clase";
+  return "Clase/Sesión";
+}
+
 /**
  * Mail de confirmación al cargar clases: va al docente, con copia a administración.
  *
@@ -62,7 +73,7 @@ export async function enviarMailConfirmacionCarga({
           <tr style="background:#f3f4f6; text-align:left;">
             <th style="padding:6px 10px;">Curso</th>
             <th style="padding:6px 10px;">Alumno</th>
-            <th style="padding:6px 10px;">Clase/Sesión</th>
+            <th style="padding:6px 10px;">${etiquetaColumna(detalle)}</th>
             <th style="padding:6px 10px;">Valor</th>
           </tr>
         </thead>
@@ -130,7 +141,7 @@ export async function enviarMailFacturaSubida({
           <tr style="background:#f3f4f6; text-align:left;">
             <th style="padding:6px 10px;">Curso</th>
             <th style="padding:6px 10px;">Alumno</th>
-            <th style="padding:6px 10px;">Clase/Sesión</th>
+            <th style="padding:6px 10px;">${etiquetaColumna(detalle)}</th>
             <th style="padding:6px 10px;">Valor</th>
           </tr>
         </thead>

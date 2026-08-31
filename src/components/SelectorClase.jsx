@@ -152,6 +152,7 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modo
         cursoReal: edicionSeleccionada.cursoReal,
         nombreCurso: edicionSeleccionada.nombreCurso,
         edicion: edicionSeleccionada?.edicion || "",
+        modalidad: edicionSeleccionada?.modalidad || "",
         claseOSesion: String(n),
         alumno: esSesion ? alumno.trim() : "",
       });
@@ -181,6 +182,7 @@ export default function SelectorClase({ ediciones, onAgregar, docenteEmail, modo
       cursoReal: edicionSeleccionada.cursoReal,
       nombreCurso: edicionSeleccionada.nombreCurso,
       edicion: edicionSeleccionada?.edicion || "",
+      modalidad: edicionSeleccionada?.modalidad || "",
       claseOSesion: selChips[0],
       alumno: alumno.trim(),
     });

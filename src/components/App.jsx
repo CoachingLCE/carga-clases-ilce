@@ -117,16 +117,21 @@ export default function App() {
 
   function agregarItem(item) {
     setPendientes((prev) => [...prev, item]);
-    if (item.cursoReal in valores) return;
+    const claveValor = `${item.cursoReal}::${item.modalidad || ""}`;
+    if (claveValor in valores) return;
     if (modoPrueba) {
-      setValores((prev) => ({ ...prev, [item.cursoReal]: DEMO_VALORES[item.cursoReal] || 0 }));
+      setValores((prev) => ({ ...prev, [claveValor]: DEMO_VALORES[item.cursoReal] || 0 }));
       return;
     }
     if (docente) {
-      fetch(`/api/valor?email=${encodeURIComponent(docente.email)}&curso=${item.cursoReal}`)
+      fetch(
+        `/api/valor?email=${encodeURIComponent(docente.email)}&curso=${item.cursoReal}&modalidad=${encodeURIComponent(
+          item.modalidad || ""
+        )}`
+      )
         .then((r) => r.json())
         .then((data) => {
-          if (data.ok) setValores((prev) => ({ ...prev, [item.cursoReal]: data.valor }));
+          if (data.ok) setValores((prev) => ({ ...prev, [claveValor]: data.valor }));
         })
         .catch(() => {});
     }
@@ -136,8 +141,12 @@ export default function App() {
     setPendientes((prev) => prev.filter((_, i) => i !== idx));
   }
 
-  const total = pendientes.reduce((acc, item) => acc + (valores[item.cursoReal] || 0), 0);
-  const totalConfirmado = confirmados.reduce((acc, item) => acc + (valores[item.cursoReal] || 0), 0);
+  const claveValorItem = (item) => `${item.cursoReal}::${item.modalidad || ""}`;
+  const total = pendientes.reduce((acc, item) => acc + (valores[claveValorItem(item)] || 0), 0);
+  const totalConfirmado = confirmados.reduce(
+    (acc, item) => acc + (valores[claveValorItem(item)] || 0),
+    0
+  );
 
   async function confirmarCarga() {
     if (pendientes.length === 0) return;
@@ -154,9 +163,10 @@ export default function App() {
             cursoReal: p.cursoReal,
             nombreCurso: p.nombreCurso,
             edicion: p.edicion,
+            modalidad: p.modalidad || "",
             claseOSesion: p.claseOSesion,
             alumno: p.alumno,
-            valor: valores[p.cursoReal] || 0,
+            valor: valores[claveValorItem(p)] || 0,
           })),
         }),
       });
@@ -330,7 +340,7 @@ export default function App() {
                         key={idx}
                         item={item}
                         nombreCurso={item.nombreCurso || item.cursoReal}
-                        valor={valores[item.cursoReal]}
+                        valor={valores[claveValorItem(item)]}
                         onQuitar={() => quitarItem(idx)}
                       />
                     ))}

@@ -8,7 +8,7 @@ function agruparParaFactura(items, valores) {
   items.forEach((item) => {
     const nombreCurso = item.nombreCurso || item.cursoReal;
     const clave = `${nombreCurso}||${item.edicion}`;
-    const valorUnitario = valores[item.cursoReal] || 0;
+    const valorUnitario = valores[`${item.cursoReal}::${item.modalidad || ""}`] || 0;
     if (!grupos[clave]) {
       grupos[clave] = { nombreCurso, edicion: item.edicion, cantidad: 0, valorUnitario };
     }

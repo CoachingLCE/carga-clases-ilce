@@ -84,17 +84,19 @@ export async function POST(request) {
       if (aceptados.length > 0) {
         const docente = await getDocentePorEmail(email);
 
-        // Buscamos el valor de cada curso involucrado (una sola vez por cursoReal).
-        const valoresPorCurso = {};
+        // Buscamos el valor de cada curso+modalidad involucrado (una sola vez
+        // por combinación, para no repetir consultas a la planilla).
+        const valoresPorClave = {};
         for (const item of aceptados) {
-          if (!(item.cursoReal in valoresPorCurso)) {
-            valoresPorCurso[item.cursoReal] = await getValor(email, item.cursoReal);
+          const clave = `${item.cursoReal}::${item.modalidad || ""}`;
+          if (!(clave in valoresPorClave)) {
+            valoresPorClave[clave] = await getValor(email, item.cursoReal, item.modalidad);
           }
         }
 
         const itemsConValor = aceptados.map((item) => ({
           ...item,
-          valor: valoresPorCurso[item.cursoReal] || 0,
+          valor: valoresPorClave[`${item.cursoReal}::${item.modalidad || ""}`] || 0,
         }));
 
         await registrarCargas(email, docente?.nombre || "", mesLabel, itemsConValor);

@@ -242,9 +242,9 @@ export default function ResumenCargasMes({
                   }`}
                   style={{ borderLeft: `3px solid ${colorDeCurso(item.cursoReal)}` }}
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-[var(--teal-900)] truncate">
+                  <div className="flex flex-wrap items-start justify-between gap-x-2 gap-y-1">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium text-[var(--teal-900)]">
                         {item.cursoNombre} — Edición {item.edicion}
                       </p>
                       {editando ? (

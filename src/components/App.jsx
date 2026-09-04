@@ -224,7 +224,7 @@ export default function App() {
   const { mesLabel } = getEstadoCierre();
 
   return (
-    <div className="max-w-md mx-auto px-6 py-8 pb-16">
+    <div className="max-w-md sm:max-w-xl mx-auto px-6 py-8 pb-16">
       {mostrarTutorial && <Tutorial onCerrar={cerrarTutorial} />}
       {mostrarRecorrido && <RecorridoGuiado onCerrar={() => setMostrarRecorrido(false)} />}
 

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CUIT_INSTITUTO, CONDICION_FISCAL } from "@/lib/config";
+import { StatsFinal, AccesosILCE } from "./ConfirmacionFinal";
 
 function agruparParaFactura(items, valores) {
   const grupos = {};
@@ -64,7 +65,16 @@ function GuiaFactura({ items, valores }) {
   );
 }
 
-export default function SubirFactura({ docente, items, mes, valores, total, onFinalizar, modoPrueba }) {
+export default function SubirFactura({
+  docente,
+  items,
+  mes,
+  valores,
+  total,
+  onFinalizar,
+  modoPrueba,
+  onVerMisCargas,
+}) {
   const [archivo, setArchivo] = useState(null);
   const [fechaFactura, setFechaFactura] = useState("");
   const [alias, setAlias] = useState("");
@@ -103,11 +113,19 @@ export default function SubirFactura({ docente, items, mes, valores, total, onFi
   if (enviada) {
     return (
       <div className="fade-in border border-[var(--line)] bg-[var(--panel)] rounded-2xl p-5 text-center">
-        <p className="font-display text-lg text-[var(--teal-900)] mb-1">Factura recibida</p>
-        <p className="text-sm text-[var(--ink)]/70">
+        <p className="font-display text-xl text-[var(--teal-900)] mb-1">
+          ¡Listo! Tu carga fue registrada correctamente.
+        </p>
+        <p className="text-sm text-[var(--ink)]/70 mb-1">
           Tu factura ya fue enviada a administracion@institutoilce.com. Además, vas a recibir en
           tu correo una copia de lo registrado.
         </p>
+        <div className="text-left mt-4">
+          <StatsFinal totalClases={items.length} total={total} estadoFactura="Facturada" />
+        </div>
+        <div className="text-left">
+          <AccesosILCE onVerMisCargas={onVerMisCargas} />
+        </div>
       </div>
     );
   }

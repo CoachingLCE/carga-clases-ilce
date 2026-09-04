@@ -6,6 +6,8 @@ import Tutorial from "./Tutorial";
 import RecorridoGuiado from "./RecorridoGuiado";
 import SelectorClase from "./SelectorClase";
 import ResumenCargasMes from "./ResumenCargasMes";
+import MiActividad from "./MiActividad";
+import { StatsFinal, AccesosILCE } from "./ConfirmacionFinal";
 import TicketClase from "./TicketClase";
 import SubirFactura from "./SubirFactura";
 import AdminPanel from "./AdminPanel";
@@ -285,6 +287,13 @@ export default function App() {
 
       <BannerCierre modoPrueba={modoPrueba} />
 
+      <MiActividad
+        docenteEmail={docente.email}
+        mes={mesLabel}
+        modoPrueba={modoPrueba}
+        refreshSignal={refreshSignal}
+      />
+
       <div
         data-tour="tabs"
         className="flex gap-1.5 mb-5 rounded-full p-1"
@@ -331,13 +340,16 @@ export default function App() {
 
             {resultado === "ok" && confirmados.length > 0 && pendientes.length === 0 ? (
               <div className="border border-[var(--line)] bg-[var(--panel)] rounded-2xl p-5 text-center">
-                <p className="font-display text-xl text-[var(--teal-900)] mb-1">Carga confirmada</p>
-                <p className="text-sm text-[var(--ink)]/70 mb-3">
-                  Total a facturar:{" "}
-                  <span className="font-mono font-semibold text-[var(--teal-700)]">
-                    ${totalConfirmado.toLocaleString("es-AR")}
-                  </span>
+                <p className="font-display text-xl text-[var(--teal-900)] mb-1">
+                  ¡Listo! Tu carga fue registrada correctamente.
                 </p>
+                <div className="text-left mt-4">
+                  <StatsFinal
+                    totalClases={confirmados.length}
+                    total={totalConfirmado}
+                    estadoFactura="Pendiente"
+                  />
+                </div>
                 {rechazadosInfo > 0 && (
                   <p className="text-[13px] text-[var(--clay-600)] mb-3">
                     {rechazadosInfo} ítem(s) no se pudieron cargar: ya estaban registrados por otro
@@ -356,6 +368,9 @@ export default function App() {
                 >
                   Agregar más clases
                 </button>
+                <div className="text-left">
+                  <AccesosILCE onVerMisCargas={() => setResultado(null)} />
+                </div>
               </div>
             ) : (
               <>
@@ -434,6 +449,10 @@ export default function App() {
               total={totalConfirmado}
               onFinalizar={() => setResultado("factura-ok")}
               modoPrueba={modoPrueba}
+              onVerMisCargas={() => {
+                setResultado(null);
+                setTab("cargar");
+              }}
             />
           </>
         )}

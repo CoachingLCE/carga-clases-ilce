@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CUIT_INSTITUTO, CONDICION_FISCAL } from "@/lib/config";
+import { CUIT_INSTITUTO, CONDICION_FISCAL, colorDeCurso } from "@/lib/config";
 import { StatsFinal, AccesosILCE } from "./ConfirmacionFinal";
 
 function agruparParaFactura(items, valores) {
@@ -11,7 +11,13 @@ function agruparParaFactura(items, valores) {
     const clave = `${nombreCurso}||${item.edicion}`;
     const valorUnitario = valores[`${item.cursoReal}::${item.modalidad || ""}`] || 0;
     if (!grupos[clave]) {
-      grupos[clave] = { nombreCurso, edicion: item.edicion, cantidad: 0, valorUnitario };
+      grupos[clave] = {
+        nombreCurso,
+        edicion: item.edicion,
+        cursoReal: item.cursoReal,
+        cantidad: 0,
+        valorUnitario,
+      };
     }
     grupos[clave].cantidad += 1;
   });
@@ -43,7 +49,11 @@ function GuiaFactura({ items, valores }) {
         </div>
       </div>
       {grupos.map((g, i) => (
-        <div key={i} className="border border-[var(--line)] rounded-lg px-3 py-2.5 mb-2">
+        <div
+          key={i}
+          className="border border-[var(--line)] rounded-lg px-3 py-2.5 mb-2"
+          style={{ borderLeft: `3px solid ${colorDeCurso(g.cursoReal)}` }}
+        >
           <p className="text-[11px] uppercase tracking-wide text-[var(--teal-500)] font-semibold mb-1.5">
             Línea {i + 1}
           </p>

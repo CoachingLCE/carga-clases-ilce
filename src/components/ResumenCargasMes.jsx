@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { colorDeCurso } from "@/lib/config";
 
 // Resumen + tabla de "Tu carga de este mes" (todo lo ya registrado en la
 // hoja "Cargas", no solo lo pendiente de confirmar en esta sesión).
@@ -239,6 +240,7 @@ export default function ResumenCargasMes({
                       ? "border-[var(--teal-500)] bg-[var(--teal-500)]/5"
                       : "border-[var(--line)]"
                   }`}
+                  style={{ borderLeft: `3px solid ${colorDeCurso(item.cursoReal)}` }}
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">

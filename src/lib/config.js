@@ -20,6 +20,22 @@ export const REGLAS_CUOTAS = {
 export const CUIT_INSTITUTO = "23-34230780-9";
 export const CONDICION_FISCAL = "Consumidor final";
 
+// Colores leves para diferenciar cursos de un vistazo en las listas (tickets,
+// resumen, guía de factura). No busca "pintar" la app, solo un puntito de color.
+export const COLOR_POR_CURSO = {
+  ontologico: "#7c3aed", // violeta
+  educativo: "#ea580c", // naranja
+  deportivo: "#0891b2", // celeste
+  vocacional: "#16a34a", // verde
+  oratoria: "#db2777", // rosa
+  equipos: "#2563eb", // azul
+};
+export const COLOR_CURSO_DEFAULT = "#6b7280"; // gris, para cursos sin color asignado
+
+export function colorDeCurso(cursoReal) {
+  return COLOR_POR_CURSO[cursoReal] || COLOR_CURSO_DEFAULT;
+}
+
 // Datos de ejemplo para el modo prueba: así el demo funciona solo, sin leer
 // ni escribir nada en la planilla real de Google Sheets.
 export const DEMO_EDICIONES = [

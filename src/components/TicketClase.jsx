@@ -1,8 +1,13 @@
 "use client";
 
+import { colorDeCurso } from "@/lib/config";
+
 export default function TicketClase({ item, nombreCurso, valor, onQuitar }) {
   return (
-    <div className="border border-[var(--line)] bg-[var(--panel)] rounded-lg px-5 py-3 flex items-center justify-between mb-2">
+    <div
+      className="border border-[var(--line)] bg-[var(--panel)] rounded-lg px-5 py-3 flex items-center justify-between mb-2"
+      style={{ borderLeft: `3px solid ${colorDeCurso(item.cursoReal)}` }}
+    >
       <div>
         <p className="text-sm font-medium text-[var(--teal-900)]">
           {nombreCurso} {item.edicion ? `— ${item.edicion}` : ""}

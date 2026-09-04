@@ -178,6 +178,23 @@ export default function SelectorClase({
     seleccionarCurso(match.cursoId, item.alumno, unicaSesion, true);
   }
 
+  // Para una sesión que no aparece en el resumen (ej. un alumno que todavía
+  // no está en la planilla externa de asignaciones): entra directo al modo
+  // manual, sin tener que buscar la opción en el desplegable de curso.
+  // Nota: si hubiera más de una edición de sesiones de Ontológico abierta a
+  // la vez, esto toma la primera — caso poco común hoy.
+  function handleCargarSesionManual() {
+    const match = ediciones.find((e) => e.cursoReal === "ontologico" && e.modalidad === "sesion");
+    if (!match) {
+      setErrorResumen(
+        "No hay ninguna edición de sesiones individuales de Ontológico abierta este mes."
+      );
+      return;
+    }
+    setErrorResumen("");
+    seleccionarCurso(match.cursoId, "", null, true);
+  }
+
   // Sesiones pre-asignadas (para Ontológico modo sesión), leídas de la planilla externa.
   useEffect(() => {
     if (!esSesion || !docenteEmail) {
@@ -321,6 +338,9 @@ export default function SelectorClase({
 
   const mostrarPreAsignadas = esSesion && !modoManual;
   const mostrarChips = !esSesion || modoManual;
+  const hayEdicionSesionAbierta = ediciones.some(
+    (e) => e.cursoReal === "ontologico" && e.modalidad === "sesion"
+  );
 
   return (
     <div className="border border-[var(--line)] bg-[var(--panel)] rounded-2xl p-5 mb-5">
@@ -362,6 +382,31 @@ export default function SelectorClase({
               {errorResumen}
             </p>
           )}
+          {hayEdicionSesionAbierta && (
+            <button
+              type="button"
+              onClick={handleCargarSesionManual}
+              className="text-xs text-[var(--teal-700)] underline mt-2.5"
+            >
+              ¿Diste una sesión que no aparece acá? Cargarla a mano
+            </button>
+          )}
+        </div>
+      )}
+      {resumenPendientes.length === 0 && hayEdicionSesionAbierta && !modoManual && (
+        <div className="mb-4">
+          <button
+            type="button"
+            onClick={handleCargarSesionManual}
+            className="text-xs text-[var(--teal-700)] underline"
+          >
+            ¿Diste una sesión individual de Ontológico? Cargarla a mano
+          </button>
+          {errorResumen && (
+            <p className="text-xs text-[var(--red-700,#b91c1c)] bg-[var(--red-50,#fef2f2)] rounded-lg px-2.5 py-2 mt-2">
+              {errorResumen}
+            </p>
+          )}
         </div>
       )}
       {cargandoResumen && resumenPendientes.length === 0 && (
@@ -379,11 +424,13 @@ export default function SelectorClase({
         className="w-full border border-[var(--line)] rounded-lg px-3 py-2.5 text-sm mb-3.5 outline-none bg-white focus:border-[var(--teal-500)]"
       >
         <option value="">Elegí un curso...</option>
-        {ediciones.map((e) => (
-          <option key={e.cursoId} value={e.cursoId}>
-            {e.nombreCurso} {e.edicion ? `— Edición ${e.edicion}` : ""}
-          </option>
-        ))}
+        {ediciones
+          .filter((e) => e.modalidad !== "sesion" || e.cursoId === cursoId)
+          .map((e) => (
+            <option key={e.cursoId} value={e.cursoId}>
+              {e.nombreCurso} {e.edicion ? `— Edición ${e.edicion}` : ""}
+            </option>
+          ))}
       </select>
 
       {cursoId && (

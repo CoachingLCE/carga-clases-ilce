@@ -15,6 +15,17 @@
   --clay-300: #dde2e6;
   --clay-100: rgba(220, 216, 204, 0.4);
   --line: #dde2e6;
+
+  /* Paleta oscura, usada solo en la pantalla de login (EmailGate) */
+  --login-bg: #0b0e1a;
+  --login-surface2: #181d35;
+  --login-border: #262c4a;
+  --login-text: #eef0f8;
+  --login-textSec: #9aa1c2;
+  --login-textMuted: #6b7299;
+  --login-accentPurple: #7c3aed;
+  --login-accentMagenta: #c026d3;
+  --login-accentTeal: #22d3ee;
 }
 
 * {

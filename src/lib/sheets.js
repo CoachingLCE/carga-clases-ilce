@@ -88,17 +88,36 @@ export async function getReferenciaCursos() {
     }));
 }
 
+// Devuelve el conjunto de cursos (cursoReal) para los que un docente tiene
+// algún valor cargado en la hoja "Valores" — se usa para no mostrarle en el
+// desplegable cursos que no dicta.
+async function getCursosAsignados(email) {
+  const filas = await leerRango(`${HOJA_VALORES}!A2:B`);
+  const emailNorm = email.trim().toLowerCase();
+  const set = new Set();
+  filas.forEach((f) => {
+    if ((f[0] || "").trim().toLowerCase() === emailNorm && f[1]) {
+      set.add((f[1] || "").trim());
+    }
+  });
+  return set;
+}
+
 // Devuelve la lista de ediciones/cursos disponibles para elegir, combinando
 // "Referencia cursos" (nombres) + "Ediciones" (cuáles están Abiertas) + las
 // reglas fijas de modalidad y rango.
+// Si se pasa `email`, se filtra para mostrar solo los cursos que ese docente
+// tiene asignados en la hoja "Valores" (si no tiene ninguno cargado ahí,
+// se muestran todos, para no dejarlo sin opciones por una planilla incompleta).
 // Cada item tiene:
 //   cursoId    -> clave única para la UI: "curso::modalidad::edicion"
 //   cursoReal  -> el id real del curso (el que se guarda en Valores/Cargas)
 //   nombreCurso, edicion, modalidad ("clase"|"sesion"), topeSesiones
-export async function getEdiciones() {
-  const [referencia, filasEdiciones] = await Promise.all([
+export async function getEdiciones(email) {
+  const [referencia, filasEdiciones, cursosAsignados] = await Promise.all([
     getReferenciaCursos(),
     leerRango(`${HOJA_EDICIONES}!A2:C`),
+    email ? getCursosAsignados(email) : null,
   ]);
 
   const nombrePorCurso = {};
@@ -109,7 +128,13 @@ export async function getEdiciones() {
   const abiertas = filasEdiciones
     .filter((f) => (f[2] || "").trim().toLowerCase() === "abierta")
     .map((f) => ({ curso: (f[0] || "").trim(), edicion: (f[1] || "").trim() }))
-    .filter((e) => e.curso && e.edicion);
+    .filter((e) => e.curso && e.edicion)
+    .filter((e) => {
+      // Si el docente no tiene NINGÚN curso cargado en Valores, no lo filtramos
+      // (mejor mostrarle todo que dejarlo sin opciones por una planilla incompleta).
+      if (!cursosAsignados || cursosAsignados.size === 0) return true;
+      return cursosAsignados.has(e.curso);
+    });
 
   const resultado = [];
   for (const { curso, edicion } of abiertas) {

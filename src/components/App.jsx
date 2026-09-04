@@ -106,7 +106,7 @@ export default function App() {
       return;
     }
 
-    fetch("/api/valor?soloEdiciones=1")
+    fetch(`/api/valor?soloEdiciones=1&email=${encodeURIComponent(docente.email)}`)
       .then((r) => r.json())
       .then((data) => {
         if (data.ok) setEdiciones(data.ediciones);

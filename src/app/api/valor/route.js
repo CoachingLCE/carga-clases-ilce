@@ -6,7 +6,8 @@ export async function GET(request) {
 
   try {
     if (searchParams.has("soloEdiciones")) {
-      const ediciones = await getEdiciones();
+      const email = searchParams.get("email") || "";
+      const ediciones = await getEdiciones(email);
       return NextResponse.json({ ok: true, ediciones });
     }
 

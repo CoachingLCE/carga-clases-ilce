@@ -70,9 +70,9 @@ export default function EmailGate({ onIngreso }) {
         }}
       >
         <img
-          src="/logo.png"
+          src="/logo-ilce-blanco.png"
           alt="Instituto ILCE"
-          className="w-14 h-14 rounded-full mx-auto mb-4 object-cover"
+          className="h-12 w-auto mx-auto mb-5"
         />
 
         <p

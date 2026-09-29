@@ -104,3 +104,11 @@ select {
 .fade-in {
   animation: fadeIn 0.25s ease-out;
 }
+
+
+/* Badge de version: parpadea cuando hay novedades no vistas. */
+.version-badge-novedad { animation: version-badge-parpadeo 1.7s ease-in-out infinite; }
+@keyframes version-badge-parpadeo {
+  0%, 100% { opacity: .45; box-shadow: 0 0 0 0 rgba(34,211,238,0); }
+  50% { opacity: 1; box-shadow: 0 0 12px 3px rgba(34,211,238,.65); border-color: #22d3ee; }
+}

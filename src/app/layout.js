@@ -1,4 +1,5 @@
 import "./globals.css";
+import VersionBadge from "../components/VersionBadge";
 
 export const metadata = {
   title: "Carga de clases - ILCE",
@@ -16,7 +17,7 @@ export default function RootLayout({ children }) {
           rel="stylesheet"
         />
       </head>
-      <body>{children}</body>
+      <body>{children}<VersionBadge /></body>
     </html>
   );
 }

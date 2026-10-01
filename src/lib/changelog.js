@@ -1,5 +1,12 @@
 export const CHANGELOG = [
   {
+    version: '1.2.4',
+    fecha: '2026-10-01',
+    cambios: [
+      'Los íconos de redes sociales de la barra ahora son los logos reales con sus colores de marca (Instagram, Facebook, WhatsApp, LinkedIn), en vez de emoji genéricos.'
+    ]
+  },
+  {
     version: '1.2.3',
     fecha: '2026-10-01',
     cambios: [

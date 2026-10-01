@@ -1,12 +1,13 @@
 "use client";
 
 import { LINKS_RAPIDOS } from "@/lib/config";
+import { IconoInstagram, IconoFacebook, IconoWhatsapp, IconoLinkedin } from "./IconosRedes";
 
 const REDES = [
-  { clave: "instagram", icono: "📷", label: "Instagram" },
-  { clave: "facebook", icono: "📘", label: "Facebook" },
-  { clave: "whatsapp", icono: "💬", label: "WhatsApp" },
-  { clave: "linkedin", icono: "💼", label: "LinkedIn" },
+  { clave: "instagram", Icono: IconoInstagram, label: "Instagram" },
+  { clave: "facebook", Icono: IconoFacebook, label: "Facebook" },
+  { clave: "whatsapp", Icono: IconoWhatsapp, label: "WhatsApp" },
+  { clave: "linkedin", Icono: IconoLinkedin, label: "LinkedIn" },
 ];
 
 // Chip con el mismo lenguaje visual que el Nav de ILCE Gestión (seguimiento-lead-estudiante):
@@ -84,9 +85,9 @@ export default function BarraSuperior({
                   target="_blank"
                   rel="noreferrer"
                   title={r.label}
-                  className="w-7 h-7 rounded-full border border-[var(--line)] flex items-center justify-center text-sm text-[var(--ink)]/60 hover:border-[var(--teal-500)] hover:text-[var(--teal-700)] transition-colors"
+                  className="w-7 h-7 rounded-full flex items-center justify-center hover:opacity-80 transition-opacity overflow-hidden"
                 >
-                  {r.icono}
+                  <r.Icono size={22} />
                 </a>
               ))}
             </div>

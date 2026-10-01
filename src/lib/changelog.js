@@ -1,5 +1,13 @@
 export const CHANGELOG = [
   {
+    version: '1.3.3',
+    fecha: '2026-10-01',
+    cambios: [
+      'Arreglado el modo oscuro y automático, que no funcionaban (quedó mal anidado el CSS al agregarlo).',
+      'En el login, el email ahora aparece oculto por defecto, con un ícono de ojito para mostrarlo.'
+    ]
+  },
+  {
     version: '1.3.2',
     fecha: '2026-10-01',
     cambios: [

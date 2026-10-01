@@ -14,6 +14,7 @@ export default function EmailGate({ onIngreso }) {
   const [email, setEmail] = useState("");
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState("");
+  const [mostrarEmail, setMostrarEmail] = useState(false);
 
   useEffect(() => {
     const ultimoEmail = localStorage.getItem("ilce_ultimo_email");
@@ -103,19 +104,31 @@ export default function EmailGate({ onIngreso }) {
           >
             Email
           </label>
-          <input
-            type="email"
-            required
-            placeholder="nombre@correo.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg px-3 py-2.5 text-sm mb-3.5 outline-none"
-            style={{
-              background: "var(--login-bg)",
-              border: "1px solid var(--login-border)",
-              color: "var(--login-text)",
-            }}
-          />
+          <div className="relative mb-3.5">
+            <input
+              type={mostrarEmail ? "text" : "password"}
+              required
+              placeholder="nombre@correo.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="off"
+              className="w-full rounded-lg pl-3 pr-10 py-2.5 text-sm outline-none"
+              style={{
+                background: "var(--login-bg)",
+                border: "1px solid var(--login-border)",
+                color: "var(--login-text)",
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setMostrarEmail((v) => !v)}
+              title={mostrarEmail ? "Ocultar email" : "Mostrar email"}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-sm"
+              style={{ color: "var(--login-textMuted)" }}
+            >
+              {mostrarEmail ? "🙈" : "👁️"}
+            </button>
+          </div>
 
           {error && (
             <p

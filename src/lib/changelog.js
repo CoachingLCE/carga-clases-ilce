@@ -1,5 +1,12 @@
 export const CHANGELOG = [
   {
+    version: '1.3.0',
+    fecha: '2026-10-01',
+    cambios: [
+      'Nuevo selector de modo claro/oscuro/automático (☀️🌙🕒) en la barra superior — igual que en el resto de las apps de ILCE. "Automático" cambia solo según la hora (claro de 7 a 19hs).'
+    ]
+  },
+  {
     version: '1.2.5',
     fecha: '2026-10-01',
     cambios: [

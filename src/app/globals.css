@@ -16,6 +16,21 @@
   --clay-100: rgba(220, 216, 204, 0.4);
   --line: #dde2e6;
 
+[data-theme="dark"] {
+  --ink: #e8ecf3;
+  --paper: #0f1420;
+  --panel: #171d2e;
+  --teal-900: #e8ecf3;
+  --teal-700: #4fd1e0;
+  --teal-500: #22b8cc;
+  --amber-600: #c770e8;
+  --amber-100: rgba(199, 112, 232, 0.14);
+  --clay-600: #f08a84;
+  --clay-300: rgba(255, 255, 255, 0.14);
+  --clay-100: rgba(255, 255, 255, 0.08);
+  --line: rgba(255, 255, 255, 0.12);
+}
+
   /* Paleta oscura, usada solo en la pantalla de login (EmailGate) */
   --login-bg: #0b0e1a;
   --login-surface2: #181d35;

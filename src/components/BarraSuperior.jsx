@@ -2,6 +2,7 @@
 
 import { LINKS_RAPIDOS } from "@/lib/config";
 import { IconoInstagram, IconoFacebook, IconoWhatsapp, IconoLinkedin } from "./IconosRedes";
+import ThemeSelector from "./ThemeSelector";
 
 const REDES = [
   { clave: "instagram", Icono: IconoInstagram, label: "Instagram" },
@@ -76,22 +77,21 @@ export default function BarraSuperior({
             <Chip onClick={onAyuda}>Ayuda</Chip>
           </nav>
 
-          {redesConLink.length > 0 && (
-            <div className="flex items-center gap-1.5 pl-2 border-l border-[var(--line)] shrink-0">
-              {redesConLink.map((r) => (
-                <a
-                  key={r.clave}
-                  href={LINKS_RAPIDOS[r.clave]}
-                  target="_blank"
-                  rel="noreferrer"
-                  title={r.label}
-                  className="w-7 h-7 rounded-full flex items-center justify-center hover:opacity-80 transition-opacity overflow-hidden"
-                >
-                  <r.Icono size={22} />
-                </a>
-              ))}
-            </div>
-          )}
+          <div className="flex items-center gap-1.5 pl-2 border-l border-[var(--line)] shrink-0">
+            <ThemeSelector />
+            {redesConLink.map((r) => (
+              <a
+                key={r.clave}
+                href={LINKS_RAPIDOS[r.clave]}
+                target="_blank"
+                rel="noreferrer"
+                title={r.label}
+                className="w-7 h-7 rounded-full flex items-center justify-center hover:opacity-80 transition-opacity overflow-hidden"
+              >
+                <r.Icono size={22} />
+              </a>
+            ))}
+          </div>
         </div>
       </div>
     </div>

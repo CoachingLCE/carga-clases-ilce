@@ -1,5 +1,6 @@
 import "./globals.css";
 import VersionBadge from "../components/VersionBadge";
+import { ThemeProvider } from "../lib/ThemeContext";
 
 export const metadata = {
   title: "Carga de clases - ILCE",
@@ -17,7 +18,12 @@ export default function RootLayout({ children }) {
           rel="stylesheet"
         />
       </head>
-      <body>{children}<VersionBadge /></body>
+      <body>
+        <ThemeProvider>
+          {children}
+          <VersionBadge />
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

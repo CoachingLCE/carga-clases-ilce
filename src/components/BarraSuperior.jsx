@@ -53,7 +53,7 @@ export default function BarraSuperior({
       className="sticky top-0 z-40 border-b border-[var(--line)]"
       style={{ background: "var(--panel)" }}
     >
-      <div className="max-w-3xl mx-auto px-4 sm:px-6">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <div className="flex items-center gap-2 flex-wrap py-2.5">
           <img
             src="/logo.png"

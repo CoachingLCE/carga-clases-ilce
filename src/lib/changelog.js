@@ -1,5 +1,12 @@
 export const CHANGELOG = [
   {
+    version: '1.3.2',
+    fecha: '2026-10-01',
+    cambios: [
+      'La barra de navegación se ensanchó más, para que todos los ítems entren en una sola línea en pantallas de escritorio normales.'
+    ]
+  },
+  {
     version: '1.3.1',
     fecha: '2026-10-01',
     cambios: [

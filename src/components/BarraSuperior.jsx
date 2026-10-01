@@ -44,7 +44,6 @@ export default function BarraSuperior({
   onMiActividad,
   onHistorial,
   onTutorial,
-  onRecorrido,
   onAyuda,
 }) {
   const redesConLink = REDES.filter((r) => LINKS_RAPIDOS[r.clave]);
@@ -73,7 +72,6 @@ export default function BarraSuperior({
             <Chip onClick={onMiActividad}>Mi actividad</Chip>
             <Chip onClick={onHistorial}>Historial</Chip>
             <Chip onClick={onTutorial}>Tutorial</Chip>
-            <Chip onClick={onRecorrido}>Recorrido</Chip>
             <Chip onClick={onAyuda}>Ayuda</Chip>
           </nav>
 

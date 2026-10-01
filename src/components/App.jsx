@@ -236,7 +236,6 @@ export default function App() {
         }
         onHistorial={() => setMostrarHistorial(true)}
         onTutorial={() => setMostrarTutorial(true)}
-        onRecorrido={() => setMostrarRecorrido(true)}
         onAyuda={() => setMostrarAyuda(true)}
       />
 

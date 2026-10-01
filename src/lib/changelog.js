@@ -1,5 +1,12 @@
 export const CHANGELOG = [
   {
+    version: '1.3.1',
+    fecha: '2026-10-01',
+    cambios: [
+      'Se sacó "Recorrido" de la barra de navegación — ya está disponible dentro de "Ayuda".'
+    ]
+  },
+  {
     version: '1.3.0',
     fecha: '2026-10-01',
     cambios: [

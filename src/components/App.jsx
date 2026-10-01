@@ -229,6 +229,28 @@ export default function App() {
   const { mesLabel } = getEstadoCierre();
 
   return (
+    <>
+      <BarraSuperior
+        onMiActividad={() =>
+          refActividad.current?.scrollIntoView({ behavior: "smooth", block: "center" })
+        }
+        onHistorial={() => setMostrarHistorial(true)}
+        onTutorial={() => setMostrarTutorial(true)}
+        onRecorrido={() => setMostrarRecorrido(true)}
+        onAyuda={() => setMostrarAyuda(true)}
+      />
+
+      {mostrarHistorial && (
+        <Historial docenteEmail={docente.email} onCerrar={() => setMostrarHistorial(false)} />
+      )}
+      {mostrarAyuda && (
+        <CentroAyuda
+          onCerrar={() => setMostrarAyuda(false)}
+          onTutorial={() => setMostrarTutorial(true)}
+          onRecorrido={() => setMostrarRecorrido(true)}
+        />
+      )}
+
     <div className="max-w-md sm:max-w-xl mx-auto px-6 py-8 pb-16">
       {mostrarTutorial && <Tutorial onCerrar={cerrarTutorial} />}
       {mostrarRecorrido && <RecorridoGuiado onCerrar={() => setMostrarRecorrido(false)} />}
@@ -276,27 +298,6 @@ export default function App() {
           </div>
         </div>
       </div>
-
-      <BarraSuperior
-        onMiActividad={() =>
-          refActividad.current?.scrollIntoView({ behavior: "smooth", block: "center" })
-        }
-        onHistorial={() => setMostrarHistorial(true)}
-        onTutorial={() => setMostrarTutorial(true)}
-        onRecorrido={() => setMostrarRecorrido(true)}
-        onAyuda={() => setMostrarAyuda(true)}
-      />
-
-      {mostrarHistorial && (
-        <Historial docenteEmail={docente.email} onCerrar={() => setMostrarHistorial(false)} />
-      )}
-      {mostrarAyuda && (
-        <CentroAyuda
-          onCerrar={() => setMostrarAyuda(false)}
-          onTutorial={() => setMostrarTutorial(true)}
-          onRecorrido={() => setMostrarRecorrido(true)}
-        />
-      )}
 
       <BannerCierre modoPrueba={modoPrueba} />
 
@@ -486,5 +487,6 @@ export default function App() {
         v{APP_VERSION}
       </div>
     </div>
+    </>
   );
 }

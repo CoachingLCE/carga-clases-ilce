@@ -15,8 +15,8 @@ function Chip({ onClick, href, children, destacado }) {
   const base =
     "h-8 flex items-center px-3.5 rounded-full text-[13px] font-medium whitespace-nowrap transition-colors";
   const clases = destacado
-    ? `${base} text-white`
-    : `${base} text-[var(--ink)]/60 hover:text-[var(--teal-900)] hover:bg-[var(--clay-100)]`;
+    ? `${base} text-white shrink-0`
+    : `${base} text-[var(--ink)]/60 hover:text-[var(--teal-900)] hover:bg-[var(--clay-100)] shrink-0`;
   const estiloDestacado = destacado
     ? { background: "linear-gradient(90deg, var(--teal-700), var(--amber-600))" }
     : undefined;
@@ -35,8 +35,9 @@ function Chip({ onClick, href, children, destacado }) {
   );
 }
 
-// Reemplaza los botones de texto sueltos ("Ver tutorial", "Ver recorrido", etc.) por una
-// barra de navegación con el mismo lenguaje visual que el resto de las apps de ILCE.
+// Barra fija arriba de todo, de ancho completo — igual que el Nav de las demás apps de ILCE
+// (seguimiento-lead-estudiante): logo a la izquierda, chips de navegación, redes a la derecha.
+// El contenido interno respeta el mismo ancho máximo que el resto de la pantalla.
 export default function BarraSuperior({
   onMiActividad,
   onHistorial,
@@ -47,36 +48,51 @@ export default function BarraSuperior({
   const redesConLink = REDES.filter((r) => LINKS_RAPIDOS[r.clave]);
 
   return (
-    <div className="border-b border-[var(--line)] pb-3 mb-4">
-      <nav className="flex items-center gap-1.5 flex-wrap">
-        {LINKS_RAPIDOS.campus && (
-          <Chip href={LINKS_RAPIDOS.campus} destacado>
-            🎓 Ir al Campus
-          </Chip>
-        )}
-        <Chip onClick={onMiActividad}>Mi actividad</Chip>
-        <Chip onClick={onHistorial}>Historial</Chip>
-        <Chip onClick={onTutorial}>Tutorial</Chip>
-        <Chip onClick={onRecorrido}>Recorrido guiado</Chip>
-        <Chip onClick={onAyuda}>Ayuda</Chip>
+    <div
+      className="sticky top-0 z-40 border-b border-[var(--line)]"
+      style={{ background: "var(--panel)" }}
+    >
+      <div className="max-w-md sm:max-w-xl mx-auto px-6">
+        <div className="flex items-center gap-2 h-14">
+          <img
+            src="/logo.png"
+            alt="Instituto ILCE"
+            className="w-7 h-7 rounded-full object-cover flex-shrink-0"
+          />
+          <p className="font-display text-[15px] text-[var(--teal-900)] shrink-0 mr-1">
+            ILCE
+          </p>
+          <nav className="flex items-center gap-1.5 overflow-x-auto flex-1 min-w-0">
+            {LINKS_RAPIDOS.campus && (
+              <Chip href={LINKS_RAPIDOS.campus} destacado>
+                🎓 Campus
+              </Chip>
+            )}
+            <Chip onClick={onMiActividad}>Mi actividad</Chip>
+            <Chip onClick={onHistorial}>Historial</Chip>
+            <Chip onClick={onTutorial}>Tutorial</Chip>
+            <Chip onClick={onRecorrido}>Recorrido</Chip>
+            <Chip onClick={onAyuda}>Ayuda</Chip>
+          </nav>
 
-        {redesConLink.length > 0 && (
-          <div className="flex items-center gap-1.5 ml-auto pl-2 border-l border-[var(--line)]">
-            {redesConLink.map((r) => (
-              <a
-                key={r.clave}
-                href={LINKS_RAPIDOS[r.clave]}
-                target="_blank"
-                rel="noreferrer"
-                title={r.label}
-                className="w-8 h-8 rounded-full border border-[var(--line)] flex items-center justify-center text-sm text-[var(--ink)]/60 hover:border-[var(--teal-500)] hover:text-[var(--teal-700)] transition-colors"
-              >
-                {r.icono}
-              </a>
-            ))}
-          </div>
-        )}
-      </nav>
+          {redesConLink.length > 0 && (
+            <div className="flex items-center gap-1.5 pl-2 border-l border-[var(--line)] shrink-0">
+              {redesConLink.map((r) => (
+                <a
+                  key={r.clave}
+                  href={LINKS_RAPIDOS[r.clave]}
+                  target="_blank"
+                  rel="noreferrer"
+                  title={r.label}
+                  className="w-7 h-7 rounded-full border border-[var(--line)] flex items-center justify-center text-sm text-[var(--ink)]/60 hover:border-[var(--teal-500)] hover:text-[var(--teal-700)] transition-colors"
+                >
+                  {r.icono}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

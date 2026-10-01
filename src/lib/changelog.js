@@ -1,5 +1,12 @@
 export const CHANGELOG = [
   {
+    version: '1.2.2',
+    fecha: '2026-10-01',
+    cambios: [
+      'La barra de navegación ahora queda fija arriba de todo (sticky) y ocupa todo el ancho de la pantalla, con el logo de ILCE — igual que en el resto de las apps de ILCE.'
+    ]
+  },
+  {
     version: '1.2.1',
     fecha: '2026-10-01',
     cambios: [

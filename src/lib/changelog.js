@@ -1,5 +1,13 @@
 export const CHANGELOG = [
   {
+    version: '1.2.1',
+    fecha: '2026-10-01',
+    cambios: [
+      'Barra de navegación: ahora usa chips con el mismo lenguaje visual que el resto de las apps de ILCE (pastillas redondeadas, "Ir al Campus" destacado) en vez de texto subrayado.',
+      'Se agregaron los links reales de Instagram, Facebook, WhatsApp y LinkedIn de ILCE.'
+    ]
+  },
+  {
     version: '1.2.0',
     fecha: '2026-10-01',
     cambios: [

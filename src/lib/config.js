@@ -12,10 +12,10 @@ export const LINKS_RAPIDOS = {
   campus: "https://campus.institutoilce.com",
   blog: "https://coachingeducativolider.com/blog",
   comunidad: "https://app.slack.com/client/T065ZV5C7FF",
-  instagram: "",
-  facebook: "",
-  whatsapp: "",
-  linkedin: "",
+  instagram: "https://www.instagram.com/institutoilce",
+  facebook: "https://www.facebook.com/institutoilce/",
+  whatsapp: "https://www.whatsapp.com/channel/0029VaBfdccGOj9tAv5s1A0G",
+  linkedin: "https://www.linkedin.com/school/institutoilce/",
 };
 
 // Cantidad de sesiones que se muestran para elegir en cursos tipo "sesion"

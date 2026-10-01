@@ -1,5 +1,12 @@
 export const CHANGELOG = [
   {
+    version: '1.2.3',
+    fecha: '2026-10-01',
+    cambios: [
+      'Nuevo botón flotante "❓ Necesito ayuda" abajo a la derecha (igual que en las demás apps de ILCE) — abre el Centro de ayuda.'
+    ]
+  },
+  {
     version: '1.2.2',
     fecha: '2026-10-01',
     cambios: [

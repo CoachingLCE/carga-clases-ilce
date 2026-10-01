@@ -483,6 +483,15 @@ export default function App() {
         </a>
       </p>
 
+      <button
+        type="button"
+        onClick={() => setMostrarAyuda(true)}
+        className="fixed bottom-14 right-4 z-40 text-white text-sm font-semibold px-4 py-2.5 rounded-full shadow-lg flex items-center gap-1.5 hover:opacity-90 transition-opacity"
+        style={{ background: "linear-gradient(90deg, var(--teal-700), var(--amber-600))" }}
+      >
+        ❓ Necesito ayuda
+      </button>
+
       <div className="fixed bottom-2.5 right-3.5 text-[11px] text-[var(--ink)]/35 font-mono z-10">
         v{APP_VERSION}
       </div>

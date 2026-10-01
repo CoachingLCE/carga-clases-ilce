@@ -1,5 +1,12 @@
 export const CHANGELOG = [
   {
+    version: '1.2.5',
+    fecha: '2026-10-01',
+    cambios: [
+      'La barra de navegación ahora es más ancha y los ítems pasan a una segunda línea si hace falta, en vez de quedar con scroll horizontal.'
+    ]
+  },
+  {
     version: '1.2.4',
     fecha: '2026-10-01',
     cambios: [

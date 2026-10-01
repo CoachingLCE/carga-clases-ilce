@@ -53,8 +53,8 @@ export default function BarraSuperior({
       className="sticky top-0 z-40 border-b border-[var(--line)]"
       style={{ background: "var(--panel)" }}
     >
-      <div className="max-w-md sm:max-w-xl mx-auto px-6">
-        <div className="flex items-center gap-2 h-14">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6">
+        <div className="flex items-center gap-2 flex-wrap py-2.5">
           <img
             src="/logo.png"
             alt="Instituto ILCE"
@@ -63,7 +63,7 @@ export default function BarraSuperior({
           <p className="font-display text-[15px] text-[var(--teal-900)] shrink-0 mr-1">
             ILCE
           </p>
-          <nav className="flex items-center gap-1.5 overflow-x-auto flex-1 min-w-0">
+          <nav className="flex items-center gap-1.5 flex-wrap flex-1 min-w-0">
             {LINKS_RAPIDOS.campus && (
               <Chip href={LINKS_RAPIDOS.campus} destacado>
                 🎓 Campus

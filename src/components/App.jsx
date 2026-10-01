@@ -1,20 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import EmailGate from "./EmailGate";
 import Tutorial from "./Tutorial";
 import RecorridoGuiado from "./RecorridoGuiado";
 import SelectorClase from "./SelectorClase";
 import ResumenCargasMes from "./ResumenCargasMes";
 import MiActividad from "./MiActividad";
+import BarraSuperior from "./BarraSuperior";
+import Historial from "./Historial";
+import CentroAyuda from "./CentroAyuda";
 import { StatsFinal, AccesosILCE } from "./ConfirmacionFinal";
 import TicketClase from "./TicketClase";
 import SubirFactura from "./SubirFactura";
 import AdminPanel from "./AdminPanel";
 import { getEstadoCierre } from "@/lib/mes";
 import { DEMO_EDICIONES, DEMO_VALORES } from "@/lib/config";
-
-const APP_VERSION = "v22";
+import { APP_VERSION } from "@/lib/version";
 
 function BannerCierre({ modoPrueba }) {
   if (modoPrueba) {
@@ -80,6 +82,9 @@ export default function App() {
   const [docente, setDocente] = useState(null);
   const [mostrarTutorial, setMostrarTutorial] = useState(false);
   const [mostrarRecorrido, setMostrarRecorrido] = useState(false);
+  const [mostrarHistorial, setMostrarHistorial] = useState(false);
+  const [mostrarAyuda, setMostrarAyuda] = useState(false);
+  const refActividad = useRef(null);
   const [tab, setTab] = useState("cargar"); // cargar | factura
   const [ediciones, setEdiciones] = useState([]);
   const [pendientes, setPendientes] = useState([]);
@@ -254,7 +259,7 @@ export default function App() {
         </div>
       )}
 
-      <div className="flex items-start justify-between mb-4">
+      <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2.5">
           <img
             src="/logo.png"
@@ -270,29 +275,39 @@ export default function App() {
             </h1>
           </div>
         </div>
-        <button
-          onClick={() => setMostrarRecorrido(true)}
-          className="text-[11px] text-[var(--teal-700)] underline mt-1.5 whitespace-nowrap"
-        >
-          Ver recorrido
-        </button>
       </div>
 
-      <button
-        onClick={() => setMostrarTutorial(true)}
-        className="text-xs text-[var(--amber-600)] underline mb-3.5 block"
-      >
-        Ver tutorial
-      </button>
+      <BarraSuperior
+        onMiActividad={() =>
+          refActividad.current?.scrollIntoView({ behavior: "smooth", block: "center" })
+        }
+        onHistorial={() => setMostrarHistorial(true)}
+        onTutorial={() => setMostrarTutorial(true)}
+        onRecorrido={() => setMostrarRecorrido(true)}
+        onAyuda={() => setMostrarAyuda(true)}
+      />
+
+      {mostrarHistorial && (
+        <Historial docenteEmail={docente.email} onCerrar={() => setMostrarHistorial(false)} />
+      )}
+      {mostrarAyuda && (
+        <CentroAyuda
+          onCerrar={() => setMostrarAyuda(false)}
+          onTutorial={() => setMostrarTutorial(true)}
+          onRecorrido={() => setMostrarRecorrido(true)}
+        />
+      )}
 
       <BannerCierre modoPrueba={modoPrueba} />
 
-      <MiActividad
-        docenteEmail={docente.email}
-        mes={mesLabel}
-        modoPrueba={modoPrueba}
-        refreshSignal={refreshSignal}
-      />
+      <div ref={refActividad}>
+        <MiActividad
+          docenteEmail={docente.email}
+          mes={mesLabel}
+          modoPrueba={modoPrueba}
+          refreshSignal={refreshSignal}
+        />
+      </div>
 
       <div
         data-tour="tabs"
@@ -468,7 +483,7 @@ export default function App() {
       </p>
 
       <div className="fixed bottom-2.5 right-3.5 text-[11px] text-[var(--ink)]/35 font-mono z-10">
-        {APP_VERSION}
+        v{APP_VERSION}
       </div>
     </div>
   );

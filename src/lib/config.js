@@ -4,6 +4,20 @@ export const DIA_CIERRE_MENSUAL = 10;
 
 export const MAIL_ADMINISTRACION = "administracion@institutoilce.com";
 
+// Links de accesos rápidos (barra superior / tarjeta "Seguinos"). Campus, Blog y Comunidad ya
+// estaban confirmados en el código existente. Instagram/Facebook/WhatsApp/LinkedIn quedan en ""
+// a propósito — completar acá con los reales antes de que se vean los íconos (si quedan vacíos,
+// el ícono no se muestra, para no linkear a algo equivocado).
+export const LINKS_RAPIDOS = {
+  campus: "https://campus.institutoilce.com",
+  blog: "https://coachingeducativolider.com/blog",
+  comunidad: "https://app.slack.com/client/T065ZV5C7FF",
+  instagram: "",
+  facebook: "",
+  whatsapp: "",
+  linkedin: "",
+};
+
 // Cantidad de sesiones que se muestran para elegir en cursos tipo "sesion"
 // cuando todavía no hay un tope definido por edición.
 export const SESIONES_DEFAULT = 20;

@@ -1,5 +1,15 @@
 export const CHANGELOG = [
   {
+    version: '1.2.0',
+    fecha: '2026-10-01',
+    cambios: [
+      'Nueva barra de navegación arriba (Mi actividad | Historial | Tutorial | Recorrido guiado | Campus | Ayuda), con los íconos de redes sociales a la derecha — reemplaza los botones sueltos de antes.',
+      'Nueva sección "Historial de envíos": todas tus cargas organizadas por mes, colapsadas (el mes más reciente arranca abierto), con cantidad, total y el detalle de cada clase/sesión al desplegar.',
+      '"Mi actividad" ahora muestra 4 indicadores (clases cargadas, cursos distintos, facturación estimada, última carga) en vez de solo 2.',
+      'Nuevo "Centro de ayuda" con accesos directos a Tutorial, Recorrido guiado y contacto con soporte.'
+    ]
+  },
+  {
     version: '1.1.0',
     fecha: '2026-10-01',
     cambios: [

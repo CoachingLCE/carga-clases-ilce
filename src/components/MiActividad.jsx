@@ -28,22 +28,48 @@ export default function MiActividad({ docenteEmail, mes, modoPrueba, refreshSign
 
   const totalClases = cargas.length;
   const total = cargas.reduce((acc, c) => acc + (c.valor || 0), 0);
+  const cursosDistintos = new Set(cargas.map((c) => c.cursoReal)).size;
+  const ultima = cargas[0]; // ya vienen ordenadas más reciente primero
+  const ultimaHaceTexto = (() => {
+    if (!ultima?.timestamp) return "—";
+    const ms = Date.now() - new Date(ultima.timestamp).getTime();
+    const dias = Math.floor(ms / 86400000);
+    if (dias <= 0) return "Hoy";
+    if (dias === 1) return "Hace 1 día";
+    return `Hace ${dias} días`;
+  })();
 
   return (
-    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border border-[var(--line)] bg-[var(--panel)] rounded-xl px-4 py-2.5 mb-4">
-      <p className="text-[11px] uppercase tracking-wide text-[var(--teal-500)] font-semibold shrink-0">
+    <div className="border border-[var(--line)] bg-[var(--panel)] rounded-xl px-4 py-3 mb-4">
+      <p className="text-[11px] uppercase tracking-wide text-[var(--teal-500)] font-semibold mb-2.5">
         Mi actividad
       </p>
-      <span className="text-sm text-[var(--ink)]/70">
-        <strong className="text-[var(--teal-900)] font-mono">{cargando ? "…" : totalClases}</strong>{" "}
-        cargada{totalClases === 1 ? "" : "s"} este mes
-      </span>
-      <span className="text-sm text-[var(--ink)]/70">
-        Total:{" "}
-        <strong className="text-[var(--teal-700)] font-mono">
-          ${total.toLocaleString("es-AR")}
-        </strong>
-      </span>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        <div className="text-center">
+          <p className="text-lg font-mono font-semibold text-[var(--teal-900)]">
+            {cargando ? "…" : totalClases}
+          </p>
+          <p className="text-[10.5px] text-[var(--ink)]/55 leading-tight">Clases cargadas</p>
+        </div>
+        <div className="text-center">
+          <p className="text-lg font-mono font-semibold text-[var(--teal-900)]">
+            {cargando ? "…" : cursosDistintos}
+          </p>
+          <p className="text-[10.5px] text-[var(--ink)]/55 leading-tight">Cursos distintos</p>
+        </div>
+        <div className="text-center">
+          <p className="text-[15px] font-mono font-semibold text-[var(--teal-700)]">
+            ${total.toLocaleString("es-AR")}
+          </p>
+          <p className="text-[10.5px] text-[var(--ink)]/55 leading-tight">Facturación estimada</p>
+        </div>
+        <div className="text-center">
+          <p className="text-[13px] font-mono font-semibold text-[var(--teal-900)]">
+            {cargando ? "…" : ultimaHaceTexto}
+          </p>
+          <p className="text-[10.5px] text-[var(--ink)]/55 leading-tight">Última carga</p>
+        </div>
+      </div>
     </div>
   );
 }

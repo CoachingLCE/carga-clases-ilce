@@ -263,6 +263,52 @@ export async function getClasesTomadas(cursoReal, edicion, alumno) {
     .filter(Boolean);
 }
 
+// Igual que getCargasDeDocente, pero sin filtrar por mes — trae TODA la historia
+// del docente, para la sección "Historial" (agrupada por mes en el front).
+export async function getHistorialDeDocente(email) {
+  const [filas, referencia] = await Promise.all([
+    leerRango(`${HOJA_CARGAS}!A2:M`),
+    getReferenciaCursos(),
+  ]);
+
+  const nombrePorCurso = {};
+  referencia.forEach((r) => {
+    nombrePorCurso[r.cursoId] = r.nombreCurso;
+  });
+
+  const emailNorm = email.trim().toLowerCase();
+
+  return filas
+    .map((f, idx) => ({ f, fila: idx + 2 }))
+    .filter(({ f }) => {
+      const estado = (f[9] || "").trim().toLowerCase();
+      if (estado === "eliminada") return false;
+      return (f[1] || "").trim().toLowerCase() === emailNorm;
+    })
+    .map(({ f, fila }) => {
+      const cursoReal = (f[3] || "").trim();
+      const alumno = (f[6] || "").trim();
+      const modalidad = (f[12] || "").trim() || (alumno ? "sesion" : "clase");
+      const nombreBase = nombrePorCurso[cursoReal] || cursoReal;
+      return {
+        fila,
+        timestamp: f[0] || "",
+        email: f[1] || "",
+        nombreDocente: f[2] || "",
+        cursoReal,
+        cursoNombre: modalidad === "sesion" ? `${nombreBase} (sesiones individuales)` : nombreBase,
+        edicion: (f[4] || "").trim(),
+        claseOSesion: (f[5] || "").trim(),
+        alumno,
+        mes: f[7] || "",
+        valor: Number(f[8]) || 0,
+        estadoFacturado: f[9] || "Pendiente",
+        modalidad,
+      };
+    })
+    .sort((a, b) => (a.timestamp < b.timestamp ? 1 : -1)); // más reciente primero
+}
+
 // Devuelve todas las cargas de un docente en un mes puntual, para el resumen
 // y la tabla "Tu carga de este mes". Incluye el número de fila real de la
 // hoja (para poder editar/eliminar esa fila puntual después).

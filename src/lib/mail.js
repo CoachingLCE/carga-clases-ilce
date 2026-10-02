@@ -49,9 +49,18 @@ function palabras(tipo) {
 function formacionLimpia(cursoNombre) {
   return (cursoNombre || "").replace(/\s*\(sesiones individuales\)\s*/i, "").trim();
 }
-function formacionConEdicion(d) {
-  const nombre = formacionLimpia(d.cursoNombre);
-  return d.edicion ? `${nombre} — Ed. ${d.edicion}` : nombre;
+// Orden de lectura natural: primero por edición (más baja primero), y adentro de cada edición
+// por número de clase/sesión — así nunca aparece una clase "2" después de una "6" de la misma
+// edición solo porque llegó antes en la planilla.
+function ordenarDetalle(detalle) {
+  return [...detalle].sort((a, b) => {
+    const edA = parseInt(a.edicion, 10) || 0;
+    const edB = parseInt(b.edicion, 10) || 0;
+    if (edA !== edB) return edA - edB;
+    const clA = parseInt(a.claseOSesion, 10) || 0;
+    const clB = parseInt(b.claseOSesion, 10) || 0;
+    return clA - clB;
+  });
 }
 
 function formatearFechaHora(fecha) {
@@ -66,7 +75,8 @@ function formatearFechaHora(fecha) {
 function filaTabla(d, esSesion) {
   return `
     <tr>
-      <td style="padding:10px 12px;border-bottom:1px solid ${COLOR.borde};font-size:13px;color:${COLOR.azul};font-family:${FUENTE};">${formacionConEdicion(d)}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid ${COLOR.borde};font-size:13px;color:${COLOR.azul};font-family:${FUENTE};">${formacionLimpia(d.cursoNombre)}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid ${COLOR.borde};font-size:13px;color:${COLOR.azul};font-family:${FUENTE};text-align:center;white-space:nowrap;">${d.edicion || "—"}</td>
       <td style="padding:10px 12px;border-bottom:1px solid ${COLOR.borde};font-size:13px;color:${COLOR.azul};font-family:${FUENTE};">${d.alumno || "—"}</td>
       <td style="padding:10px 12px;border-bottom:1px solid ${COLOR.borde};font-size:13px;color:${COLOR.azul};font-family:${FUENTE};text-align:center;">${d.claseOSesion}</td>
       <td style="padding:10px 12px;border-bottom:1px solid ${COLOR.borde};font-size:13px;color:${COLOR.azul};font-family:${FUENTE};text-align:right;white-space:nowrap;">$${(d.valor || 0).toLocaleString("es-AR")}</td>
@@ -79,13 +89,14 @@ function tablaCompleta(detalle, esSesion) {
     <table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:100%;margin:14px 0;">
       <thead>
         <tr>
-          <th style="padding:9px 12px;background:${COLOR.bgExterior};border-bottom:2px solid ${COLOR.borde};text-align:left;font-size:12px;color:${COLOR.textoSecundario};font-family:${FUENTE};text-transform:uppercase;letter-spacing:0.03em;">Formación / Edición</th>
+          <th style="padding:9px 12px;background:${COLOR.bgExterior};border-bottom:2px solid ${COLOR.borde};text-align:left;font-size:12px;color:${COLOR.textoSecundario};font-family:${FUENTE};text-transform:uppercase;letter-spacing:0.03em;">Formación</th>
+          <th style="padding:9px 12px;background:${COLOR.bgExterior};border-bottom:2px solid ${COLOR.borde};text-align:center;font-size:12px;color:${COLOR.textoSecundario};font-family:${FUENTE};text-transform:uppercase;letter-spacing:0.03em;">Edición</th>
           <th style="padding:9px 12px;background:${COLOR.bgExterior};border-bottom:2px solid ${COLOR.borde};text-align:left;font-size:12px;color:${COLOR.textoSecundario};font-family:${FUENTE};text-transform:uppercase;letter-spacing:0.03em;">Alumno</th>
           <th style="padding:9px 12px;background:${COLOR.bgExterior};border-bottom:2px solid ${COLOR.borde};text-align:center;font-size:12px;color:${COLOR.textoSecundario};font-family:${FUENTE};text-transform:uppercase;letter-spacing:0.03em;">${encabezadoSesionClase}</th>
           <th style="padding:9px 12px;background:${COLOR.bgExterior};border-bottom:2px solid ${COLOR.borde};text-align:right;font-size:12px;color:${COLOR.textoSecundario};font-family:${FUENTE};text-transform:uppercase;letter-spacing:0.03em;">Valor</th>
         </tr>
       </thead>
-      <tbody>${detalle.map((d) => filaTabla(d, esSesion)).join("")}</tbody>
+      <tbody>${ordenarDetalle(detalle).map((d) => filaTabla(d, esSesion)).join("")}</tbody>
     </table>`;
 }
 

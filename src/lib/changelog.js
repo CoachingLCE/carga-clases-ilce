@@ -1,5 +1,13 @@
 export const CHANGELOG = [
   {
+    version: '1.4.3',
+    fecha: '2026-10-01',
+    cambios: [
+      'Mail de carga confirmada: "Formación" y "Edición" ahora son dos columnas separadas en la tabla (antes iban juntas en una).',
+      'Las filas del mail ahora se ordenan primero por Edición y después por Clase/Sesión, para que se lean en orden natural.'
+    ]
+  },
+  {
     version: '1.4.2',
     fecha: '2026-10-01',
     cambios: [

@@ -1,5 +1,12 @@
 export const CHANGELOG = [
   {
+    version: '1.4.1',
+    fecha: '2026-10-01',
+    cambios: [
+      'Centro de ayuda rediseñado con el mismo tono de bienvenida que seguimiento-lead-estudiante ("Te mostramos cómo funciona...") y "Comenzar recorrido" como botón principal destacado.'
+    ]
+  },
+  {
     version: '1.4.0',
     fecha: '2026-10-01',
     cambios: [

@@ -26,7 +26,7 @@ const PASOS = [
 export default function Tutorial({ onCerrar }) {
   return (
     <div className="fixed inset-0 bg-[var(--ink)]/50 flex items-end sm:items-center justify-center z-50 p-3 fade-in">
-      <div className="relative w-full max-w-sm bg-white rounded-[20px] border border-[var(--line)] max-h-[90vh] overflow-y-auto shadow-2xl">
+      <div className="relative w-full max-w-sm bg-[var(--panel)] rounded-[20px] border border-[var(--line)] max-h-[90vh] overflow-y-auto shadow-2xl">
         <button
           type="button"
           onClick={onCerrar}

@@ -91,7 +91,7 @@ export default function RecorridoGuiado({ onCerrar }) {
         <div className="absolute inset-0 bg-black/60" style={{ pointerEvents: "none" }} />
       )}
 
-      <div className="absolute bg-white rounded-2xl p-5 max-w-xs shadow-xl" style={tarjetaStyle}>
+      <div className="absolute bg-[var(--panel)] rounded-2xl p-5 max-w-xs shadow-xl" style={tarjetaStyle}>
         <p className="text-xs font-medium text-[var(--amber-600)] mb-1">
           Paso {paso + 1} de {PASOS.length}
         </p>

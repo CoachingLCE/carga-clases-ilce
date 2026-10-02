@@ -33,7 +33,7 @@ function BannerCierre({ modoPrueba }) {
 
   if (cerrado) {
     return (
-      <div className="rounded-xl bg-[#fdecec] border border-[#f0b8b8] px-4 py-3 mb-4">
+      <div className="rounded-xl bg-[var(--clay-600)]/10 border border-[var(--clay-600)]/30 px-4 py-3 mb-4">
         <p className="text-sm text-[var(--clay-600)] font-medium">
           No hay ninguna carga abierta ahora. Se habilita de nuevo el último día de {mesLabel}
           {diasParaAbrir ? ` (en ${diasParaAbrir} día${diasParaAbrir === 1 ? "" : "s"})` : ""}.
@@ -317,7 +317,7 @@ export default function App() {
         <button
           onClick={() => setTab("cargar")}
           className={`flex-1 rounded-full py-2 text-sm font-medium transition-colors ${
-            tab === "cargar" ? "bg-white text-[var(--teal-900)] shadow-sm" : "text-[var(--ink)]/60"
+            tab === "cargar" ? "bg-[var(--panel)] text-[var(--teal-900)] shadow-sm" : "text-[var(--ink)]/60"
           }`}
         >
           Cargar clases
@@ -325,7 +325,7 @@ export default function App() {
         <button
           onClick={() => setTab("factura")}
           className={`flex-1 rounded-full py-2 text-sm font-medium transition-colors ${
-            tab === "factura" ? "bg-white text-[var(--teal-900)] shadow-sm" : "text-[var(--ink)]/60"
+            tab === "factura" ? "bg-[var(--panel)] text-[var(--teal-900)] shadow-sm" : "text-[var(--ink)]/60"
           }`}
         >
           Subir factura

@@ -75,7 +75,7 @@ export default function AdminPanel({ email }) {
         <div className="border border-[var(--line)] bg-[var(--panel)] rounded-2xl overflow-hidden">
           <table className="w-full text-[13px]">
             <thead>
-              <tr className="bg-[#eef0f1] text-left">
+              <tr className="bg-[var(--clay-100)] text-left">
                 <th className="px-3.5 py-2.5 font-semibold text-[var(--ink)]/70">Docente</th>
                 <th className="px-3.5 py-2.5 font-semibold text-[var(--ink)]/70">Mes</th>
                 <th className="px-3.5 py-2.5 font-semibold text-[var(--ink)]/70">Cantidad</th>

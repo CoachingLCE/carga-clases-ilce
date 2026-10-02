@@ -348,7 +348,7 @@ export default function SelectorClase({
         Agregar clase o sesión
       </h3>
       {resumenPendientes.length > 0 && (
-        <div className="border border-[var(--teal-500)]/40 bg-white rounded-xl p-3.5 mb-4">
+        <div className="border border-[var(--teal-500)]/40 bg-[var(--panel)] rounded-xl p-3.5 mb-4">
           <p className="text-[11px] uppercase tracking-wide text-[var(--teal-700)] font-semibold mb-2">
             Tus sesiones pendientes este mes
           </p>
@@ -421,7 +421,7 @@ export default function SelectorClase({
         data-tour="selector-curso"
         value={cursoId}
         onChange={(e) => seleccionarCurso(e.target.value)}
-        className="w-full border border-[var(--line)] rounded-lg px-3 py-2.5 text-sm mb-3.5 outline-none bg-white focus:border-[var(--teal-500)]"
+        className="w-full border border-[var(--line)] rounded-lg px-3 py-2.5 text-sm mb-3.5 outline-none bg-[var(--panel)] focus:border-[var(--teal-500)]"
       >
         <option value="">Elegí un curso...</option>
         {ediciones
@@ -564,7 +564,7 @@ export default function SelectorClase({
                           className={`font-mono text-sm rounded-lg px-3 py-1.5 border transition-colors ${
                             selChips.includes(String(n))
                               ? "bg-[var(--teal-700)] border-[var(--teal-700)] text-white"
-                              : "bg-white border-[var(--line)] text-[var(--ink)] hover:border-[var(--teal-500)]"
+                              : "bg-[var(--panel)] border-[var(--line)] text-[var(--ink)] hover:border-[var(--teal-500)]"
                           }`}
                         >
                           {n}

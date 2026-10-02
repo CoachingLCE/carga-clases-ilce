@@ -1,5 +1,12 @@
 export const CHANGELOG = [
   {
+    version: '1.4.2',
+    fecha: '2026-10-01',
+    cambios: [
+      'Arreglados varios fondos que quedaban fijos en blanco/gris claro y no se leían bien en modo oscuro: Historial, pestañas de Cargar/Factura, Tutorial, Recorrido guiado, los inputs y tarjetas de Agregar clase, el aviso de "carga cerrada", y la tabla del panel de administración.'
+    ]
+  },
+  {
     version: '1.4.1',
     fecha: '2026-10-01',
     cambios: [

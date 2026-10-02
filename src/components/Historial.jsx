@@ -134,7 +134,7 @@ export default function Historial({ docenteEmail, onCerrar }) {
 
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-start justify-center overflow-y-auto px-4 py-8">
-      <div className="bg-white rounded-2xl w-full max-w-lg p-6 relative">
+      <div className="bg-[var(--panel)] rounded-2xl w-full max-w-lg p-6 relative">
         <button
           onClick={onCerrar}
           className="absolute top-4 right-4 text-[var(--ink)]/40 text-lg leading-none"

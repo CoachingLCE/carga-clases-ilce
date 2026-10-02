@@ -420,6 +420,7 @@ export async function enviarMailFacturaSubida({
   await transporter.sendMail({
     from: `Instituto ILCE <${process.env.GMAIL_USER}>`,
     to: MAIL_ADMINISTRACION,
+    cc: emailDocente,
     subject: asunto,
     html: construirHtml({ variante: "admin" }),
     attachments,

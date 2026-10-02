@@ -1,5 +1,12 @@
 export const CHANGELOG = [
   {
+    version: '1.5.1',
+    fecha: '2026-10-02',
+    cambios: [
+      'El mail de "Factura recibida" para Administración ahora lleva a la docente en copia (CC).'
+    ]
+  },
+  {
     version: '1.5.0',
     fecha: '2026-10-02',
     cambios: [

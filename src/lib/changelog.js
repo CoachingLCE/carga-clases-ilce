@@ -1,5 +1,12 @@
 export const CHANGELOG = [
   {
+    version: '1.4.0',
+    fecha: '2026-10-01',
+    cambios: [
+      'La barra usa ahora el logo oficial completo de Instituto ILCE (el mismo que en seguimiento-lead-estudiante), que se adapta solo al modo claro/oscuro — antes era el isotipo circular + la palabra "ILCE" suelta.'
+    ]
+  },
+  {
     version: '1.3.3',
     fecha: '2026-10-01',
     cambios: [

@@ -56,13 +56,15 @@ export default function BarraSuperior({
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <div className="flex items-center gap-2 flex-wrap py-2.5">
           <img
-            src="/logo.png"
+            src="/logo-ilce-color.png"
             alt="Instituto ILCE"
-            className="w-7 h-7 rounded-full object-cover flex-shrink-0"
+            className="h-6 w-auto shrink-0 mr-1 block dark:hidden"
           />
-          <p className="font-display text-[15px] text-[var(--teal-900)] shrink-0 mr-1">
-            ILCE
-          </p>
+          <img
+            src="/logo-ilce-blanco.png"
+            alt="Instituto ILCE"
+            className="h-6 w-auto shrink-0 mr-1 hidden dark:block"
+          />
           <nav className="flex items-center gap-1.5 flex-wrap flex-1 min-w-0">
             {LINKS_RAPIDOS.campus && (
               <Chip href={LINKS_RAPIDOS.campus} destacado>

@@ -1,5 +1,13 @@
 export const CHANGELOG = [
   {
+    version: '1.5.0',
+    fecha: '2026-10-02',
+    cambios: [
+      'Rediseño completo del mail "Factura recibida y registrada": separa sesiones individuales de clases/formaciones en tablas distintas (nunca mezcladas, nunca vacías), saludo personalizado, estado "✓ Factura recibida" discreto, total destacado al final, sección de documento adjunto, firma institucional y footer.',
+      'Ahora se mandan 2 variantes del mail: la de la docente (sin datos administrativos) y la de Administración (con el alias informado) — antes era un único mail con copia a los dos.'
+    ]
+  },
+  {
     version: '1.4.3',
     fecha: '2026-10-01',
     cambios: [

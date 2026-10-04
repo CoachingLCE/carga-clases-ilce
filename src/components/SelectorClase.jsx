@@ -348,8 +348,8 @@ export default function SelectorClase({
         Agregar clase o sesión
       </h3>
       {resumenPendientes.length > 0 && (
-        <div className="border border-[var(--teal-500)]/40 bg-[var(--panel)] rounded-xl p-3.5 mb-4">
-          <p className="text-[11px] uppercase tracking-wide text-[var(--teal-700)] font-semibold mb-2">
+        <div className="border border-teal500/40 bg-[var(--panel)] rounded-xl p-3.5 mb-4">
+          <p className="text-[12.5px] uppercase tracking-wide text-[var(--teal-700)] font-semibold mb-2">
             Tus sesiones pendientes este mes
           </p>
           <div className="space-y-1.5">
@@ -360,7 +360,7 @@ export default function SelectorClase({
               >
                 <div>
                   <p className="text-sm font-medium text-[var(--teal-900)]">{item.alumno}</p>
-                  <p className="text-xs text-[var(--ink)]/55">
+                  <p className="text-xs text-muted">
                     Ontológico · Edición {item.edicion} ·{" "}
                     {item.sesiones.length > 1
                       ? `${item.sesiones.length} sesiones`
@@ -410,10 +410,10 @@ export default function SelectorClase({
         </div>
       )}
       {cargandoResumen && resumenPendientes.length === 0 && (
-        <p className="text-xs text-[var(--ink)]/50 mb-3">Buscando tus sesiones pendientes...</p>
+        <p className="text-xs text-muted mb-3">Buscando tus sesiones pendientes...</p>
       )}
 
-      <label className="block text-[11px] uppercase tracking-wide text-[var(--ink)]/55 mb-1.5">
+      <label className="block text-[12.5px] uppercase tracking-wide text-muted mb-1.5">
         Curso
       </label>
       <select
@@ -437,14 +437,14 @@ export default function SelectorClase({
         <>
           {mostrarPreAsignadas && (
             <div className="mb-4" data-tour="selector-clase">
-              <label className="block text-[11px] uppercase tracking-wide text-[var(--ink)]/55 mb-1.5">
+              <label className="block text-[12.5px] uppercase tracking-wide text-muted mb-1.5">
                 Tus sesiones asignadas
               </label>
               {cargandoAsignaciones && (
-                <p className="text-xs text-[var(--ink)]/50">Buscando tus sesiones asignadas...</p>
+                <p className="text-xs text-muted">Buscando tus sesiones asignadas...</p>
               )}
               {!cargandoAsignaciones && asignaciones.length === 0 && (
-                <p className="text-xs text-[var(--ink)]/50 mb-2">
+                <p className="text-xs text-muted mb-2">
                   No encontramos sesiones pre-asignadas para vos. Podés cargarla manualmente.
                 </p>
               )}
@@ -457,7 +457,7 @@ export default function SelectorClase({
                     >
                       <div>
                         <p className="text-sm font-medium text-[var(--teal-900)]">{a.alumno}</p>
-                        <p className="text-xs text-[var(--ink)]/55">
+                        <p className="text-xs text-muted">
                           {a.edicion ? `Edición ${a.edicion} · ` : ""}
                           {a.sesiones.length} sesión(es) pendiente(s)
                         </p>
@@ -495,7 +495,7 @@ export default function SelectorClase({
               {asignacionElegida && (
                 <button
                   onClick={handleAgregarAsignacion}
-                  className="w-full mt-3 bg-[var(--amber-600)] text-white rounded-full px-4 py-2 text-sm font-medium"
+                  className="w-full mt-3 bg-primary hover:bg-primaryHover text-white rounded-full px-4 py-2 text-sm font-medium"
                 >
                   Agregar sesión {selChips[0]} de {alumno} a mi carga
                 </button>
@@ -507,7 +507,7 @@ export default function SelectorClase({
             <>
               {esSesion && (
                 <>
-                  <label className="block text-[11px] uppercase tracking-wide text-[var(--ink)]/55 mb-1.5">
+                  <label className="block text-[12.5px] uppercase tracking-wide text-muted mb-1.5">
                     ¿De qué alumno es la sesión?
                   </label>
                   <input
@@ -531,7 +531,7 @@ export default function SelectorClase({
               {(!esSesion || alumno.trim()) && (
                 <div data-tour="selector-clase">
                   <div className="mb-3.5">
-                    <div className="flex justify-between text-[11px] text-[var(--ink)]/65 mb-1">
+                    <div className="flex justify-between text-[12.5px] text-muted mb-1">
                       <span>
                         {cargandasLabel(cargadasCount, totalRango)}
                       </span>
@@ -545,11 +545,11 @@ export default function SelectorClase({
                     </div>
                   </div>
 
-                  <label className="block text-[11px] uppercase tracking-wide text-[var(--ink)]/55 mb-1.5">
+                  <label className="block text-[12.5px] uppercase tracking-wide text-muted mb-1.5">
                     {esSesion ? "¿Qué sesiones diste?" : "¿Qué clases diste?"}
                   </label>
                   {cargandoTomadas ? (
-                    <p className="text-xs text-[var(--ink)]/50">Buscando disponibilidad...</p>
+                    <p className="text-xs text-muted">Buscando disponibilidad...</p>
                   ) : disponibles.length === 0 ? (
                     <p className="text-sm text-[var(--clay-600)]">
                       Ya no quedan {esSesion ? "sesiones" : "clases"} por cargar acá.
@@ -563,7 +563,7 @@ export default function SelectorClase({
                           onClick={() => toggleChip(String(n))}
                           className={`font-mono text-sm rounded-lg px-3 py-1.5 border transition-colors ${
                             selChips.includes(String(n))
-                              ? "bg-[var(--teal-700)] border-[var(--teal-700)] text-white"
+                              ? "bg-primary border-primary text-white"
                               : "bg-[var(--panel)] border-[var(--line)] text-[var(--ink)] hover:border-[var(--teal-500)]"
                           }`}
                         >
@@ -579,7 +579,7 @@ export default function SelectorClase({
                 <button
                   data-tour="boton-agregar"
                   onClick={handleAgregarChips}
-                  className="w-full mt-3.5 bg-[var(--amber-600)] text-white rounded-full px-4 py-2.5 text-sm font-medium"
+                  className="w-full mt-3.5 bg-primary hover:bg-primaryHover text-white rounded-full px-4 py-2.5 text-sm font-medium"
                 >
                   Agregar {selChips.length} {esSesion ? "sesión(es)" : "clase(s)"} a mi carga
                 </button>

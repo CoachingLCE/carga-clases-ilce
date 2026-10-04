@@ -1,5 +1,19 @@
 export const CHANGELOG = [
   {
+    version: '1.6.0',
+    fecha: '2026-10-04',
+    cambios: [
+      'Arreglado: el texto secundario (etiquetas, datos de apoyo, subtítulos) se veía igual de fuerte que el principal y se perdía la jerarquía. Ahora se ve atenuado y con buen contraste.',
+      'Arreglado: en celular la barra superior se apilaba y ocupaba casi un cuarto de la pantalla. Ahora es una sola fila con un menú desplegable.',
+      'Modo oscuro: los botones de acción y el botón de ayuda ahora se leen bien (antes el texto blanco sobre celeste y rosa pastel casi no se veía), y los campos de texto ya no quedan en blanco.',
+      'Un solo color para las acciones principales (el magenta de la marca). El botón "Necesito ayuda" pasa a ser neutro para no competir con la acción principal.',
+      'Los paneles (Ayuda, Historial, Tutorial, Recorrido, Novedades) ahora se cierran con la tecla Esc; Ayuda e Historial también haciendo clic afuera.',
+      'Se sacó el texto de versión duplicado que se superponía al badge de novedades.',
+      'El resumen del mes ahora cuenta los cursos igual que "Mi actividad" (antes mostraba 4 donde "Mi actividad" mostraba 3, por contar por separado las sesiones individuales).',
+      'Foco visible al navegar con teclado y textos chicos un poco más grandes.'
+    ]
+  },
+  {
     version: '1.5.1',
     fecha: '2026-10-02',
     cambios: [

@@ -41,7 +41,7 @@ export default function MiActividad({ docenteEmail, mes, modoPrueba, refreshSign
 
   return (
     <div className="border border-[var(--line)] bg-[var(--panel)] rounded-xl px-4 py-3 mb-4">
-      <p className="text-[11px] uppercase tracking-wide text-[var(--teal-500)] font-semibold mb-2.5">
+      <p className="text-[12.5px] uppercase tracking-wide text-[var(--teal-500)] font-semibold mb-2.5">
         Mi actividad
       </p>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -49,25 +49,25 @@ export default function MiActividad({ docenteEmail, mes, modoPrueba, refreshSign
           <p className="text-lg font-mono font-semibold text-[var(--teal-900)]">
             {cargando ? "…" : totalClases}
           </p>
-          <p className="text-[10.5px] text-[var(--ink)]/55 leading-tight">Clases cargadas</p>
+          <p className="text-[12.5px] text-muted leading-tight">Clases cargadas</p>
         </div>
         <div className="text-center">
           <p className="text-lg font-mono font-semibold text-[var(--teal-900)]">
             {cargando ? "…" : cursosDistintos}
           </p>
-          <p className="text-[10.5px] text-[var(--ink)]/55 leading-tight">Cursos distintos</p>
+          <p className="text-[12.5px] text-muted leading-tight">Cursos distintos</p>
         </div>
         <div className="text-center">
           <p className="text-[15px] font-mono font-semibold text-[var(--teal-700)]">
             ${total.toLocaleString("es-AR")}
           </p>
-          <p className="text-[10.5px] text-[var(--ink)]/55 leading-tight">Facturación estimada</p>
+          <p className="text-[12.5px] text-muted leading-tight">Facturación estimada</p>
         </div>
         <div className="text-center">
           <p className="text-[13px] font-mono font-semibold text-[var(--teal-900)]">
             {cargando ? "…" : ultimaHaceTexto}
           </p>
-          <p className="text-[10.5px] text-[var(--ink)]/55 leading-tight">Última carga</p>
+          <p className="text-[12.5px] text-muted leading-tight">Última carga</p>
         </div>
       </div>
     </div>

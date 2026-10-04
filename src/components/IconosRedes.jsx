@@ -1,11 +1,16 @@
 // Iconos SVG simples de cada red, con su color de marca — reemplazan los emoji genéricos
 // (📷, 📘, etc.) por algo que se reconoce de un vistazo como la red real.
 
+import { useId } from "react";
+
 export function IconoInstagram({ size = 16 }) {
+  // id único por copia: si hay dos íconos en la página (barra de escritorio y menú de celular),
+  // un id repetido hace que el degradado deje de verse en el que está en un contenedor oculto.
+  const gid = "ig-" + useId().replace(/:/g, "");
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <defs>
-        <linearGradient id="ig-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+        <linearGradient id={gid} x1="0%" y1="100%" x2="100%" y2="0%">
           <stop offset="0%" stopColor="#FFDC80" />
           <stop offset="25%" stopColor="#F77737" />
           <stop offset="50%" stopColor="#F56040" />
@@ -13,7 +18,7 @@ export function IconoInstagram({ size = 16 }) {
           <stop offset="100%" stopColor="#833AB4" />
         </linearGradient>
       </defs>
-      <rect x="2" y="2" width="20" height="20" rx="6" fill="url(#ig-grad)" />
+      <rect x="2" y="2" width="20" height="20" rx="6" fill={`url(#${gid})`} />
       <circle cx="12" cy="12" r="5" stroke="white" strokeWidth="1.8" fill="none" />
       <circle cx="17.3" cy="6.7" r="1.3" fill="white" />
     </svg>

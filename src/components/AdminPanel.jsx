@@ -46,11 +46,11 @@ export default function AdminPanel({ email }) {
             className="w-8 h-8 rounded-full object-cover flex-shrink-0"
           />
           <div>
-            <p className="text-[11px] uppercase tracking-wide text-[var(--teal-500)] mb-1">
+            <p className="text-[12.5px] uppercase tracking-wide text-[var(--teal-500)] mb-1">
               Instituto ILCE · Panel de administración
             </p>
             <h1 className="font-display text-2xl text-[var(--teal-900)]">Facturas recibidas</h1>
-            <p className="text-[13px] text-[var(--ink)]/55 mt-1.5">
+            <p className="text-[13px] text-muted mt-1.5">
               Se actualiza automáticamente cada vez que un docente sube su factura.
             </p>
           </div>
@@ -58,17 +58,17 @@ export default function AdminPanel({ email }) {
         <button
           onClick={exportarExcel}
           disabled={facturas.length === 0}
-          className="bg-[var(--teal-700)] text-white rounded-full px-4 py-2.5 text-sm font-medium whitespace-nowrap disabled:opacity-40"
+          className="bg-primary hover:bg-primaryHover text-white rounded-full px-4 py-2.5 text-sm font-medium whitespace-nowrap disabled:opacity-40"
         >
           Exportar a Excel
         </button>
       </header>
 
-      {cargando && <p className="text-sm text-[var(--ink)]/50">Cargando...</p>}
+      {cargando && <p className="text-sm text-muted">Cargando...</p>}
       {error && <p className="text-sm text-[var(--clay-600)]">{error}</p>}
 
       {!cargando && !error && facturas.length === 0 && (
-        <p className="text-sm text-[var(--ink)]/50">Todavía no se subió ninguna factura.</p>
+        <p className="text-sm text-muted">Todavía no se subió ninguna factura.</p>
       )}
 
       {facturas.length > 0 && (
@@ -76,12 +76,12 @@ export default function AdminPanel({ email }) {
           <table className="w-full text-[13px]">
             <thead>
               <tr className="bg-[var(--clay-100)] text-left">
-                <th className="px-3.5 py-2.5 font-semibold text-[var(--ink)]/70">Docente</th>
-                <th className="px-3.5 py-2.5 font-semibold text-[var(--ink)]/70">Mes</th>
-                <th className="px-3.5 py-2.5 font-semibold text-[var(--ink)]/70">Cantidad</th>
-                <th className="px-3.5 py-2.5 font-semibold text-[var(--ink)]/70">Total</th>
-                <th className="px-3.5 py-2.5 font-semibold text-[var(--ink)]/70">Alias</th>
-                <th className="px-3.5 py-2.5 font-semibold text-[var(--ink)]/70">Factura</th>
+                <th className="px-3.5 py-2.5 font-semibold text-ink2">Docente</th>
+                <th className="px-3.5 py-2.5 font-semibold text-ink2">Mes</th>
+                <th className="px-3.5 py-2.5 font-semibold text-ink2">Cantidad</th>
+                <th className="px-3.5 py-2.5 font-semibold text-ink2">Total</th>
+                <th className="px-3.5 py-2.5 font-semibold text-ink2">Alias</th>
+                <th className="px-3.5 py-2.5 font-semibold text-ink2">Factura</th>
               </tr>
             </thead>
             <tbody>

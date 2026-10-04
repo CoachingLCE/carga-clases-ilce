@@ -36,13 +36,13 @@ function GuiaFactura({ items, valores }) {
       </div>
       <div className="flex gap-6 flex-wrap mb-3.5">
         <div>
-          <p className="text-[11px] uppercase tracking-wide text-[var(--ink)]/55 mb-0.5">
+          <p className="text-[12.5px] uppercase tracking-wide text-muted mb-0.5">
             CUIT Instituto ILCE
           </p>
           <p className="text-sm text-[var(--ink)]">{CUIT_INSTITUTO}</p>
         </div>
         <div>
-          <p className="text-[11px] uppercase tracking-wide text-[var(--ink)]/55 mb-0.5">
+          <p className="text-[12.5px] uppercase tracking-wide text-muted mb-0.5">
             Condición
           </p>
           <p className="text-sm text-[var(--ink)]">{CONDICION_FISCAL}</p>
@@ -54,17 +54,17 @@ function GuiaFactura({ items, valores }) {
           className="border border-[var(--line)] rounded-lg px-3 py-2.5 mb-2"
           style={{ borderLeft: `3px solid ${colorDeCurso(g.cursoReal)}` }}
         >
-          <p className="text-[11px] uppercase tracking-wide text-[var(--teal-500)] font-semibold mb-1.5">
+          <p className="text-[12.5px] uppercase tracking-wide text-[var(--teal-500)] font-semibold mb-1.5">
             Línea {i + 1}
           </p>
           <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-[13px]">
-            <span className="text-[var(--ink)]/55">Producto/Servicio</span>
+            <span className="text-muted">Producto/Servicio</span>
             <span className="text-[var(--ink)] font-medium">
               {g.nombreCurso} {g.edicion ? `— Edición ${g.edicion}` : ""}
             </span>
-            <span className="text-[var(--ink)]/55">Cantidad</span>
+            <span className="text-muted">Cantidad</span>
             <span className="text-[var(--ink)] font-medium">{g.cantidad}</span>
-            <span className="text-[var(--ink)]/55">Precio Unitario</span>
+            <span className="text-muted">Precio Unitario</span>
             <span className="text-[var(--ink)] font-medium">
               ${g.valorUnitario.toLocaleString("es-AR")}
             </span>
@@ -126,7 +126,7 @@ export default function SubirFactura({
         <p className="font-display text-xl text-[var(--teal-900)] mb-1">
           ¡Listo! Tu carga fue registrada correctamente.
         </p>
-        <p className="text-sm text-[var(--ink)]/70 mb-1">
+        <p className="text-sm text-ink2 mb-1">
           Tu factura ya fue enviada a administracion@institutoilce.com. Además, vas a recibir en
           tu correo una copia de lo registrado.
         </p>
@@ -146,7 +146,7 @@ export default function SubirFactura({
 
       <div className="border border-[var(--line)] bg-[var(--panel)] rounded-2xl p-5">
         <h3 className="font-display text-[17px] text-[var(--teal-900)] mb-1">Subir factura</h3>
-        <p className="text-sm text-[var(--ink)]/60 mb-3.5">
+        <p className="text-sm text-muted mb-3.5">
           Adjuntá tu factura en PDF, JPG o PNG
           {total ? (
             <>
@@ -162,7 +162,7 @@ export default function SubirFactura({
           )}
         </p>
 
-        <label className="block text-[11px] uppercase tracking-wide text-[var(--ink)]/55 mb-1.5">
+        <label className="block text-[12.5px] uppercase tracking-wide text-muted mb-1.5">
           Fecha de la factura
         </label>
         <input
@@ -172,7 +172,7 @@ export default function SubirFactura({
           className="w-full border border-[var(--line)] rounded-lg px-3 py-2.5 text-sm mb-3.5 outline-none focus:border-[var(--teal-500)]"
         />
 
-        <label className="block text-[11px] uppercase tracking-wide text-[var(--ink)]/55 mb-1.5">
+        <label className="block text-[12.5px] uppercase tracking-wide text-muted mb-1.5">
           Alias
         </label>
         <input
@@ -195,7 +195,7 @@ export default function SubirFactura({
         <button
           onClick={handleSubir}
           disabled={!archivo || !fechaFactura || subiendo}
-          className="w-full bg-[var(--teal-700)] text-white rounded-full px-4 py-3 text-sm font-medium disabled:opacity-60"
+          className="w-full bg-primary hover:bg-primaryHover text-white rounded-full px-4 py-3 text-sm font-medium disabled:opacity-60"
         >
           {subiendo ? "Subiendo..." : "Subir factura"}
         </button>

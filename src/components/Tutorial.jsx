@@ -1,4 +1,5 @@
 "use client";
+import { useEscape } from "@/lib/useEscape";
 
 const PASOS = [
   {
@@ -24,20 +25,21 @@ const PASOS = [
 ];
 
 export default function Tutorial({ onCerrar }) {
+  useEscape(true, onCerrar);
   return (
-    <div className="fixed inset-0 bg-[var(--ink)]/50 flex items-end sm:items-center justify-center z-50 p-3 fade-in">
+    <div className="fixed inset-0 bg-ink/50 flex items-end sm:items-center justify-center z-50 p-3 fade-in">
       <div className="relative w-full max-w-sm bg-[var(--panel)] rounded-[20px] border border-[var(--line)] max-h-[90vh] overflow-y-auto shadow-2xl">
         <button
           type="button"
           onClick={onCerrar}
           aria-label="Cerrar"
-          className="absolute top-3.5 right-3.5 w-7 h-7 rounded-full bg-[var(--paper)] text-[var(--ink)]/60 text-base leading-none hover:text-[var(--ink)]"
+          className="absolute top-3.5 right-3.5 w-7 h-7 rounded-full bg-[var(--paper)] text-muted text-base leading-none hover:text-[var(--ink)]"
         >
           ×
         </button>
 
         <div className="px-6 pt-6 pb-4 border-b border-[var(--line)]">
-          <p className="text-[11px] uppercase tracking-wide text-[var(--teal-500)]">Antes de arrancar</p>
+          <p className="text-[12.5px] uppercase tracking-wide text-[var(--teal-500)]">Antes de arrancar</p>
           <h2 className="font-display text-[22px] text-[var(--teal-900)] mt-1">
             Cómo funciona la carga de clases
           </h2>
@@ -50,7 +52,7 @@ export default function Tutorial({ onCerrar }) {
               style={{ animationDelay: `${i * 0.45}s` }}
             >
               <h3 className="font-display text-[16px] text-[var(--ink)] mb-0.5">{p.t}</h3>
-              <p className="text-sm text-[var(--ink)]/75 leading-relaxed">{p.d}</p>
+              <p className="text-sm text-ink2 leading-relaxed">{p.d}</p>
             </div>
           ))}
         </div>
@@ -60,7 +62,7 @@ export default function Tutorial({ onCerrar }) {
         >
           <button
             onClick={onCerrar}
-            className="w-full bg-[var(--amber-600)] text-white rounded-lg px-4 py-2.5 text-sm font-semibold"
+            className="w-full bg-primary hover:bg-primaryHover text-white rounded-lg px-4 py-2.5 text-sm font-semibold"
           >
             Entendido, empezar
           </button>

@@ -12,7 +12,7 @@ export default function TicketClase({ item, nombreCurso, valor, onQuitar }) {
         <p className="text-sm font-medium text-[var(--teal-900)]">
           {nombreCurso} {item.edicion ? `— ${item.edicion}` : ""}
         </p>
-        <p className="text-xs text-[var(--ink)]/60 mt-0.5">
+        <p className="text-xs text-muted mt-0.5">
           {item.alumno ? `Alumno: ${item.alumno} · ` : ""}N°{" "}
           <span className="font-mono">{item.claseOSesion}</span>
         </p>

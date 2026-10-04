@@ -16,7 +16,6 @@ import SubirFactura from "./SubirFactura";
 import AdminPanel from "./AdminPanel";
 import { getEstadoCierre } from "@/lib/mes";
 import { DEMO_EDICIONES, DEMO_VALORES } from "@/lib/config";
-import { APP_VERSION } from "@/lib/version";
 
 function BannerCierre({ modoPrueba }) {
   if (modoPrueba) {
@@ -33,7 +32,7 @@ function BannerCierre({ modoPrueba }) {
 
   if (cerrado) {
     return (
-      <div className="rounded-xl bg-[var(--clay-600)]/10 border border-[var(--clay-600)]/30 px-4 py-3 mb-4">
+      <div className="rounded-xl bg-clay600/10 border border-clay600/30 px-4 py-3 mb-4">
         <p className="text-sm text-[var(--clay-600)] font-medium">
           No hay ninguna carga abierta ahora. Se habilita de nuevo el último día de {mesLabel}
           {diasParaAbrir ? ` (en ${diasParaAbrir} día${diasParaAbrir === 1 ? "" : "s"})` : ""}.
@@ -59,7 +58,7 @@ function BannerCierre({ modoPrueba }) {
           En {diasRestantes} día{diasRestantes === 1 ? "" : "s"} se cierra la carga de tus clases y
           sesiones de {mesLabel}.
         </p>
-        <span className="font-mono bg-[var(--amber-600)] text-white rounded-full px-3 py-1 text-sm font-bold">
+        <span className="font-mono bg-primary hover:bg-primaryHover text-white rounded-full px-3 py-1 text-sm font-bold">
           {diasRestantes}
         </span>
       </div>
@@ -68,7 +67,7 @@ function BannerCierre({ modoPrueba }) {
 
   return (
     <div className="flex items-center justify-between px-1 mb-4">
-      <p className="text-xs text-[var(--ink)]/55">
+      <p className="text-xs text-muted">
         Podés cargar tus clases y sesiones de {mesLabel} hasta el día 10.
       </p>
       <span className="font-mono text-xs text-[var(--teal-700)] font-semibold">
@@ -250,7 +249,7 @@ export default function App() {
         />
       )}
 
-    <div className="max-w-md sm:max-w-xl mx-auto px-6 py-8 pb-16">
+    <div className="max-w-md sm:max-w-xl mx-auto px-6 py-8 pb-28">
       {mostrarTutorial && <Tutorial onCerrar={cerrarTutorial} />}
       {mostrarRecorrido && <RecorridoGuiado onCerrar={() => setMostrarRecorrido(false)} />}
 
@@ -273,7 +272,7 @@ export default function App() {
               }
               setDocente(null);
             }}
-            className="text-[11px] text-[var(--ink)]/50 underline"
+            className="text-[12.5px] text-muted underline"
           >
             Salir del modo prueba
           </button>
@@ -288,7 +287,7 @@ export default function App() {
             className="w-8 h-8 rounded-full object-cover flex-shrink-0"
           />
           <div>
-            <p className="text-[11px] uppercase tracking-wide text-[var(--teal-500)] mb-1">
+            <p className="text-[12.5px] uppercase tracking-wide text-[var(--teal-500)] mb-1">
               Instituto ILCE · {mesLabel}
             </p>
             <h1 className="font-display text-2xl text-[var(--teal-900)]">
@@ -317,7 +316,7 @@ export default function App() {
         <button
           onClick={() => setTab("cargar")}
           className={`flex-1 rounded-full py-2 text-sm font-medium transition-colors ${
-            tab === "cargar" ? "bg-[var(--panel)] text-[var(--teal-900)] shadow-sm" : "text-[var(--ink)]/60"
+            tab === "cargar" ? "bg-[var(--panel)] text-[var(--teal-900)] shadow-sm" : "text-muted"
           }`}
         >
           Cargar clases
@@ -325,7 +324,7 @@ export default function App() {
         <button
           onClick={() => setTab("factura")}
           className={`flex-1 rounded-full py-2 text-sm font-medium transition-colors ${
-            tab === "factura" ? "bg-[var(--panel)] text-[var(--teal-900)] shadow-sm" : "text-[var(--ink)]/60"
+            tab === "factura" ? "bg-[var(--panel)] text-[var(--teal-900)] shadow-sm" : "text-muted"
           }`}
         >
           Subir factura
@@ -373,7 +372,7 @@ export default function App() {
                 )}
                 <button
                   onClick={() => setTab("factura")}
-                  className="w-full bg-[var(--amber-600)] text-white rounded-full px-4 py-2.5 text-sm font-medium mb-2"
+                  className="w-full bg-primary hover:bg-primaryHover text-white rounded-full px-4 py-2.5 text-sm font-medium mb-2"
                 >
                   Subir factura ahora
                 </button>
@@ -414,7 +413,7 @@ export default function App() {
                       />
                     ))}
                     <div className="flex items-center justify-between px-1 py-2 mb-2">
-                      <span className="text-sm text-[var(--ink)]/70">Total estimado</span>
+                      <span className="text-sm text-ink2">Total estimado</span>
                       <span className="font-mono text-lg font-semibold text-[var(--teal-700)]">
                         ${total.toLocaleString("es-AR")}
                       </span>
@@ -427,7 +426,7 @@ export default function App() {
                 <button
                   onClick={confirmarCarga}
                   disabled={pendientes.length === 0 || enviando}
-                  className="w-full bg-[var(--teal-700)] text-white rounded-full px-4 py-3 text-sm font-medium disabled:opacity-40"
+                  className="w-full bg-primary hover:bg-primaryHover text-white rounded-full px-4 py-3 text-sm font-medium disabled:opacity-40"
                 >
                   {enviando ? "Enviando..." : "Confirmar carga"}
                 </button>
@@ -473,7 +472,7 @@ export default function App() {
         )}
       </div>
 
-      <p className="text-xs text-[var(--ink)]/45 text-center mt-8 leading-relaxed">
+      <p className="text-xs text-muted text-center mt-8 leading-relaxed">
         ¿Tenés algún inconveniente con la app?
         <br />
         Escribí a{" "}
@@ -485,15 +484,15 @@ export default function App() {
       <button
         type="button"
         onClick={() => setMostrarAyuda(true)}
-        className="fixed bottom-14 right-4 z-40 text-white text-sm font-semibold px-4 py-2.5 rounded-full shadow-lg flex items-center gap-1.5 hover:opacity-90 transition-opacity"
-        style={{ background: "linear-gradient(90deg, var(--teal-700), var(--amber-600))" }}
+        aria-label="Necesito ayuda"
+        className="fixed bottom-14 right-4 z-40 h-12 w-12 sm:w-auto sm:px-4 justify-center text-sm font-semibold rounded-full shadow-lg flex items-center gap-2 border border-[var(--line)] bg-[var(--panel)] text-[var(--ink)] hover:bg-[var(--clay-100)] transition-colors"
       >
-        ❓ Necesito ayuda
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary shrink-0" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01" />
+        </svg>
+        <span className="hidden sm:inline">Necesito ayuda</span>
       </button>
-
-      <div className="fixed bottom-2.5 right-3.5 text-[11px] text-[var(--ink)]/35 font-mono z-10">
-        v{APP_VERSION}
-      </div>
     </div>
     </>
   );

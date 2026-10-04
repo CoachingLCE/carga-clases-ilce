@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useEscape } from "@/lib/useEscape";
 
 const MESES = [
   "enero", "febrero", "marzo", "abril", "mayo", "junio",
@@ -54,7 +55,7 @@ function GrupoMes({ grupo, abiertoPorDefecto }) {
           </span>
         </div>
         <div className="text-right">
-          <p className="text-xs text-[var(--ink)]/60">
+          <p className="text-xs text-muted">
             {cantidad} clase{cantidad === 1 ? "" : "s"} cargada{cantidad === 1 ? "" : "s"}
           </p>
           <p className="text-sm font-mono font-semibold text-[var(--teal-700)]">
@@ -66,7 +67,7 @@ function GrupoMes({ grupo, abiertoPorDefecto }) {
       {abierto && (
         <div className="border-t border-[var(--line)] px-4 py-3 bg-[var(--panel)]">
           {ultima && (
-            <p className="text-[11px] text-[var(--ink)]/50 mb-2.5">
+            <p className="text-[12.5px] text-muted mb-2.5">
               Última carga: {fechaCorta(ultima.timestamp).split(" - ")[0]}
             </p>
           )}
@@ -80,13 +81,13 @@ function GrupoMes({ grupo, abiertoPorDefecto }) {
                       {nombreCurso(c)}
                       {c.edicion ? ` — Ed. ${c.edicion}` : ""}
                     </p>
-                    <p className="text-[11px] text-[var(--ink)]/50">
+                    <p className="text-[12.5px] text-muted">
                       {fechaCorta(c.timestamp)}
                       {c.alumno ? ` · ${c.alumno}` : ""}
                     </p>
                   </div>
                 </div>
-                <span className="text-xs font-mono text-[var(--ink)]/60 shrink-0">
+                <span className="text-xs font-mono text-muted shrink-0">
                   ${(c.valor || 0).toLocaleString("es-AR")}
                 </span>
               </div>
@@ -101,6 +102,7 @@ function GrupoMes({ grupo, abiertoPorDefecto }) {
 // Modal de pantalla completa con todo el historial del docente, agrupado por mes
 // y colapsado por defecto (solo el mes más reciente arranca abierto).
 export default function Historial({ docenteEmail, onCerrar }) {
+  useEscape(true, onCerrar);
   const [cargas, setCargas] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
@@ -133,31 +135,36 @@ export default function Historial({ docenteEmail, onCerrar }) {
   const totalGeneral = cargas.reduce((acc, c) => acc + (c.valor || 0), 0);
 
   return (
-    <div className="fixed inset-0 bg-black/40 z-50 flex items-start justify-center overflow-y-auto px-4 py-8">
+    <div
+      className="fixed inset-0 bg-black/40 z-50 flex items-start justify-center overflow-y-auto px-4 py-8"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onCerrar();
+      }}
+    >
       <div className="bg-[var(--panel)] rounded-2xl w-full max-w-lg p-6 relative">
         <button
           onClick={onCerrar}
-          className="absolute top-4 right-4 text-[var(--ink)]/40 text-lg leading-none"
+          className="absolute top-4 right-4 text-muted text-lg leading-none"
           aria-label="Cerrar"
         >
           ✕
         </button>
         <h2 className="font-display text-xl text-[var(--teal-900)] mb-1">Historial de envíos</h2>
-        <p className="text-xs text-[var(--ink)]/55 mb-4">
+        <p className="text-xs text-muted mb-4">
           Todas tus cargas, organizadas por mes.
         </p>
 
         {cargando ? (
-          <p className="text-sm text-[var(--ink)]/55 py-6 text-center">Cargando...</p>
+          <p className="text-sm text-muted py-6 text-center">Cargando...</p>
         ) : error ? (
           <p className="text-sm text-[var(--clay-600)] py-6 text-center">{error}</p>
         ) : grupos.length === 0 ? (
-          <p className="text-sm text-[var(--ink)]/55 py-6 text-center">
+          <p className="text-sm text-muted py-6 text-center">
             Todavía no tenés ninguna carga registrada.
           </p>
         ) : (
           <>
-            <div className="flex items-center justify-between px-1 mb-3 text-xs text-[var(--ink)]/55">
+            <div className="flex items-center justify-between px-1 mb-3 text-xs text-muted">
               <span>Total histórico</span>
               <span className="font-mono font-semibold text-[var(--teal-700)] text-sm">
                 ${totalGeneral.toLocaleString("es-AR")}

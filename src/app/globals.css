@@ -16,6 +16,20 @@
   --clay-100: rgba(220, 216, 204, 0.4);
   --line: #dde2e6;
 
+  /* Canales RGB: permiten usar opacidad (text-ink/50, bg-teal500/10...). Con un color en una
+     variable hex, Tailwind NO genera esas clases y el estilo se perdía en silencio. */
+  --ink-rgb: 1 35 63;
+  --teal-500-rgb: 3 115 139;
+  --clay-600-rgb: 164 52 46;
+  /* Acción principal: magenta del manual de marca (#96198F) */
+  --primary-rgb: 150 25 143;
+  --primary-hover: #7f1479;
+  --primary-soft: #f8e9f7;
+  --primary-soft-fg: #70168d;
+  /* Texto secundario y atenuado, con contraste AA (>= 4,5:1) sobre blanco y sobre el fondo */
+  --text-2: #3f5365;
+  --text-muted: #566877;
+
   /* Paleta oscura, usada solo en la pantalla de login (EmailGate) */
   --login-bg: #0b0e1a;
   --login-surface2: #181d35;
@@ -41,6 +55,31 @@
   --clay-300: rgba(255, 255, 255, 0.14);
   --clay-100: rgba(255, 255, 255, 0.08);
   --line: rgba(255, 255, 255, 0.12);
+  --ink-rgb: 232 236 243;
+  --teal-500-rgb: 34 184 204;
+  --clay-600-rgb: 240 138 132;
+  --primary-rgb: 168 39 159;
+  --primary-hover: #bb3bb1;
+  --primary-soft: rgba(168, 39, 159, 0.18);
+  --primary-soft-fg: #e7a3e1;
+  --text-2: #bac1db;
+  --text-muted: #98a1c6;
+}
+
+:root { color-scheme: light; }
+[data-theme="dark"] { color-scheme: dark; }
+
+@layer base {
+  /* Foco visible para quien navega con teclado */
+  :focus-visible {
+    outline: 2px solid var(--teal-500);
+    outline-offset: 2px;
+  }
+  /* Los campos toman los colores del tema (antes quedaban blancos en modo oscuro) */
+  input, select, textarea {
+    background-color: var(--panel);
+    color: var(--ink);
+  }
 }
 
 * {

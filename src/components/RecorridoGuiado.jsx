@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useEscape } from "@/lib/useEscape";
 
 // Pasos del recorrido: apuntan a elementos por atributo data-tour, no por
 // texto ni valores concretos de la app (curso, edición, etc.), para que
@@ -31,6 +32,7 @@ const PASOS = [
 ];
 
 export default function RecorridoGuiado({ onCerrar }) {
+  useEscape(true, onCerrar);
   const [paso, setPaso] = useState(0);
   const [rect, setRect] = useState(null);
 
@@ -96,14 +98,14 @@ export default function RecorridoGuiado({ onCerrar }) {
           Paso {paso + 1} de {PASOS.length}
         </p>
         <h3 className="font-display text-base text-[var(--teal-900)] mb-1.5">{actual.titulo}</h3>
-        <p className="text-sm text-[var(--ink)]/70 mb-1">{actual.texto}</p>
+        <p className="text-sm text-ink2 mb-1">{actual.texto}</p>
         {!rect && (
-          <p className="text-xs text-[var(--ink)]/50 mb-3">
+          <p className="text-xs text-muted mb-3">
             (Este paso se ve reflejado en la pantalla a medida que avanzás con la carga.)
           </p>
         )}
         <div className="flex items-center justify-between gap-2 mt-3">
-          <button onClick={onCerrar} className="text-xs text-[var(--ink)]/50 underline">
+          <button onClick={onCerrar} className="text-xs text-muted underline">
             Saltear
           </button>
           <div className="flex gap-2">
@@ -117,7 +119,7 @@ export default function RecorridoGuiado({ onCerrar }) {
             )}
             <button
               onClick={siguiente}
-              className="bg-[var(--teal-700)] text-white rounded-lg px-3 py-1.5 text-sm font-medium"
+              className="bg-primary hover:bg-primaryHover text-white rounded-lg px-3 py-1.5 text-sm font-medium"
             >
               {esUltimo ? "Listo" : "Siguiente"}
             </button>

@@ -58,7 +58,7 @@ export default function ResumenCargasMes({
   }, [docenteEmail, mes, modoPrueba, refreshSignal]);
 
   const totalClases = cargas.length;
-  const cursosDistintos = new Set(cargas.map((c) => c.cursoNombre)).size;
+  const cursosDistintos = new Set(cargas.map((c) => c.cursoReal)).size;
   const totalAcumulado = cargas.reduce((acc, c) => acc + (c.valor || 0), 0);
   const cargadas = cargas.filter((c) => c.estadoFacturado?.toLowerCase() === "facturado").length;
   const pendientesFacturar = totalClases - cargadas;
@@ -140,7 +140,7 @@ export default function ResumenCargasMes({
 
   if (modoPrueba) {
     return (
-      <div className="border border-[var(--line)] bg-[var(--panel)] rounded-2xl p-5 mb-5 text-sm text-[var(--ink)]/60">
+      <div className="border border-[var(--line)] bg-[var(--panel)] rounded-2xl p-5 mb-5 text-sm text-muted">
         En modo prueba no se muestra el historial real de cargas (no se lee ni se escribe nada en
         la planilla).
       </div>
@@ -153,7 +153,7 @@ export default function ResumenCargasMes({
       <div className="grid grid-cols-3 gap-2.5 mb-3">
         <div className="border border-[var(--line)] bg-[var(--panel)] rounded-xl p-3 text-center">
           <p className="text-xl font-semibold text-[var(--teal-900)] font-mono">{totalClases}</p>
-          <p className="text-[11px] text-[var(--ink)]/55 leading-tight mt-0.5">
+          <p className="text-[12.5px] text-muted leading-tight mt-0.5">
             clase(s)/sesión(es)
           </p>
         </div>
@@ -161,21 +161,21 @@ export default function ResumenCargasMes({
           <p className="text-xl font-semibold text-[var(--teal-900)] font-mono">
             {cursosDistintos}
           </p>
-          <p className="text-[11px] text-[var(--ink)]/55 leading-tight mt-0.5">curso(s)</p>
+          <p className="text-[12.5px] text-muted leading-tight mt-0.5">curso(s)</p>
         </div>
         <div className="border border-[var(--line)] bg-[var(--panel)] rounded-xl p-3 text-center">
           <p className="text-lg font-semibold text-[var(--teal-900)] font-mono">
             ${totalAcumulado.toLocaleString("es-AR")}
           </p>
-          <p className="text-[11px] text-[var(--ink)]/55 leading-tight mt-0.5">
+          <p className="text-[12.5px] text-muted leading-tight mt-0.5">
             total estimado
           </p>
         </div>
       </div>
 
       {totalClases > 0 && (
-        <div className="flex gap-2 mb-3.5 text-[11px]">
-          <span className="bg-[var(--teal-500)]/10 text-[var(--teal-700)] rounded-full px-2.5 py-1 font-medium">
+        <div className="flex gap-2 mb-3.5 text-[12.5px]">
+          <span className="bg-teal500/10 text-[var(--teal-700)] rounded-full px-2.5 py-1 font-medium">
             {cargadas} facturada{cargadas === 1 ? "" : "s"}
           </span>
           <span className="bg-[var(--amber-100)] text-[var(--amber-600)] rounded-full px-2.5 py-1 font-medium">
@@ -187,19 +187,19 @@ export default function ResumenCargasMes({
       {error && <p className="text-[13px] text-[var(--clay-600)] mb-2.5">{error}</p>}
 
       {cargando && cargas.length === 0 && (
-        <p className="text-xs text-[var(--ink)]/50 mb-3">Buscando tu carga de este mes...</p>
+        <p className="text-xs text-muted mb-3">Buscando tu carga de este mes...</p>
       )}
 
       {!cargando && totalClases === 0 && !error && (
         <div className="border border-dashed border-[var(--line)] rounded-2xl p-6 text-center">
-          <p className="text-sm text-[var(--ink)]/60 mb-3">
+          <p className="text-sm text-muted mb-3">
             Todavía no cargaste ninguna clase ni sesión este mes.
           </p>
           {onRegistrarPrimera && (
             <button
               type="button"
               onClick={onRegistrarPrimera}
-              className="bg-[var(--teal-700)] text-white rounded-full px-4 py-2 text-sm font-medium"
+              className="bg-primary hover:bg-primaryHover text-white rounded-full px-4 py-2 text-sm font-medium"
             >
               Registrar primera clase
             </button>
@@ -237,7 +237,7 @@ export default function ResumenCargasMes({
                   key={item.fila}
                   className={`border rounded-xl p-3 transition-colors ${
                     destacada
-                      ? "border-[var(--teal-500)] bg-[var(--teal-500)]/5"
+                      ? "border-[var(--teal-500)] bg-teal500/5"
                       : "border-[var(--line)]"
                   }`}
                   style={{ borderLeft: `3px solid ${colorDeCurso(item.cursoReal)}` }}
@@ -271,19 +271,19 @@ export default function ResumenCargasMes({
                           />
                         </div>
                       ) : (
-                        <p className="text-xs text-[var(--ink)]/55 mt-0.5">
+                        <p className="text-xs text-muted mt-0.5">
                           {item.alumno ? `${item.alumno} · ` : ""}N° {item.claseOSesion} · $
                           {(item.valor || 0).toLocaleString("es-AR")}
                         </p>
                       )}
                       {avisoFila && editando && (
-                        <p className="text-[11px] text-[var(--clay-600)] mt-1">{avisoFila}</p>
+                        <p className="text-[12.5px] text-[var(--clay-600)] mt-1">{avisoFila}</p>
                       )}
                     </div>
                     <span
-                      className={`shrink-0 text-[10px] uppercase font-semibold rounded-full px-2 py-1 ${
+                      className={`shrink-0 text-[12.5px] uppercase font-semibold rounded-full px-2 py-1 ${
                         facturada
-                          ? "bg-[var(--teal-500)]/10 text-[var(--teal-700)]"
+                          ? "bg-teal500/10 text-[var(--teal-700)]"
                           : "bg-[var(--amber-100)] text-[var(--amber-600)]"
                       }`}
                     >
@@ -298,7 +298,7 @@ export default function ResumenCargasMes({
                           type="button"
                           onClick={() => guardarEdicion(item)}
                           disabled={accionEnCurso === item.fila}
-                          className="text-xs bg-[var(--teal-700)] text-white rounded-full px-3 py-1.5 font-medium disabled:opacity-60"
+                          className="text-xs bg-primary hover:bg-primaryHover text-white rounded-full px-3 py-1.5 font-medium disabled:opacity-60"
                         >
                           {accionEnCurso === item.fila ? "Guardando..." : "Guardar"}
                         </button>
@@ -311,7 +311,7 @@ export default function ResumenCargasMes({
                         </button>
                       </>
                     ) : facturada ? (
-                      <p className="text-[11px] text-[var(--ink)]/45">
+                      <p className="text-[12.5px] text-muted">
                         Ya facturada — no se puede editar ni eliminar.
                       </p>
                     ) : (
@@ -347,7 +347,7 @@ export default function ResumenCargasMes({
               );
             })}
             {filtradas.length === 0 && (
-              <p className="text-sm text-[var(--ink)]/50 text-center py-4">
+              <p className="text-sm text-muted text-center py-4">
                 Ningún curso coincide con "{busqueda}".
               </p>
             )}

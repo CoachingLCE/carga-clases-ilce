@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { APP_VERSION, APP_UPDATED_AT } from "../lib/version";
 import { CHANGELOG } from "../lib/changelog";
+import { useEscape } from "../lib/useEscape";
 
 // Badge autocontenido (estilos propios) — esta app no usa los tokens de color de las demas.
 const CLAVE = "ilce-carga-clases-ultima-version-vista";
@@ -11,6 +12,7 @@ export default function VersionBadge() {
   const [abierto, setAbierto] = useState(false);
   const [hayNovedades, setHayNovedades] = useState(false);
   const [verAnteriores, setVerAnteriores] = useState(false);
+  useEscape(abierto, () => setAbierto(false));
   const fecha = new Date(APP_UPDATED_AT + "T00:00:00").toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit", year: "numeric" });
 
   useEffect(() => { try { if (localStorage.getItem(CLAVE) !== APP_VERSION) setHayNovedades(true); } catch (e) {} }, []);
@@ -26,7 +28,7 @@ export default function VersionBadge() {
     <>
       <button onClick={abrir} title="Ver novedades" className={hayNovedades ? "version-badge-novedad" : ""}
         style={{ position: "fixed", bottom: 12, right: 16, fontSize: 11, color: C.muted, background: C.panel, border: "1px solid " + C.border, borderRadius: 999, padding: "4px 12px", zIndex: 40, cursor: "pointer" }}>
-        v{APP_VERSION} · Actualizado {fecha}
+        v{APP_VERSION}<span className="hidden sm:inline"> · Actualizado {fecha}</span>
       </button>
       {abierto && (
         <div onClick={() => setAbierto(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: 16 }}>

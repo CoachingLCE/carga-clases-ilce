@@ -7,7 +7,7 @@ export function StatsFinal({ totalClases, total, estadoFactura }) {
     <div className="grid grid-cols-3 gap-2.5 mb-4">
       <div className="border border-[var(--line)] rounded-xl p-3 text-center">
         <p className="text-lg font-semibold text-[var(--teal-900)] font-mono">{totalClases}</p>
-        <p className="text-[11px] text-[var(--ink)]/55 mt-0.5 leading-tight">
+        <p className="text-[12.5px] text-muted mt-0.5 leading-tight">
           Clases registradas
         </p>
       </div>
@@ -15,21 +15,21 @@ export function StatsFinal({ totalClases, total, estadoFactura }) {
         <p className="text-[15px] font-semibold text-[var(--teal-900)] font-mono">
           ${total.toLocaleString("es-AR")}
         </p>
-        <p className="text-[11px] text-[var(--ink)]/55 mt-0.5 leading-tight">
+        <p className="text-[12.5px] text-muted mt-0.5 leading-tight">
           Total a facturar
         </p>
       </div>
       <div className="border border-[var(--line)] rounded-xl p-3 text-center flex flex-col items-center justify-center">
         <span
-          className={`text-[11px] font-semibold rounded-full px-2 py-1 ${
+          className={`text-[12.5px] font-semibold rounded-full px-2 py-1 ${
             facturada
-              ? "bg-[var(--teal-500)]/10 text-[var(--teal-700)]"
+              ? "bg-teal500/10 text-[var(--teal-700)]"
               : "bg-[var(--amber-100)] text-[var(--amber-600)]"
           }`}
         >
           {estadoFactura}
         </span>
-        <p className="text-[11px] text-[var(--ink)]/55 mt-1 leading-tight">
+        <p className="text-[12.5px] text-muted mt-1 leading-tight">
           Estado de la factura
         </p>
       </div>
@@ -56,7 +56,7 @@ export function AccesosILCE({ onVerMisCargas }) {
             <p className="text-sm font-medium text-[var(--teal-900)]">
               ¿Querés leer alguna nota de nuestro blog?
             </p>
-            <p className="text-xs text-[var(--ink)]/55 mt-0.5">
+            <p className="text-xs text-muted mt-0.5">
               Encontrá artículos sobre coaching, liderazgo, educación y desarrollo personal.
             </p>
             <p className="text-xs text-[var(--teal-700)] font-medium mt-1">Ir al blog →</p>
@@ -74,7 +74,7 @@ export function AccesosILCE({ onVerMisCargas }) {
             <p className="text-sm font-medium text-[var(--teal-900)]">
               ¿Querés acceder a los recursos docentes?
             </p>
-            <p className="text-xs text-[var(--ink)]/55 mt-0.5">
+            <p className="text-xs text-muted mt-0.5">
               Ingresá a nuestro espacio de Slack para encontrar recursos y comunicaciones.
             </p>
             <p className="text-xs text-[var(--teal-700)] font-medium mt-1">Ir a Slack →</p>
@@ -90,7 +90,7 @@ export function AccesosILCE({ onVerMisCargas }) {
             <span className="text-lg leading-none">📋</span>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-[var(--teal-900)]">Ver mis cargas</p>
-              <p className="text-xs text-[var(--ink)]/55 mt-0.5">
+              <p className="text-xs text-muted mt-0.5">
                 Consultá tus cargas anteriores y su estado.
               </p>
             </div>

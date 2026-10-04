@@ -1,5 +1,12 @@
 export const CHANGELOG = [
   {
+    version: '1.7.2',
+    fecha: '2026-10-04',
+    cambios: [
+      'En celular, cuando hay clases para confirmar, el botón "Confirmar carga" queda fijo abajo mostrando cuántas son y el total, así no hace falta buscarlo al final de la página. El botón de ayuda sube para no taparlo.'
+    ]
+  },
+  {
     version: '1.7.1',
     fecha: '2026-10-04',
     cambios: [

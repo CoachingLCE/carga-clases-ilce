@@ -423,12 +423,16 @@ export default function App() {
                   </div>
                 )}
 
-                {errorEnvio && <p className="text-[13px] text-[var(--clay-600)] mb-2.5">{errorEnvio}</p>}
+                {errorEnvio && (
+                  <p className={`text-[13px] text-[var(--clay-600)] mb-2.5 ${pendientes.length > 0 ? "hidden sm:block" : ""}`}>
+                    {errorEnvio}
+                  </p>
+                )}
 
                 <button
                   onClick={confirmarCarga}
                   disabled={pendientes.length === 0 || enviando}
-                  className="w-full bg-primary hover:bg-primaryHover text-white rounded-full px-4 py-3 text-sm font-medium disabled:opacity-40"
+                  className={`w-full bg-primary hover:bg-primaryHover text-white rounded-full px-4 py-3 text-sm font-medium disabled:opacity-40 ${pendientes.length > 0 ? "hidden sm:block" : ""}`}
                 >
                   {enviando ? "Enviando..." : "Confirmar carga"}
                 </button>
@@ -505,11 +509,28 @@ export default function App() {
         </a>
       </p>
 
+      {tab === "cargar" && pendientes.length > 0 && (
+        <div className="sm:hidden fixed left-0 right-0 bottom-0 z-40 border-t border-[var(--line)] bg-[var(--panel)] px-4 py-3 shadow-[0_-8px_24px_rgba(1,35,63,0.14)]">
+          {errorEnvio && <p className="text-[13px] text-[var(--clay-600)] mb-2">{errorEnvio}</p>}
+          <button
+            type="button"
+            onClick={confirmarCarga}
+            disabled={enviando}
+            className="w-full bg-primary hover:bg-primaryHover text-white rounded-full px-5 py-3 text-sm font-semibold disabled:opacity-40 flex items-center justify-between"
+          >
+            <span>{enviando ? "Enviando..." : "Confirmar carga"}</span>
+            <span className="font-mono">
+              {pendientes.length} · ${total.toLocaleString("es-AR")}
+            </span>
+          </button>
+        </div>
+      )}
+
       <button
         type="button"
         onClick={() => setMostrarAyuda(true)}
         aria-label="Necesito ayuda"
-        className="fixed bottom-14 right-4 z-40 h-12 w-12 sm:w-auto sm:px-4 justify-center text-sm font-semibold rounded-full shadow-lg flex items-center gap-2 border border-[var(--line)] bg-[var(--panel)] text-[var(--ink)] hover:bg-[var(--clay-100)] transition-colors"
+        className={`fixed ${tab === "cargar" && pendientes.length > 0 ? "bottom-24 sm:bottom-14" : "bottom-14"} right-4 z-40 h-12 w-12 sm:w-auto sm:px-4 justify-center text-sm font-semibold rounded-full shadow-lg flex items-center gap-2 border border-[var(--line)] bg-[var(--panel)] text-[var(--ink)] hover:bg-[var(--clay-100)] transition-colors`}
       >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary shrink-0" aria-hidden="true">
           <circle cx="12" cy="12" r="10" />

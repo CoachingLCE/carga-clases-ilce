@@ -341,7 +341,7 @@ export default function App() {
             onClick={() => setTab(clave)}
             className={`h-11 px-4 text-[14.5px] font-semibold border-b-2 -mb-px whitespace-nowrap transition-colors ${
               tab === clave
-                ? "border-primary text-primary"
+                ? "border-primary text-primarySoftFg"
                 : "border-transparent text-ink2 hover:text-[var(--teal-900)]"
             }`}
           >

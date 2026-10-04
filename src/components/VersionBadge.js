@@ -13,6 +13,12 @@ export default function VersionBadge() {
   const [hayNovedades, setHayNovedades] = useState(false);
   const [verAnteriores, setVerAnteriores] = useState(false);
   useEscape(abierto, () => setAbierto(false));
+  // "Novedades" también se abre desde el panel de Ayuda (en celular el badge flotante no se muestra).
+  useEffect(() => {
+    const abrirDesdeAyuda = () => abrir();
+    window.addEventListener("ilce:novedades", abrirDesdeAyuda);
+    return () => window.removeEventListener("ilce:novedades", abrirDesdeAyuda);
+  });
   const fecha = new Date(APP_UPDATED_AT + "T00:00:00").toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit", year: "numeric" });
 
   useEffect(() => { try { if (localStorage.getItem(CLAVE) !== APP_VERSION) setHayNovedades(true); } catch (e) {} }, []);
@@ -26,7 +32,7 @@ export default function VersionBadge() {
 
   return (
     <>
-      <button onClick={abrir} title="Ver novedades" className={hayNovedades ? "version-badge-novedad" : ""}
+      <button onClick={abrir} title="Ver novedades" className={(hayNovedades ? "version-badge-novedad " : "") + "hidden md:block"}
         style={{ position: "fixed", bottom: 12, right: 16, fontSize: 11, color: C.muted, background: C.panel, border: "1px solid " + C.border, borderRadius: 999, padding: "4px 12px", zIndex: 40, cursor: "pointer" }}>
         v{APP_VERSION}<span className="hidden sm:inline"> · Actualizado {fecha}</span>
       </button>

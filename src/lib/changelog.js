@@ -1,5 +1,15 @@
 export const CHANGELOG = [
   {
+    version: '1.7.1',
+    fecha: '2026-10-04',
+    cambios: [
+      'Subir factura: el selector de archivo ahora es un botón propio de la app (antes era el del navegador, en inglés y sin estilo), con el nombre y el tamaño del archivo elegido.',
+      'Panel de administración: las columnas que se pueden ordenar ahora lo muestran siempre con una flecha (antes solo aparecía después de usarlas).',
+      'Las novedades y la versión ahora también se abren desde el botón de Ayuda. En celular se saca el cartelito de versión que se superponía con la lista.',
+      'Modo oscuro: la pestaña activa se lee mejor.'
+    ]
+  },
+  {
     version: '1.7.0',
     fecha: '2026-10-04',
     cambios: [

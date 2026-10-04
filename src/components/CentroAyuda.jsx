@@ -2,6 +2,7 @@
 
 import { MAIL_ADMINISTRACION } from "@/lib/config";
 import { useEscape } from "@/lib/useEscape";
+import { APP_VERSION } from "@/lib/version";
 
 export default function CentroAyuda({ onCerrar, onTutorial, onRecorrido }) {
   useEscape(true, onCerrar);
@@ -55,6 +56,17 @@ export default function CentroAyuda({ onCerrar, onTutorial, onRecorrido }) {
             className="text-left text-sm text-[var(--teal-900)] border border-[var(--line)] rounded-lg px-3 py-2 hover:border-[var(--teal-500)] transition-colors"
           >
             Ver tutorial
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              onCerrar();
+              window.dispatchEvent(new Event("ilce:novedades"));
+            }}
+            className="text-left text-sm text-[var(--teal-900)] border border-[var(--line)] rounded-lg px-3 py-2 hover:border-[var(--teal-500)] transition-colors flex items-center justify-between"
+          >
+            <span>Novedades de la app</span>
+            <span className="text-[12.5px] text-muted">v{APP_VERSION}</span>
           </button>
           <a
             href={`mailto:${MAIL_ADMINISTRACION}`}

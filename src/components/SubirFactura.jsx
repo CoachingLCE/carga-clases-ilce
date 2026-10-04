@@ -184,11 +184,29 @@ export default function SubirFactura({
         />
 
         <input
+          id="factura-archivo"
           type="file"
           accept=".pdf,.jpg,.jpeg,.png"
           onChange={(e) => setArchivo(e.target.files?.[0] || null)}
-          className="w-full text-sm mb-3.5"
+          className="sr-only peer"
         />
+        <label
+          htmlFor="factura-archivo"
+          className="flex items-center gap-3 w-full rounded-lg border border-dashed border-[var(--line)] px-3.5 py-3 mb-3.5 cursor-pointer hover:bg-[var(--clay-100)] transition-colors peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--teal-500)]"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primarySoftFg shrink-0" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+          </svg>
+          <span className="min-w-0 flex-1">
+            <span className="block text-sm font-medium text-[var(--ink)] truncate">
+              {archivo ? archivo.name : "Elegir archivo"}
+            </span>
+            <span className="block text-[12.5px] text-muted">
+              {archivo ? `${(archivo.size / 1024).toLocaleString("es-AR", { maximumFractionDigits: 0 })} KB` : "PDF, JPG o PNG"}
+            </span>
+          </span>
+          {archivo && <span className="text-[13px] font-semibold text-primarySoftFg shrink-0">Cambiar</span>}
+        </label>
 
         {error && <p className="text-[13px] text-[var(--clay-600)] mb-2.5">{error}</p>}
 

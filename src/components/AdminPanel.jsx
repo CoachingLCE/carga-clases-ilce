@@ -84,7 +84,13 @@ export default function AdminPanel({ email }) {
     setOrden((o) => (o.k === k ? { k, d: -o.d } : { k, d: k === "n" ? 1 : -1 }));
   }
   const ariaSort = (k) => (orden.k === k ? (orden.d === 1 ? "ascending" : "descending") : "none");
-  const flecha = (k) => (orden.k === k ? (orden.d === 1 ? " ↑" : " ↓") : "");
+  // Siempre hay una señal de que la columna se puede ordenar (↕); al usarla pasa a ↑ o ↓.
+  const flecha = (k) =>
+    orden.k === k ? (
+      <span aria-hidden="true">{orden.d === 1 ? " ↑" : " ↓"}</span>
+    ) : (
+      <span aria-hidden="true" className="opacity-40">{" ↕"}</span>
+    );
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
@@ -133,7 +139,7 @@ export default function AdminPanel({ email }) {
                 onClick={() => setMesSel(clave)}
                 className={`h-11 px-4 text-[14.5px] font-semibold border-b-2 -mb-px whitespace-nowrap flex items-center gap-2 transition-colors ${
                   mesActivo === clave
-                    ? "border-primary text-primary"
+                    ? "border-primary text-primarySoftFg"
                     : "border-transparent text-ink2 hover:text-[var(--teal-900)]"
                 }`}
               >

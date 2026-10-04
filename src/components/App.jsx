@@ -14,6 +14,7 @@ import { StatsFinal, AccesosILCE } from "./ConfirmacionFinal";
 import TicketClase from "./TicketClase";
 import SubirFactura from "./SubirFactura";
 import AdminPanel from "./AdminPanel";
+import DialogoConfirmar from "./DialogoConfirmar";
 import { getEstadoCierre } from "@/lib/mes";
 import { DEMO_EDICIONES, DEMO_VALORES } from "@/lib/config";
 
@@ -66,11 +67,11 @@ function BannerCierre({ modoPrueba }) {
   }
 
   return (
-    <div className="flex items-center justify-between px-1 mb-4">
-      <p className="text-xs text-muted">
+    <div className="flex items-center justify-between gap-3 px-1 mb-4">
+      <p className="text-[13px] text-muted">
         Podés cargar tus clases y sesiones de {mesLabel} hasta el día 10.
       </p>
-      <span className="font-mono text-xs text-[var(--teal-700)] font-semibold">
+      <span className="font-mono text-[13px] text-[var(--teal-700)] font-semibold whitespace-nowrap shrink-0">
         {diasRestantes} días
       </span>
     </div>
@@ -92,6 +93,7 @@ export default function App() {
   const [enviando, setEnviando] = useState(false);
   const [resultado, setResultado] = useState(null);
   const [errorEnvio, setErrorEnvio] = useState("");
+  const [confirmarRepetida, setConfirmarRepetida] = useState(null); // ítem repetido pendiente de confirmar
   const [rechazadosInfo, setRechazadosInfo] = useState(0);
   const [refreshSignal, setRefreshSignal] = useState(0);
   const [presetExterno, setPresetExterno] = useState(null);
@@ -134,11 +136,13 @@ export default function App() {
         (p.alumno || "").toLowerCase() === (item.alumno || "").toLowerCase()
     );
     if (yaExiste) {
-      const seguir = window.confirm(
-        "Ya agregaste esta misma clase/sesión a tu carga de este mes. ¿Agregarla de nuevo?"
-      );
-      if (!seguir) return;
+      setConfirmarRepetida(item);
+      return;
     }
+    sumarItem(item);
+  }
+
+  function sumarItem(item) {
     setPendientes((prev) => [...prev, item]);
     const claveValor = `${item.cursoReal}::${item.modalidad || ""}`;
     if (claveValor in valores) return;
@@ -249,7 +253,20 @@ export default function App() {
         />
       )}
 
-    <div className="max-w-md sm:max-w-xl mx-auto px-6 py-8 pb-28">
+    <div className="max-w-md sm:max-w-xl lg:max-w-6xl mx-auto px-4 sm:px-6 py-8 pb-28">
+      {confirmarRepetida && (
+        <DialogoConfirmar
+          titulo="Esta clase ya está en tu carga"
+          textoConfirmar="Agregarla de nuevo"
+          onConfirmar={() => {
+            sumarItem(confirmarRepetida);
+            setConfirmarRepetida(null);
+          }}
+          onCancelar={() => setConfirmarRepetida(null)}
+        >
+          Ya agregaste esta misma clase/sesión a tu carga de este mes. ¿Agregarla de nuevo?
+        </DialogoConfirmar>
+      )}
       {mostrarTutorial && <Tutorial onCerrar={cerrarTutorial} />}
       {mostrarRecorrido && <RecorridoGuiado onCerrar={() => setMostrarRecorrido(false)} />}
 
@@ -310,48 +327,33 @@ export default function App() {
 
       <div
         data-tour="tabs"
-        className="flex gap-1.5 mb-5 rounded-full p-1"
-        style={{ background: "var(--clay-100)" }}
+        role="tablist"
+        className="flex gap-1 mb-5 border-b border-[var(--line)] overflow-x-auto"
       >
-        <button
-          onClick={() => setTab("cargar")}
-          className={`flex-1 rounded-full py-2 text-sm font-medium transition-colors ${
-            tab === "cargar" ? "bg-[var(--panel)] text-[var(--teal-900)] shadow-sm" : "text-muted"
-          }`}
-        >
-          Cargar clases
-        </button>
-        <button
-          onClick={() => setTab("factura")}
-          className={`flex-1 rounded-full py-2 text-sm font-medium transition-colors ${
-            tab === "factura" ? "bg-[var(--panel)] text-[var(--teal-900)] shadow-sm" : "text-muted"
-          }`}
-        >
-          Subir factura
-        </button>
+        {[
+          ["cargar", "Cargar clases"],
+          ["factura", "Subir factura"],
+        ].map(([clave, etiqueta]) => (
+          <button
+            key={clave}
+            role="tab"
+            aria-selected={tab === clave}
+            onClick={() => setTab(clave)}
+            className={`h-11 px-4 text-[14.5px] font-semibold border-b-2 -mb-px whitespace-nowrap transition-colors ${
+              tab === clave
+                ? "border-primary text-primary"
+                : "border-transparent text-ink2 hover:text-[var(--teal-900)]"
+            }`}
+          >
+            {etiqueta}
+          </button>
+        ))}
       </div>
 
       <div className="fade-in">
         {tab === "cargar" && (
-          <>
-            <ResumenCargasMes
-              docenteEmail={docente.email}
-              mes={mesLabel}
-              modoPrueba={modoPrueba}
-              refreshSignal={refreshSignal}
-              onDuplicar={(item) =>
-                setPresetExterno({
-                  cursoReal: item.cursoReal,
-                  edicion: item.edicion,
-                  modalidad: item.modalidad,
-                  alumno: item.alumno || "",
-                })
-              }
-              onRegistrarPrimera={() =>
-                document.getElementById("selector-curso-select")?.focus()
-              }
-            />
-
+          <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-6 lg:items-start">
+            <div>
             {resultado === "ok" && confirmados.length > 0 && pendientes.length === 0 ? (
               <div className="border border-[var(--line)] bg-[var(--panel)] rounded-2xl p-5 text-center">
                 <p className="font-display text-xl text-[var(--teal-900)] mb-1">
@@ -401,7 +403,7 @@ export default function App() {
                 {pendientes.length > 0 && (
                   <div className="mb-4">
                     <h2 className="font-display text-[17px] text-[var(--teal-900)] mb-3">
-                      Tu carga de este mes
+                      Para confirmar
                     </h2>
                     {pendientes.map((item, idx) => (
                       <TicketClase
@@ -432,7 +434,27 @@ export default function App() {
                 </button>
               </>
             )}
-          </>
+            </div>
+            <div className="mt-6 lg:mt-0">
+            <ResumenCargasMes
+              docenteEmail={docente.email}
+              mes={mesLabel}
+              modoPrueba={modoPrueba}
+              refreshSignal={refreshSignal}
+              onDuplicar={(item) =>
+                setPresetExterno({
+                  cursoReal: item.cursoReal,
+                  edicion: item.edicion,
+                  modalidad: item.modalidad,
+                  alumno: item.alumno || "",
+                })
+              }
+              onRegistrarPrimera={() =>
+                document.getElementById("selector-curso-select")?.focus()
+              }
+            />
+            </div>
+          </div>
         )}
 
         {tab === "factura" && (
@@ -455,6 +477,7 @@ export default function App() {
                 Cargar otra clase similar a la última
               </button>
             )}
+            <div className="max-w-xl mx-auto">
             <SubirFactura
               docente={docente}
               items={confirmados}
@@ -468,6 +491,7 @@ export default function App() {
                 setTab("cargar");
               }}
             />
+            </div>
           </>
         )}
       </div>

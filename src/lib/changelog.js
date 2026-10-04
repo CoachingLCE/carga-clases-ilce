@@ -1,5 +1,18 @@
 export const CHANGELOG = [
   {
+    version: '1.7.0',
+    fecha: '2026-10-04',
+    cambios: [
+      'Pantalla principal reorganizada en escritorio: a la izquierda lo que querés hacer (agregar una clase y confirmar la carga) y a la derecha lo que ya cargaste este mes, agrupado por curso y edición con el subtotal de cada grupo. En celular, primero agregar y después lo ya cargado.',
+      'Un solo resumen del mes arriba (antes había dos que repetían los mismos datos).',
+      'Duplicar, Editar y Eliminar pasan a un menú ⋮ en cada clase cargada.',
+      'Eliminar una carga y agregar una clase repetida ahora muestran un cuadro de la app, no el del navegador; los errores aparecen dentro de la pantalla.',
+      'Panel de administración: tabla de ancho completo con pestañas por mes, indicadores (facturas, clases y total), búsqueda por docente o alias, orden por columna y estado "Sin archivo". En celular cada factura es una tarjeta.',
+      'Las pestañas "Cargar clases" y "Subir factura" pasan a un estilo subrayado.',
+      'No se cambió ningún dato, cálculo ni flujo existente.'
+    ]
+  },
+  {
     version: '1.6.0',
     fecha: '2026-10-04',
     cambios: [

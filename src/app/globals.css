@@ -166,3 +166,19 @@ select {
   0%, 100% { opacity: .45; box-shadow: 0 0 0 0 rgba(34,211,238,0); }
   50% { opacity: 1; box-shadow: 0 0 12px 3px rgba(34,211,238,.65); border-color: #22d3ee; }
 }
+
+/* Tabla de facturas (administración): en celular cada fila pasa a ser una tarjeta con todos los
+   datos, porque una tabla comprimida no se lee. El orden pasa al selector "Ordenar por". */
+@media (max-width: 639px) {
+  .tabla-adm thead { display: none; }
+  .tabla-adm, .tabla-adm tbody, .tabla-adm tr, .tabla-adm td { display: block; }
+  .tabla-adm tr { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; padding: 14px 16px; }
+  .tabla-adm tr:hover { background: transparent; }
+  .tabla-adm td { padding: 0 !important; text-align: left; }
+  .tabla-adm .c-doc, .tabla-adm .c-mes, .tabla-adm .c-fac { grid-column: 1 / -1; }
+  .tabla-adm .c-cl { grid-column: 1; text-align: left; }
+  .tabla-adm .c-cl::before { content: "Clases "; color: var(--text-muted); font-weight: 400; font-family: "Dosis", system-ui, sans-serif; font-size: 13px; }
+  .tabla-adm .c-tot { grid-column: 2; text-align: right; }
+  .tabla-adm .c-tot::before { content: "Total "; color: var(--text-muted); font-weight: 400; font-family: "Dosis", system-ui, sans-serif; font-size: 13px; }
+  .tabla-adm .c-fac { margin-top: 4px; }
+}

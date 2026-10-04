@@ -79,7 +79,7 @@ export default function BarraSuperior({ onMiActividad, onHistorial, onTutorial, 
 
   return (
     <div className="sticky top-0 z-40 border-b border-[var(--line)]" style={{ background: "var(--panel)" }}>
-      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="flex items-center gap-2 py-2.5">
           <img src="/logo-ilce-color.png" alt="Instituto ILCE" className="h-6 w-auto shrink-0 mr-1 block dark:hidden" />
           <img src="/logo-ilce-blanco.png" alt="Instituto ILCE" className="h-6 w-auto shrink-0 mr-1 hidden dark:block" />

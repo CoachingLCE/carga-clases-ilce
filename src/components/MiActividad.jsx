@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { haceCuanto } from "@/lib/tiempo";
 
 // Widget chico y persistente (no una sección enorme): cuántas clases/sesiones
 // lleva cargadas este mes el docente, y el total acumulado. Se apoya en el
@@ -30,46 +31,33 @@ export default function MiActividad({ docenteEmail, mes, modoPrueba, refreshSign
   const total = cargas.reduce((acc, c) => acc + (c.valor || 0), 0);
   const cursosDistintos = new Set(cargas.map((c) => c.cursoReal)).size;
   const ultima = cargas[0]; // ya vienen ordenadas más reciente primero
-  const ultimaHaceTexto = (() => {
-    if (!ultima?.timestamp) return "—";
-    const ms = Date.now() - new Date(ultima.timestamp).getTime();
-    const dias = Math.floor(ms / 86400000);
-    if (dias <= 0) return "Hoy";
-    if (dias === 1) return "Hace 1 día";
-    return `Hace ${dias} días`;
-  })();
 
   return (
-    <div className="border border-[var(--line)] bg-[var(--panel)] rounded-xl px-4 py-3 mb-4">
-      <p className="text-[12.5px] uppercase tracking-wide text-[var(--teal-500)] font-semibold mb-2.5">
-        Mi actividad
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5" aria-label="Mi actividad del mes">
+      <Indicador etiqueta="Clases cargadas" valor={cargando ? "…" : totalClases} />
+      <Indicador etiqueta="Cursos distintos" valor={cargando ? "…" : cursosDistintos} />
+      <Indicador
+        etiqueta="Facturación estimada"
+        valor={`$${total.toLocaleString("es-AR")}`}
+        destacado
+      />
+      <Indicador etiqueta="Última carga" valor={cargando ? "…" : haceCuanto(ultima?.timestamp)} />
+    </div>
+  );
+}
+
+// Un solo resumen del mes (antes había dos que repetían los mismos datos).
+function Indicador({ etiqueta, valor, destacado }) {
+  return (
+    <div className="border border-[var(--line)] bg-[var(--panel)] rounded-xl px-4 py-3">
+      <p className="text-[13px] font-semibold text-ink2 leading-tight">{etiqueta}</p>
+      <p
+        className={`mt-1 font-mono text-xl font-semibold leading-tight ${
+          destacado ? "text-[var(--teal-700)]" : "text-[var(--teal-900)]"
+        }`}
+      >
+        {valor}
       </p>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-        <div className="text-center">
-          <p className="text-lg font-mono font-semibold text-[var(--teal-900)]">
-            {cargando ? "…" : totalClases}
-          </p>
-          <p className="text-[12.5px] text-muted leading-tight">Clases cargadas</p>
-        </div>
-        <div className="text-center">
-          <p className="text-lg font-mono font-semibold text-[var(--teal-900)]">
-            {cargando ? "…" : cursosDistintos}
-          </p>
-          <p className="text-[12.5px] text-muted leading-tight">Cursos distintos</p>
-        </div>
-        <div className="text-center">
-          <p className="text-[15px] font-mono font-semibold text-[var(--teal-700)]">
-            ${total.toLocaleString("es-AR")}
-          </p>
-          <p className="text-[12.5px] text-muted leading-tight">Facturación estimada</p>
-        </div>
-        <div className="text-center">
-          <p className="text-[13px] font-mono font-semibold text-[var(--teal-900)]">
-            {cargando ? "…" : ultimaHaceTexto}
-          </p>
-          <p className="text-[12.5px] text-muted leading-tight">Última carga</p>
-        </div>
-      </div>
     </div>
   );
 }

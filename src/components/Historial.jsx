@@ -49,7 +49,7 @@ function GrupoMes({ grupo, abiertoPorDefecto }) {
         className="w-full flex items-center justify-between px-4 py-3 text-left"
       >
         <div className="flex items-center gap-2">
-          <span className="text-[var(--teal-700)] text-xs">{abierto ? "▼" : "▶"}</span>
+          <span className="text-[var(--teal-700)] text-xs">{abierto ? "▼" : ""}</span>
           <span className="font-display text-[15px] text-[var(--teal-900)]">
             {capitalizar(grupo.mes)}
           </span>
@@ -75,7 +75,7 @@ function GrupoMes({ grupo, abiertoPorDefecto }) {
             {grupo.cargas.map((c, i) => (
               <div key={i} className="flex items-start justify-between gap-2 text-sm">
                 <div className="flex items-start gap-1.5 min-w-0">
-                  <span className="text-[var(--teal-500)] shrink-0">✓</span>
+                  <span className="text-[var(--teal-500)] shrink-0"></span>
                   <div className="min-w-0">
                     <p className="text-[var(--teal-900)] font-medium truncate">
                       {nombreCurso(c)}
@@ -147,7 +147,7 @@ export default function Historial({ docenteEmail, onCerrar }) {
           className="absolute top-4 right-4 text-muted text-lg leading-none"
           aria-label="Cerrar"
         >
-          ✕
+          
         </button>
         <h2 className="font-display text-xl text-[var(--teal-900)] mb-1">Historial de envíos</h2>
         <p className="text-xs text-muted mb-4">

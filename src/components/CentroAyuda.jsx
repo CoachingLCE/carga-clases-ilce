@@ -22,7 +22,7 @@ export default function CentroAyuda({ onCerrar, onTutorial, onRecorrido }) {
           className="absolute top-4 right-4 text-muted text-lg leading-none"
           aria-label="Cerrar"
         >
-          ✕
+          
         </button>
 
         <h2 className="font-display text-lg text-[var(--teal-900)] mb-1">

@@ -262,7 +262,7 @@ export default function ResumenCargasMes({
                 aria-label="Cerrar aviso"
                 className="shrink-0 font-semibold"
               >
-                ✕
+                
               </button>
             </div>
           )}

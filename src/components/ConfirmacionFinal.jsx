@@ -51,7 +51,7 @@ export function AccesosILCE({ onVerMisCargas }) {
           rel="noreferrer"
           className="flex items-start gap-2.5 border border-[var(--line)] rounded-xl px-3.5 py-3 hover:border-[var(--teal-500)] transition-colors"
         >
-          <span className="text-lg leading-none">📚</span>
+          <span className="text-lg leading-none"></span>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-[var(--teal-900)]">
               ¿Querés leer alguna nota de nuestro blog?
@@ -69,7 +69,7 @@ export function AccesosILCE({ onVerMisCargas }) {
           rel="noreferrer"
           className="flex items-start gap-2.5 border border-[var(--line)] rounded-xl px-3.5 py-3 hover:border-[var(--teal-500)] transition-colors"
         >
-          <span className="text-lg leading-none">💬</span>
+          <span className="text-lg leading-none"></span>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-[var(--teal-900)]">
               ¿Querés acceder a los recursos docentes?
@@ -87,7 +87,7 @@ export function AccesosILCE({ onVerMisCargas }) {
             onClick={onVerMisCargas}
             className="w-full flex items-start gap-2.5 border border-[var(--line)] rounded-xl px-3.5 py-3 hover:border-[var(--teal-500)] text-left transition-colors"
           >
-            <span className="text-lg leading-none">📋</span>
+            <span className="text-lg leading-none"></span>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-[var(--teal-900)]">Ver mis cargas</p>
               <p className="text-xs text-muted mt-0.5">

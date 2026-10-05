@@ -126,7 +126,7 @@ export default function EmailGate({ onIngreso }) {
               className="absolute right-2.5 top-1/2 -translate-y-1/2 text-sm"
               style={{ color: "var(--login-textMuted)" }}
             >
-              {mostrarEmail ? "🙈" : "👁️"}
+              {mostrarEmail ? "" : ""}
             </button>
           </div>
 

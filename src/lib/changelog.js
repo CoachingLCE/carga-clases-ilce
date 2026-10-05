@@ -1,5 +1,15 @@
 export const CHANGELOG = [
   {
+    version: '1.8.0',
+    fecha: '2026-10-04',
+    cambios: [
+      'Tipografía de marca: el texto sigue en Dosis y los títulos y cifras pasan a TeX Gyre Adventor (antes Jost), como pide el manual. Las fuentes viajan dentro de la app: ya no se piden a Google, así se ven igual en todos los dispositivos y cargan más rápido.',
+      'Íconos: los emoji de la interfaz se reemplazaron por íconos de trazo uniforme, los mismos que usan Fichas, Gestión, Cronograma y Presentismo. Toman el color del texto y cambian solos con el modo claro u oscuro.',
+      'El cartel de versión pasa a 12 px, igual que en las otras apps.',
+      'No se cambió ningún dato, flujo ni cálculo existente.'
+    ]
+  },
+  {
     version: '1.7.2',
     fecha: '2026-10-04',
     cambios: [

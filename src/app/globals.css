@@ -88,13 +88,13 @@
 
 body {
   margin: 0;
-  font-family: "Dosis", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-texto);
   background: var(--paper);
   color: var(--ink);
 }
 
 .font-display {
-  font-family: "Jost", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-titulo);
   font-weight: 600;
 }
 
@@ -182,3 +182,31 @@ select {
   .tabla-adm .c-tot::before { content: "Total "; color: var(--text-muted); font-weight: 400; font-family: "Dosis", system-ui, sans-serif; font-size: 13px; }
   .tabla-adm .c-fac { margin-top: 4px; }
 }
+
+/* ===== Tipografía de marca (manual de ILCE): Dosis para el texto y TeX Gyre Adventor para los títulos.
+   Las fuentes están dentro de la app (carpeta public/fonts): no se piden a Google, así se ven igual en
+   todos los dispositivos. Dosis es más baja y angosta que una letra de sistema, por eso lleva
+   size-adjust (se agranda un 8 % para que se lea del mismo tamaño que antes). ===== */
+@font-face{font-family:'Dosis';src:url('/fonts/dosis-400.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap;size-adjust:108%}
+@font-face{font-family:'Dosis';src:url('/fonts/dosis-500.woff2') format('woff2');font-weight:500;font-style:normal;font-display:swap;size-adjust:108%}
+@font-face{font-family:'Dosis';src:url('/fonts/dosis-600.woff2') format('woff2');font-weight:600;font-style:normal;font-display:swap;size-adjust:108%}
+@font-face{font-family:'Dosis';src:url('/fonts/dosis-700.woff2') format('woff2');font-weight:700;font-style:normal;font-display:swap;size-adjust:108%}
+@font-face{font-family:'TeX Gyre Adventor';src:url('/fonts/adventor-400.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'TeX Gyre Adventor';src:url('/fonts/adventor-700.woff2') format('woff2');font-weight:700;font-style:normal;font-display:swap}
+:root{--font-texto:'Dosis',system-ui,-apple-system,'Segoe UI',sans-serif;--font-titulo:'TeX Gyre Adventor','Century Gothic','Avant Garde',system-ui,sans-serif}
+h1,h2,.font-display{font-family:var(--font-titulo)}
+button,input,select,textarea{font-family:inherit}
+
+/* ===== Íconos de trazo uniforme (Lucide, licencia ISC) — iguales en todas las apps de ILCE =====
+   Reemplazan a los emoji de la interfaz. Cada ícono es un carácter del rango privado U+E000–U+F8FF que el
+   navegador dibuja con esta fuente (/fonts/iconos.woff2), del color y tamaño del texto que lo rodea.
+   IMPORTANTE: cada cara de íconos lleva el MISMO peso que la cara de texto con la que se combina (400, 500, 600, 700).
+   Si se declarara con un rango (100 900) el navegador elige una sola de las dos y los íconos no se dibujan.
+   NO usar estos caracteres en lo que sale de la app (mails, Excel, PDF, portapapeles, WhatsApp, tooltips, listas
+   desplegables): ahí se usa el emoji original o nada. Qué ícono es cada carácter: ver iconos.js */
+@font-face{font-family:'Dosis';src:url('/fonts/iconos.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap;unicode-range:U+E000-F8FF}
+@font-face{font-family:'Dosis';src:url('/fonts/iconos.woff2') format('woff2');font-weight:500;font-style:normal;font-display:swap;unicode-range:U+E000-F8FF}
+@font-face{font-family:'Dosis';src:url('/fonts/iconos.woff2') format('woff2');font-weight:600;font-style:normal;font-display:swap;unicode-range:U+E000-F8FF}
+@font-face{font-family:'Dosis';src:url('/fonts/iconos.woff2') format('woff2');font-weight:700;font-style:normal;font-display:swap;unicode-range:U+E000-F8FF}
+@font-face{font-family:'TeX Gyre Adventor';src:url('/fonts/iconos.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap;unicode-range:U+E000-F8FF}
+@font-face{font-family:'TeX Gyre Adventor';src:url('/fonts/iconos.woff2') format('woff2');font-weight:700;font-style:normal;font-display:swap;unicode-range:U+E000-F8FF}

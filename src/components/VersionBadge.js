@@ -33,15 +33,15 @@ export default function VersionBadge() {
   return (
     <>
       <button onClick={abrir} title="Ver novedades" className={(hayNovedades ? "version-badge-novedad " : "") + "hidden md:block"}
-        style={{ position: "fixed", bottom: 12, right: 16, fontSize: 11, color: C.muted, background: C.panel, border: "1px solid " + C.border, borderRadius: 999, padding: "4px 12px", zIndex: 40, cursor: "pointer" }}>
+        style={{ position: "fixed", bottom: 12, right: 16, fontSize: 12, color: C.muted, background: C.panel, border: "1px solid " + C.border, borderRadius: 999, padding: "4px 12px", zIndex: 40, cursor: "pointer" }}>
         v{APP_VERSION}<span className="hidden sm:inline"> · Actualizado {fecha}</span>
       </button>
       {abierto && (
         <div onClick={() => setAbierto(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: 16 }}>
           <div onClick={(e) => e.stopPropagation()} style={{ background: C.panel, border: "1px solid " + C.border, borderRadius: 16, padding: 24, width: "100%", maxWidth: 512, maxHeight: "80vh", overflowY: "auto" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-              <p style={{ fontSize: 16, fontWeight: 700, color: C.text, margin: 0 }}>📋 Novedades de la app</p>
-              <button onClick={() => setAbierto(false)} style={{ background: "none", border: "none", color: C.muted, cursor: "pointer", fontSize: 16 }}>✕</button>
+              <p style={{ fontSize: 16, fontWeight: 700, color: C.text, margin: 0 }}> Novedades de la app</p>
+              <button onClick={() => setAbierto(false)} style={{ background: "none", border: "none", color: C.muted, cursor: "pointer", fontSize: 16 }}></button>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
               {paraMostrar.map((e) => (

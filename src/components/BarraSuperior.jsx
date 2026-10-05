@@ -53,7 +53,7 @@ export default function BarraSuperior({ onMiActividad, onHistorial, onTutorial, 
     <>
       {LINKS_RAPIDOS.campus && (
         <Chip href={LINKS_RAPIDOS.campus} destacado bloque={bloque}>
-          🎓 Campus
+           Campus
         </Chip>
       )}
       <Chip onClick={accion(onMiActividad)} bloque={bloque}>Mi actividad</Chip>

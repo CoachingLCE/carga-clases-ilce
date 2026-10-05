@@ -1,5 +1,13 @@
 export const CHANGELOG = [
   {
+    version: '1.8.1',
+    fecha: '2026-10-04',
+    cambios: [
+      'Nueva barra lateral en la computadora: Campus, Mi actividad, Historial, Tutorial y Ayuda pasan de la barra de arriba a una columna fija a la izquierda, con un ícono por sección, y el tema y las redes abajo. Es la misma barra que ahora tienen Fichas, Gestión, Cronograma y Presentismo, para que las apps se vean como una sola. El panel de administración (Facturas recibidas) tiene la misma barra. En tablet y celular sigue la barra de arriba.',
+      'No se cambió ningún dato, flujo ni cálculo existente.'
+    ]
+  },
+  {
     version: '1.8.0',
     fecha: '2026-10-04',
     cambios: [

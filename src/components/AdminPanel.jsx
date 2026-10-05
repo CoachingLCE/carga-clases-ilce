@@ -1,5 +1,6 @@
 "use client";
 
+import BarraLateral from "./BarraLateral";
 import { useEffect, useState } from "react";
 
 const MESES = [
@@ -93,6 +94,8 @@ export default function AdminPanel({ email }) {
     );
 
   return (
+    <>
+    <BarraLateral items={[{ icono: "\ue3d6", label: "Facturas recibidas", activo: true }]} />
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
       <header className="flex flex-wrap items-start justify-between gap-4 mb-6">
         <div className="flex items-center gap-2.5">
@@ -260,6 +263,7 @@ export default function AdminPanel({ email }) {
         </>
       )}
     </div>
+    </>
   );
 }
 

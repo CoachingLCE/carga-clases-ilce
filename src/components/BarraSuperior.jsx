@@ -5,6 +5,7 @@ import { LINKS_RAPIDOS } from "@/lib/config";
 import { useEscape } from "@/lib/useEscape";
 import { IconoInstagram, IconoFacebook, IconoWhatsapp, IconoLinkedin } from "./IconosRedes";
 import ThemeSelector from "./ThemeSelector";
+import BarraLateral from "./BarraLateral";
 
 const REDES = [
   { clave: "instagram", Icono: IconoInstagram, label: "Instagram" },
@@ -34,6 +35,15 @@ function Chip({ onClick, href, children, destacado, bloque }) {
     </button>
   );
 }
+
+// Íconos de la barra lateral (fuente /fonts/iconos.woff2, ver lib/iconos.js)
+const ICONO = {
+  campus: "\ue233",       // graduation-cap
+  miActividad: "\ue18f",  // trending-up
+  historial: "\ue088",    // clock
+  tutorial: "\ue065",     // book-open
+  ayuda: "\ue07f",        // circle-help
+};
 
 // Barra fija arriba de todo. En pantallas medianas y grandes: logo, chips de navegación y redes
 // en una sola fila. En celular: logo, selector de tema y botón de menú; los chips y las redes van
@@ -78,7 +88,19 @@ export default function BarraSuperior({ onMiActividad, onHistorial, onTutorial, 
   ));
 
   return (
-    <div className="sticky top-0 z-40 border-b border-[var(--line)]" style={{ background: "var(--panel)" }}>
+    <>
+    {/* BARRA LATERAL — solo escritorio (>= lg) */}
+    <BarraLateral
+      items={[
+        ...(LINKS_RAPIDOS.campus ? [{ href: LINKS_RAPIDOS.campus, icono: ICONO.campus, destacado: true, label: "Campus" }] : []),
+        { onClick: () => onMiActividad && onMiActividad(), icono: ICONO.miActividad, label: "Mi actividad" },
+        { onClick: () => onHistorial && onHistorial(), icono: ICONO.historial, label: "Historial" },
+        { onClick: () => onTutorial && onTutorial(), icono: ICONO.tutorial, label: "Tutorial" },
+        { onClick: () => onAyuda && onAyuda(), icono: ICONO.ayuda, label: "Ayuda" },
+      ]}
+    />
+
+    <div className="sticky top-0 z-40 border-b border-[var(--line)] lg:hidden" style={{ background: "var(--panel)" }}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="flex items-center gap-2 py-2.5">
           <img src="/logo-ilce-color.png" alt="Instituto ILCE" className="h-6 w-auto shrink-0 mr-1 block dark:hidden" />
@@ -114,5 +136,6 @@ export default function BarraSuperior({ onMiActividad, onHistorial, onTutorial, 
         )}
       </div>
     </div>
+    </>
   );
 }

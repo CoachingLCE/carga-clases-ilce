@@ -210,3 +210,6 @@ button,input,select,textarea{font-family:inherit}
 @font-face{font-family:'Dosis';src:url('/fonts/iconos.woff2') format('woff2');font-weight:700;font-style:normal;font-display:swap;unicode-range:U+E000-F8FF}
 @font-face{font-family:'TeX Gyre Adventor';src:url('/fonts/iconos.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap;unicode-range:U+E000-F8FF}
 @font-face{font-family:'TeX Gyre Adventor';src:url('/fonts/iconos.woff2') format('woff2');font-weight:700;font-style:normal;font-display:swap;unicode-range:U+E000-F8FF}
+
+/* Barra lateral de navegación (escritorio): el contenido deja lugar a la izquierda. */
+@media (min-width: 1024px) { body.con-menu-lateral { padding-left: 248px; } }

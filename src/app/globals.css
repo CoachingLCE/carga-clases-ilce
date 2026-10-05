@@ -213,3 +213,10 @@ button,input,select,textarea{font-family:inherit}
 
 /* Barra lateral de navegación (escritorio): el contenido deja lugar a la izquierda. */
 @media (min-width: 1024px) { body.con-menu-lateral { padding-left: 248px; } }
+
+/* Novedades: el panel arranca "apagado" y se va "prendiendo" renglón por renglón como si acompañara la lectura (pedido de
+   Diego; igual en todas las apps de ILCE). Cada ítem empieza atenuado y un IntersectionObserver (ver VersionBadge) le agrega
+   .nov-lit apenas entra a la franja de lectura de arriba del cuadro. Una vez iluminado se queda así. */
+.nov-line{opacity:.3;filter:saturate(.3);transition:opacity .55s ease,filter .55s ease}
+.nov-line.nov-lit{opacity:1;filter:none}
+@media (prefers-reduced-motion:reduce){.nov-line{opacity:1;filter:none;transition:none}}

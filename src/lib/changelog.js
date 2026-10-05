@@ -1,5 +1,14 @@
 export const CHANGELOG = [
   {
+    version: '1.8.2',
+    fecha: '2026-10-05',
+    cambios: [
+      'Novedades de la app: la lista ahora se va "prendiendo" renglón por renglón mientras se lee (arranca atenuada y cada renglón se ilumina al llegar a la zona de lectura de arriba), igual que en las demás apps de ILCE. Si tu sistema tiene activada la opción de "reducir movimiento", se muestra normal.',
+      'Arreglo: al llegar al final de la lista, los últimos renglones quedaban apagados y no se podían leer bien; ahora se encienden.',
+      'No se cambió ningún dato, flujo ni cálculo existente.'
+    ]
+  },
+  {
     version: '1.8.1',
     fecha: '2026-10-04',
     cambios: [

@@ -1,5 +1,13 @@
 export const CHANGELOG = [
   {
+    version: '1.8.3',
+    fecha: '2026-10-05',
+    cambios: [
+      'Ícono de la pestaña (favicon) actualizado: ahora el isologo de ILCE va sobre un fondo oscuro, más nítido y visible tanto en pestañas claras como oscuras (antes tenía fondo transparente y el arco blanco desaparecía en pestañas claras). Es el mismo ícono en todas las apps de ILCE.',
+      'No se cambió ningún dato, flujo ni cálculo existente.'
+    ]
+  },
+  {
     version: '1.8.2',
     fecha: '2026-10-05',
     cambios: [

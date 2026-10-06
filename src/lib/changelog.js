@@ -1,5 +1,13 @@
 export const CHANGELOG = [
   {
+    version: '1.9.0',
+    fecha: '2026-10-05',
+    cambios: [
+      'Vista previa de enlace: ahora, cuando alguien comparte un enlace de la app por WhatsApp, Slack o Telegram, se ve una tarjeta con el título, una descripción y una imagen de ILCE, en lugar de mostrar solo el dominio.',
+      'No se cambió ningún dato, flujo ni cálculo existente.'
+    ]
+  },
+  {
     version: '1.8.3',
     fecha: '2026-10-05',
     cambios: [

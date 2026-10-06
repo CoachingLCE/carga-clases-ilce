@@ -159,7 +159,7 @@ export default function Historial({ docenteEmail, onCerrar }) {
         ) : error ? (
           <p className="text-sm text-[var(--clay-600)] py-6 text-center">{error}</p>
         ) : grupos.length === 0 ? (
-          <p className="text-sm text-muted py-6 text-center">
+          <p className="vacio">
             Todavía no tenés ninguna carga registrada.
           </p>
         ) : (

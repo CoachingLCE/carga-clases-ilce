@@ -1,5 +1,13 @@
 export const CHANGELOG = [
   {
+    version: '1.10.0',
+    fecha: '2026-10-06',
+    cambios: [
+      'Cuando una lista, tabla o filtro no tiene nada para mostrar, ahora se ve un recuadro punteado con un ícono y el mensaje centrado, en lugar de una línea gris suelta. Es igual en todas las apps de ILCE.',
+      'No se cambió ningún dato, flujo ni cálculo existente.'
+    ]
+  },
+  {
     version: '1.9.0',
     fecha: '2026-10-05',
     cambios: [

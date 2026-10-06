@@ -127,7 +127,7 @@ export default function AdminPanel({ email }) {
       {error && <p className="text-sm text-[var(--clay-600)]">{error}</p>}
 
       {!cargando && !error && facturas.length === 0 && (
-        <p className="text-sm text-muted">Todavía no se subió ninguna factura.</p>
+        <p className="vacio">Todavía no se subió ninguna factura.</p>
       )}
 
       {facturas.length > 0 && (

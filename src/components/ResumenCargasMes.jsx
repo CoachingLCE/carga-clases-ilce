@@ -213,7 +213,7 @@ export default function ResumenCargasMes({
 
       {!cargando && totalClases === 0 && !error && (
         <div className="border border-dashed border-[var(--line)] rounded-2xl p-6 text-center">
-          <p className="text-sm text-muted mb-3">
+          <p className="vacio mb-3">
             Todavía no cargaste ninguna clase ni sesión este mes.
           </p>
           {onRegistrarPrimera && (
